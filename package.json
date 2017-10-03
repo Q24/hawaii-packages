@@ -1,6 +1,6 @@
 {
-  "name": "hawaii-srcs",
-  "version": "0.0.1",
+  "name": "@hawaii",
+  "version": "0.0.2",
   "description": "Hawaii packages",
   "main": "index.js",
   "dependencies": {},
