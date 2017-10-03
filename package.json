@@ -1,0 +1,21 @@
+{
+  "name": "hawaii-srcs",
+  "version": "0.0.1",
+  "description": "Hawaii packages",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Q24/hawaii-packages.git"
+  },
+  "author": "QNH",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Q24/hawaii-packages/issues"
+  },
+  "homepage": "https://github.com/Q24/hawaii-packages#readme"
+}
