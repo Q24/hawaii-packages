@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### 0.0.5
+
+* Initialized installable package
+* Repo setup
+
 ### 0.0.4
 
 * Updated the REAMDE.md with changelog notes
