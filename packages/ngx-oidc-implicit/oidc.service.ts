@@ -208,7 +208,7 @@ export class OidcService {
    * @type {boolean}
    * @private
    */
-  private _debug = true;
+  private _debug = false;
 
   /**
    * Variable for holding Log function
