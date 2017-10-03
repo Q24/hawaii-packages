@@ -1,5 +1,5 @@
 {
-  "name": "@hawaii",
+  "name": "hawaii-packages",
   "version": "0.0.2",
   "description": "Hawaii packages",
   "main": "index.js",
