@@ -1,0 +1,25 @@
+{
+  "name": "@hawaii/ngx-oidc-implicit",
+  "version": "0.0.4",
+  "description": "Open ID connect Implicit Flow implementation for Angular",
+  "main": "",
+  "module": "",
+  "es2015": "",
+  "typings": "",
+  "keywords": [
+    "oidc",
+    "openid",
+    "implicit",
+    "angular",
+    "ngx"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Q24/hawaii-packages.git"
+  },
+  "author": "QNH",
+  "license": "",
+  "homepage": "https://github.com/Q24",
+  "dependencies": {
+  }
+}
