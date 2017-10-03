@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 0.0.6
+
+* Turn off debug by default
+
 ### 0.0.5
 
 * Initialized installable package
