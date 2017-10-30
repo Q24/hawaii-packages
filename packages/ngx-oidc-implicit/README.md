@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 0.0.8
+
+* Fixed the Session Id handling and token validation call. New Hawaii calls don't have 200 with status anymore. So refactored to 'normal' rest call status codes.
+
 ### 0.0.7
 
 * Changes in Typing for isSessionAlive response
