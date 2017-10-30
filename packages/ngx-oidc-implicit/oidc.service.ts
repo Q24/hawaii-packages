@@ -382,7 +382,7 @@ export class OidcService {
    * Check to see if a session is still actively used somewhere else (i.e. other platform).
    * @returns {Observable<Object>}
    */
-  public isSessionAlive(): Observable<Object> {
+  public isSessionAlive(): Observable<{ status: number }> {
     this._log('Get Session Alive info from SSO');
 
     return this._http
