@@ -511,11 +511,11 @@ export class OidcService {
               this._log('State from URL validated against state in session storage state object', stateObj);
 
               // State validated, so now let's validate the token with Hawaii Backend
-              this._validateToken(hashFragmentParams).subscribe(response => {
-                this._log('Token validated by backend', response);
+              this._validateToken(hashFragmentParams).map(res => res.json()).subscribe(
+                response => {
+                  this._log('Token validated by backend', response);
 
-                if (response.status === 200) {
-
+                  // Store the token in the storage
                   this._storeToken(hashFragmentParams);
 
                   if (response.user_session_id) {
@@ -526,15 +526,15 @@ export class OidcService {
                   this._log('Token from URL validated, you may proceed.');
                   observer.next(true);
                   observer.complete();
-                }
 
+
+                },
                 // Something's wrong with the token according to the backend
-                else {
+                response => {
                   this._log('Token NOT validated by backend', response);
                   observer.next(false);
                   observer.complete();
-                }
-              });
+                });
             } else {
               this._log('State NOT valid');
               observer.next(false);
