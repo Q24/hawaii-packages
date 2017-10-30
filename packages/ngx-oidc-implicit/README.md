@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 0.0.7
+
+* Changes in Typing for isSessionAlive response
+
 ### 0.0.6
 
 * Turn off debug by default
