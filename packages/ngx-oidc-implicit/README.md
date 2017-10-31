@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 0.0.10
+
+* Update user_session_id session storage saving
+
 ### 0.0.9
 
 * Update isSessionAlive endpoint to use the new style.
