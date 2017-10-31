@@ -519,7 +519,8 @@ export class OidcService {
                   this._storeToken(hashFragmentParams);
 
                   if (response.user_session_id) {
-                    this._saveSessionId(response.user_session_id);
+                    const userSessionId =  response.user_session_id.replace(/^"|"$/g, '');
+                    this._saveSessionId(userSessionId);
                   }
 
                   // We're logged in with token in URL
