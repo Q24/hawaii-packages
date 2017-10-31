@@ -386,7 +386,7 @@ export class OidcService {
     this._log('Get Session Alive info from SSO');
 
     return this._http
-      .get(`${this.config.is_session_alive_endpoint}/${this._getSessionId()}/is-active`);
+      .get(`${this.config.is_session_alive_endpoint}/${this._getSessionId()}`);
   }
 
   /**
