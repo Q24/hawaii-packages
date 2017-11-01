@@ -1,6 +1,6 @@
 {
   "name": "@hawaii-framework/ngx-oidc-implicit",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Open ID connect Implicit Flow implementation for Angular",
   "main": "",
   "module": "",

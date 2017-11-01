@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 0.0.11
+
+* isSessionAlive now requires an AuthHeader.
+
 ### 0.0.10
 
 * Update user_session_id session storage saving
