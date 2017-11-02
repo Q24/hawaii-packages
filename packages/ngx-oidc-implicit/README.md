@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 0.0.12
+
+* isSessionAlive doesn't require an AuthHeader anymore. This is a better fit for spec, and effictively reverts tje previous release to 0.0.10.
+
 ### 0.0.11
 
 * isSessionAlive now requires an AuthHeader.
