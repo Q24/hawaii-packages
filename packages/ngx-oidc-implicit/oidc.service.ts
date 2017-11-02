@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Headers, Http, RequestOptions, URLSearchParams} from '@angular/http';
+import {Http, URLSearchParams} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
@@ -385,14 +385,8 @@ export class OidcService {
   public isSessionAlive(): Observable<{ status: number }> {
     this._log('Get Session Alive info from SSO');
 
-    const headers: Headers = new Headers();
-
-    headers.set('Authorization', this.getAuthHeader());
-
     return this._http
-      .get(`${this.config.is_session_alive_endpoint}/${this._getSessionId()}`, new RequestOptions({
-        headers: headers
-      }));
+      .get(`${this.config.is_session_alive_endpoint}/${this._getSessionId()}`);
   }
 
   /**
@@ -524,10 +518,8 @@ export class OidcService {
                   // Store the token in the storage
                   this._storeToken(hashFragmentParams);
 
-                  if (response.user_session_id) {
-                    const userSessionId = response.user_session_id.replace(/^"|"$/g, '');
-                    this._saveSessionId(userSessionId);
-                  }
+                  // Store the session ID
+                  this._saveSessionId(response.user_session_id);
 
                   // We're logged in with token in URL
                   this._log('Token from URL validated, you may proceed.');
@@ -663,7 +655,7 @@ export class OidcService {
    * @private
    */
   private _saveSessionId(sessionId: string) {
-    OidcService._store(`${this.config.provider_id}-session-id`, JSON.stringify(sessionId));
+    OidcService._store(`${this.config.provider_id}-session-id`, sessionId);
   }
 
   /**
