@@ -10,7 +10,7 @@
 * Go to `./packages/` and add a directory for you package, keeping naming conventions in mind. 
 
 _Be descriptive please!
-I.e.: `ngx-package-name` for Angular (2+) packages, `angularjs-package-name` for AngularJs (1), and js-package-name for Vanilla JS packages and so on_
+I.e.: `ngx-package-name` for Angular (2+) packages, `angularjs-package-name` for AngularJs (1), and `js-package-name` for Vanilla JS packages and so on_
 
 
 * `npm init` and follow instructions
