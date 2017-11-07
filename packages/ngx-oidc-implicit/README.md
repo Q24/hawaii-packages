@@ -2,6 +2,10 @@
 
 ## Changelog
 
+### 0.0.14
+
+* Made it into a proper TypeScript package
+
 ### 0.0.13
 
 * Updated Peer Dependencies to work with 'minimal' version
