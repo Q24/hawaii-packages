@@ -1,6 +1,6 @@
 {
   "name": "@hawaii-framework/ngx-oidc-implicit",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Open ID connect Implicit Flow implementation for Angular",
   "main": "",
   "module": "",
@@ -21,9 +21,9 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/Q24",
   "peerDependencies": {
-    "@angular/core": "^4.4.6",
-    "@angular/http": "^4.4.6",
-    "rxjs": "^5.4.3"
+    "@angular/core": ">=4.3.0",
+    "@angular/http": ">=4.3.0",
+    "rxjs": ">=5.4.3"
   },
   "dependencies": {
     "@angular/common": "^4.4.6",
