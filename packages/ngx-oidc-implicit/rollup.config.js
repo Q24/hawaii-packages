@@ -8,7 +8,6 @@ export default {
   external: [
     '@angular/core',
     '@angular/common/http',
-    '@angular/http',
     'rxjs/Observable',
     'rxjs/add/operator/map'
   ],
@@ -16,7 +15,6 @@ export default {
   globals:    {
     '@angular/core':   'ng.core',
     '@angular/common/http': 'ng.common.http',
-    '@angular/http': 'http',
     'rxjs/Observable': 'Rx'
   }
 }

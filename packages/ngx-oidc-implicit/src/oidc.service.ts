@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {URLSearchParams} from '@angular/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
@@ -298,7 +297,7 @@ export class OidcService {
    * @private
    */
   private static _createURLParameters(urlVars: Object): string {
-    const params = new URLSearchParams();
+    const params = new HttpParams();
 
     // Set the new Query string params.
     for (const key in urlVars) {
@@ -520,7 +519,7 @@ export class OidcService {
               this._log('State from URL validated against state in session storage state object', stateObj);
 
               // State validated, so now let's validate the token with Hawaii Backend
-              this._validateToken(hashFragmentParams).map(res => res.json()).subscribe(
+              this._validateToken(hashFragmentParams).subscribe(
                 response => {
                   this._log('Token validated by backend', response);
 
