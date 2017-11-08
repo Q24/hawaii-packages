@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.2
+
+* automatically build on `npm publish`
+
 ### 0.1.1
 
 * `.npmignore`d a little bit much...
