@@ -1,4 +1,4 @@
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 /**
@@ -250,9 +250,9 @@ export declare class OidcService {
     private static _createURLParameters(urlVars);
     /**
      * Constructor
-     * @param {Http} _http
+     * @param {HttpClient} _http
      */
-    constructor(_http: Http);
+    constructor(_http: HttpClient);
     /**
      * Get a CSRF Token from the Authorisation
      * @returns {Observable<CsrfToken>}

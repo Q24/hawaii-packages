@@ -1,22 +1,40 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./lib",
-    "sourceMap": true,
+    "baseUrl": ".",
     "declaration": true,
+    "stripInternal": true,
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "rootDir": ".",
+    "sourceMap": true,
     "moduleResolution": "node",
+    "module": "es2015",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es5",
+    "paths": {
+      "@angular/core": [
+        "node_modules/@angular/core"
+      ],
+      "rxjs/*": [
+        "node_modules/rxjs/*"
+      ]
+    },
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
-      "es2016",
+      "es2015",
       "dom"
     ]
   },
-  "include": [
-    "src/**.*"
-  ]
+  "files": [
+    "index.ts",
+    "./src/oidc.service.ts",
+    "./src/clean-hash-fragment.ts"
+  ],
+  "angularCompilerOptions": {
+    "strictMetadataEmit": true
+  }
 }

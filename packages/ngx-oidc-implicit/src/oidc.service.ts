@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Http, URLSearchParams} from '@angular/http';
+import {HttpClient} from '@angular/common/http';
+import {URLSearchParams} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
@@ -259,11 +260,20 @@ export class OidcService {
    * @private
    */
   private static _generateState(): string {
-    return 'xxxxxxxx-xxxx-14xx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      // tslint:disable-next-line:no-bitwise
-      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
+
+    let text = '';
+    const possible = '0123456789';
+
+    for (let i = 0; i < 5; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+      text += '-';
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
   }
 
   /**
@@ -303,9 +313,9 @@ export class OidcService {
 
   /**
    * Constructor
-   * @param {Http} _http
+   * @param {HttpClient} _http
    */
-  constructor(private _http: Http) {
+  constructor(private _http: HttpClient) {
 
     /**
      * Logging wrapper function
@@ -328,8 +338,7 @@ export class OidcService {
     return this._http
       .post(this.config.csrf_token_endpoint, '', {
         withCredentials: true
-      })
-      .map(res => res.json());
+      });
   }
 
   /**

@@ -1,25 +1,16 @@
-"use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var http_1 = require("@angular/http");
-var Observable_1 = require("rxjs/Observable");
-require("rxjs/add/operator/map");
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@angular/common/http'), require('@angular/http'), require('rxjs/Observable'), require('rxjs/add/operator/map')) :
+	typeof define === 'function' && define.amd ? define(['exports', '@angular/core', '@angular/common/http', '@angular/http', 'rxjs/Observable', 'rxjs/add/operator/map'], factory) :
+	(factory((global.ng = global.ng || {}, global.ng.oidc = {}),global.ng.core,global.ng.common.http,global.http,global.Rx));
+}(this, (function (exports,core,http,http$1,Observable) { 'use strict';
+
 /**
  * Open ID Connect Implimicit Flow Service for Angular
  */
-var OidcService = OidcService_1 = (function () {
+var OidcService = (function () {
     /**
      * Constructor
-     * @param {Http} _http
+     * @param {HttpClient} _http
      */
     function OidcService(_http) {
         this._http = _http;
@@ -80,11 +71,18 @@ var OidcService = OidcService_1 = (function () {
      * @private
      */
     OidcService._generateState = function () {
-        return 'xxxxxxxx-xxxx-14xx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            // tslint:disable-next-line:no-bitwise
-            var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
+        var text = '';
+        var possible = '0123456789';
+        for (var i = 0; i < 5; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+            text += '-';
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
     };
     /**
      * Generates a random 'nonce' string
@@ -106,7 +104,7 @@ var OidcService = OidcService_1 = (function () {
      * @private
      */
     OidcService._createURLParameters = function (urlVars) {
-        var params = new http_1.URLSearchParams();
+        var params = new http$1.URLSearchParams();
         // Set the new Query string params.
         for (var key in urlVars) {
             if (urlVars.hasOwnProperty(key)) {
@@ -124,16 +122,15 @@ var OidcService = OidcService_1 = (function () {
         return this._http
             .post(this.config.csrf_token_endpoint, '', {
             withCredentials: true
-        })
-            .map(function (res) { return res.json(); });
+        });
     };
     /**
      * Get the CSRF Token from the Local Storage
      * @returns {string}
      */
     OidcService.prototype.getStoredCsrfToken = function () {
-        this._log('CSRF Token from storage', OidcService_1._read('_csrf'));
-        return OidcService_1._read('_csrf');
+        this._log('CSRF Token from storage', OidcService._read('_csrf'));
+        return OidcService._read('_csrf');
     };
     /**
      * Get a validated, not expired token from sessionStorage
@@ -189,7 +186,7 @@ var OidcService = OidcService_1 = (function () {
     OidcService.prototype.deleteStoredTokens = function (providerId) {
         if (providerId === void 0) { providerId = "" + this.config.provider_id; }
         this._log("Removed Tokens from session storage: " + providerId);
-        OidcService_1._remove(providerId + "-token");
+        OidcService._remove(providerId + "-token");
     };
     /**
      * HTTP Redirect to the Authorisation. This redirects (with authorize params) to the Authorisation
@@ -205,7 +202,7 @@ var OidcService = OidcService_1 = (function () {
         // Do the authorize redirect
         if (!urlParams['error']) {
             this._log('Do authorisation redirect to SSO with options:', authorizeParams);
-            window.location.href = this.config.authorize_endpoint + "?" + OidcService_1._createURLParameters(authorizeParams);
+            window.location.href = this.config.authorize_endpoint + "?" + OidcService._createURLParameters(authorizeParams);
         }
         else {
             this._log("Error in authorize redirect: " + urlParams['error']);
@@ -223,7 +220,7 @@ var OidcService = OidcService_1 = (function () {
         };
         this._log('Session upgrade function triggered with token: ', token.session_upgrade_token);
         // Do the authorize redirect
-        window.location.href = this.config.authorisation + "/sso/upgrade-session?" + OidcService_1._createURLParameters(urlVars);
+        window.location.href = this.config.authorisation + "/sso/upgrade-session?" + OidcService._createURLParameters(urlVars);
     };
     /**
      * CORE METHOD:
@@ -245,9 +242,9 @@ var OidcService = OidcService_1 = (function () {
      */
     OidcService.prototype.checkSession = function () {
         var _this = this;
-        var urlParams = this._getURLParameters(window.location.href), hashFragmentParams = this._getHashFragmentParameters(OidcService_1._read('hash_fragment'));
+        var urlParams = this._getURLParameters(window.location.href), hashFragmentParams = this._getHashFragmentParameters(OidcService._read('hash_fragment'));
         this._log('Check session with params:', urlParams);
-        return new Observable_1.Observable(function (observer) {
+        return new Observable.Observable(function (observer) {
             _this._log('Flush state ?', urlParams.flush_state);
             // 1 Make sure the state is 'clean' when doing a session upgrade
             if (urlParams.flush_state) {
@@ -264,7 +261,7 @@ var OidcService = OidcService_1 = (function () {
                 // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
                 _this.getCsrfToken().subscribe(function (token) {
                     // Store the CSRF Token for future calls that need it. I.e. Logout
-                    OidcService_1._store('_csrf', token.csrf_token);
+                    OidcService._store('_csrf', token.csrf_token);
                     // 3 --- There's an access_token in the URL
                     if (hashFragmentParams.access_token && hashFragmentParams.state) {
                         _this._log('Access Token found in session storage temp, validating it');
@@ -345,7 +342,7 @@ var OidcService = OidcService_1 = (function () {
      */
     OidcService.prototype._saveState = function (state) {
         this._log('State saved');
-        OidcService_1._store(this.config.provider_id + "-state", JSON.stringify(state));
+        OidcService._store(this.config.provider_id + "-state", JSON.stringify(state));
     };
     /**
      * Get the saved state string from sessionStorage
@@ -353,8 +350,8 @@ var OidcService = OidcService_1 = (function () {
      * @private
      */
     OidcService.prototype._getState = function () {
-        this._log('Got state from storage', OidcService_1._read(this.config.provider_id + "-state"));
-        return JSON.parse(OidcService_1._read(this.config.provider_id + "-state"));
+        this._log('Got state from storage', OidcService._read(this.config.provider_id + "-state"));
+        return JSON.parse(OidcService._read(this.config.provider_id + "-state"));
     };
     /**
      * Deletes the state from sessionStorage
@@ -363,7 +360,7 @@ var OidcService = OidcService_1 = (function () {
     OidcService.prototype._deleteState = function (providerId) {
         if (providerId === void 0) { providerId = "" + this.config.provider_id; }
         this._log("Deleted state: " + providerId);
-        OidcService_1._remove(providerId + "-state");
+        OidcService._remove(providerId + "-state");
     };
     /**
      * Saves the nonce to sessionStorage
@@ -371,7 +368,7 @@ var OidcService = OidcService_1 = (function () {
      * @private
      */
     OidcService.prototype._saveNonce = function (nonce) {
-        OidcService_1._store(this.config.provider_id + "-nonce", nonce);
+        OidcService._store(this.config.provider_id + "-nonce", nonce);
     };
     /**
      * Get the saved nonce string from storage
@@ -379,7 +376,7 @@ var OidcService = OidcService_1 = (function () {
      * @private
      */
     OidcService.prototype._getNonce = function () {
-        return OidcService_1._read(this.config.provider_id + "-nonce");
+        return OidcService._read(this.config.provider_id + "-nonce");
     };
     /**
      * Deletes the nonce from sessionStorage
@@ -387,7 +384,7 @@ var OidcService = OidcService_1 = (function () {
      */
     OidcService.prototype._deleteNonce = function (providerId) {
         if (providerId === void 0) { providerId = "" + this.config.provider_id; }
-        OidcService_1._remove(providerId + "-nonce");
+        OidcService._remove(providerId + "-nonce");
     };
     /**
      * Saves the session ID to sessionStorage
@@ -395,7 +392,7 @@ var OidcService = OidcService_1 = (function () {
      * @private
      */
     OidcService.prototype._saveSessionId = function (sessionId) {
-        OidcService_1._store(this.config.provider_id + "-session-id", sessionId);
+        OidcService._store(this.config.provider_id + "-session-id", sessionId);
     };
     /**
      * Get the saved session ID string from storage
@@ -403,7 +400,7 @@ var OidcService = OidcService_1 = (function () {
      * @private
      */
     OidcService.prototype._getSessionId = function () {
-        return OidcService_1._read(this.config.provider_id + "-session-id");
+        return OidcService._read(this.config.provider_id + "-session-id");
     };
     /**
      * Deletes the session ID from sessionStorage
@@ -411,7 +408,7 @@ var OidcService = OidcService_1 = (function () {
      */
     OidcService.prototype._deleteSessionId = function (providerId) {
         if (providerId === void 0) { providerId = "" + this.config.provider_id; }
-        OidcService_1._remove(providerId + "-session-id");
+        OidcService._remove(providerId + "-session-id");
     };
     /**
      * Stores an array of Tokens to the session Storage
@@ -420,7 +417,7 @@ var OidcService = OidcService_1 = (function () {
      */
     OidcService.prototype._storeTokens = function (tokens) {
         this._log('Saved Tokens to session storage');
-        OidcService_1._store(this.config.provider_id + "-token", JSON.stringify(tokens));
+        OidcService._store(this.config.provider_id + "-token", JSON.stringify(tokens));
     };
     /**
      * Deletes the stored CSRF Token from storage
@@ -428,7 +425,7 @@ var OidcService = OidcService_1 = (function () {
      */
     OidcService.prototype._deleteStoredCsrfToken = function () {
         this._log("Removed CSRF Token from session storage");
-        OidcService_1._remove("_csrf");
+        OidcService._remove("_csrf");
     };
     /**
      * Get all token stored in session Storage in an Array
@@ -437,7 +434,7 @@ var OidcService = OidcService_1 = (function () {
      */
     OidcService.prototype._getStoredTokens = function () {
         this._log("Got Tokens from session storage with name '" + this.config.provider_id + "-token'");
-        return JSON.parse(OidcService_1._read(this.config.provider_id + "-token")) || [];
+        return JSON.parse(OidcService._read(this.config.provider_id + "-token")) || [];
     };
     /**
      * Compare the expiry time of a stored token with the current time.
@@ -450,7 +447,7 @@ var OidcService = OidcService_1 = (function () {
     OidcService.prototype._cleanExpiredTokens = function (storedTokens) {
         var _this = this;
         var cleanTokens;
-        var time = OidcService_1._epoch();
+        var time = OidcService._epoch();
         cleanTokens = storedTokens.filter(function (element) {
             _this._log('Stored token', element.expires, time + 5);
             return (element.expires && element.expires > time + 5);
@@ -472,7 +469,7 @@ var OidcService = OidcService_1 = (function () {
     OidcService.prototype._storeToken = function (token) {
         var tokens = this._getStoredTokens();
         var tokensCleaned;
-        token.expires = OidcService_1._epoch() + (parseInt(token.expires_in, 10) - 30);
+        token.expires = OidcService._epoch() + (parseInt(token.expires_in, 10) - 30);
         tokens.unshift(token);
         tokensCleaned = this._cleanExpiredTokens(tokens);
         this._storeTokens(tokensCleaned);
@@ -493,7 +490,7 @@ var OidcService = OidcService_1 = (function () {
                 var parameter = urlVar.split('=');
                 result[parameter[0]] = parameter[1];
             }
-            OidcService_1._remove('hash_fragment');
+            OidcService._remove('hash_fragment');
             this._log('Hash Fragment params from sessionStorage', result);
         }
         return result;
@@ -533,9 +530,9 @@ var OidcService = OidcService_1 = (function () {
      */
     OidcService.prototype._getAuthorizeParams = function () {
         var stateObj = this._getState() || {
-            state: OidcService_1._generateState(),
+            state: OidcService._generateState(),
             providerId: this.config.provider_id
-        }, nonce = OidcService_1._generateNonce(), urlVars = {
+        }, nonce = OidcService._generateNonce(), urlVars = {
             state: stateObj.state,
             nonce: nonce,
             authorization: this.config.authorisation,
@@ -553,10 +550,52 @@ var OidcService = OidcService_1 = (function () {
     };
     return OidcService;
 }());
-OidcService = OidcService_1 = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [http_1.Http])
-], OidcService);
+OidcService.decorators = [
+    { type: core.Injectable },
+];
+/** @nocollapse */
+OidcService.ctorParameters = function () { return [
+    { type: http.HttpClient, },
+]; };
+
+var OidcModule = (function () {
+    function OidcModule() {
+    }
+    /**
+     * Use this method in your root module to provide the OidcService
+     * @returns {ModuleWithProviders}
+     */
+    OidcModule.forRoot = function () {
+        return {
+            ngModule: OidcModule,
+            providers: [
+                OidcService
+            ]
+        };
+    };
+    /**
+     * Use this method in your other (non root) modules to import stuff you need
+     * @returns {ModuleWithProviders}
+     */
+    OidcModule.forChild = function () {
+        return {
+            ngModule: OidcModule,
+            providers: [
+                OidcService
+            ]
+        };
+    };
+    return OidcModule;
+}());
+OidcModule.decorators = [
+    { type: core.NgModule },
+];
+/** @nocollapse */
+OidcModule.ctorParameters = function () { return []; };
+
+exports.OidcModule = OidcModule;
 exports.OidcService = OidcService;
-var OidcService_1;
-//# sourceMappingURL=oidc.service.js.map
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));

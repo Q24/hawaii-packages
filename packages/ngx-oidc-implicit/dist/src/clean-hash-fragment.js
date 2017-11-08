@@ -18,3 +18,4 @@
         }
     }
 }(window));
+//# sourceMappingURL=clean-hash-fragment.js.map

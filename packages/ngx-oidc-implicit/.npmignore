@@ -1,1 +1,6 @@
 src
+.gitignore
+*.ts
+rollup.config.js
+*.json
+node_modules
