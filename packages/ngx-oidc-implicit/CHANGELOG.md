@@ -1,6 +1,6 @@
-## Changelog
+# Changelog
 
-### 0.0.15
+### 0.1.0
 
 * Created it as a proper ngModule
 * Added build process for creating ngModule like output with Rollup etc.

@@ -1,43 +1,55 @@
 {
   "name": "@hawaii-framework/ngx-oidc-implicit",
-  "version": "0.0.14",
-  "description": "Open ID connect Implicit Flow implementation for Angular",
-  "main": "",
-  "module": "",
-  "es2015": "",
-  "typings": "",
-  "keywords": [
-    "oidc",
-    "openid",
-    "implicit",
-    "angular",
-    "ngx"
-  ],
+  "version": "0.1.0",
+  "description": "Open ID Connect - Implicit Flow Service for Angular",
+  "author": "QNH Consulting Zuid B.V.",
+  "email": "info@qnh.nl",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/Q24/hawaii-packages/tree/master/packages/ngx-oidc-implicit",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Q24/hawaii-packages.git"
   },
-  "author": "QNH",
-  "license": "Apache-2.0",
-  "homepage": "https://github.com/Q24",
-  "peerDependencies": {
-    "@angular/core": ">=4.3.0",
-    "@angular/http": ">=4.3.0",
-    "rxjs": ">=5.4.3"
+  "bugs": {
+    "url": "https://github.com/Q24/hawaii-packages/issues"
   },
-  "dependencies": {
-    "@angular/common": "^4.4.6",
-    "@angular/compiler": "^4.4.6",
-    "@angular/core": "^4.4.6",
-    "@angular/http": "^4.4.6",
-    "@angular/platform-browser": "^4.4.6",
-    "rxjs": "^5.4.3",
-    "zone.js": "^0.8.17"
+  "keywords": [
+    "oidc",
+    "openid",
+    "oauth2",
+    "implicit",
+    "angular",
+    "ngx",
+    "ng2",
+    "ng"
+  ],
+  "module": "index.js",
+  "typings": "index.d.ts",
+  "peerDependencies": {
+    "@angular/core": ">=4.3.0 || >=5.0.0"
   },
   "devDependencies": {
+    "@angular/common": "4.4.6",
+    "@angular/compiler": "^4.4.6",
+    "@angular/compiler-cli": "^4.4.6",
+    "@angular/core": "4.4.6",
+    "@angular/http": "4.4.6",
+    "@angular/platform-browser": "4.4.6",
+    "@angular/platform-browser-dynamic": "4.4.6",
+    "@angular/platform-server": "4.4.6",
     "codelyzer": "^3.2.0",
+    "rollup": "^0.50.0",
+    "rxjs": ">=5.4.3",
     "ts-node": "^3.3.0",
     "tslint": "^5.7.0",
-    "typescript": ">=2.1.0 <2.4.0"
+    "typescript": "^2.3.4",
+    "uglify-js": "^3.1.8",
+    "zone.js": "^0.8.17"
+  },
+  "scripts": {
+    "transpile": "ngc",
+    "package": "rollup -c",
+    "minify": "uglifyjs dist/bundles/oidc.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/oidc.umd.min.js",
+    "build": "npm run transpile && npm run package && npm run minify"
   }
 }
