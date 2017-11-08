@@ -1,6 +1,5 @@
-src
+/src/
+/node_modules/
 .gitignore
-*.ts
+index.ts
 rollup.config.js
-*.json
-node_modules
