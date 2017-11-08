@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.1.3
+
+* Old mapping function remove, because new HTTP CLient does that now.
+* Removed deprecated URLSearchParams in favor of HttpParams
+
 ### 0.1.2
 
 * automatically build on `npm publish`
