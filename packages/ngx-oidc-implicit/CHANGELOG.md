@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.4
+
+* Fixed HTTPParams
+
 ### 0.1.3
 
 * Old mapping function remove, because new HTTP CLient does that now.
