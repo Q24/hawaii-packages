@@ -835,7 +835,7 @@ export class OidcService {
         state: OidcService._generateState(),
         providerId: this.config.provider_id
       },
-      nonce = OidcService._generateNonce(),
+      nonce = this._getNonce() || OidcService._generateNonce(),
       urlVars = {
         state: stateObj.state,
         nonce: nonce,
