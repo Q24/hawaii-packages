@@ -297,12 +297,12 @@ export class OidcService {
    * @private
    */
   private static _createURLParameters(urlVars: Object): string {
-    const params = new HttpParams();
+    let params = new HttpParams();
 
     // Set the new Query string params.
     for (const key in urlVars) {
       if (urlVars.hasOwnProperty(key)) {
-        params.set(key, urlVars[key]);
+        params = params.set(key, urlVars[key]);
       }
     }
 
