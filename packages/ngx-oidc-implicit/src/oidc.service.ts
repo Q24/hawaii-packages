@@ -78,6 +78,37 @@ export interface OidcConfig {
    * List of provider ids to be cleaned from storage
    */
   post_logout_provider_ids_to_be_cleaned?: string[];
+
+  /**
+   * Config object for QR login with websocket
+   */
+  qr?: QrCodeLoginConfig;
+}
+
+
+/**
+ * Config object for QR Login via websocket
+ */
+export interface QrCodeLoginConfig {
+
+  /**
+   * Websocket BASE URL. Connect to this URL to have access to the subscription channels
+   */
+  web_socket: string;
+
+  /**
+   * Websocket channel for QR code rendering.
+   * When subscribing to this channel you will receive a code to parse to QR and render on screen.
+   * So this sets up your session to login with QR.
+   */
+  channel_qr: string;
+
+  /**
+   * Websocket channel for the Redirect.
+   * When subscribing to this channel you will receive a 302 redirect once the QR was scanned in the Vodafone App.
+   * So this will keep listening if your session started with the QR channel was succesfully scanned somewhere.
+   */
+  channel_redirect: string;
 }
 
 /**
