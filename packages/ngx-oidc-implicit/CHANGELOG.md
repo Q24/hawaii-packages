@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.6
+
+* Added option login with QR code Config interface to extend OidcConfig interface
+
 ### 0.1.5
 
 * Fixed Nonce generator. Use a already generated once, because it could be created outside of this service instance.
