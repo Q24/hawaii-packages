@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.8
+
+* Typed all functions in `oidc.service.ts`
+
 ### 0.1.7
 
 * Strip hash fragment from 'redirect_uri' in urlParams creation. This way there can't be an access token in the redirected URL, which causes problems.
