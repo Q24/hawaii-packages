@@ -379,7 +379,7 @@ export class OidcService {
     this._log('Get CSRF token from Authorisation');
 
     return this._http
-      .post(this.config.csrf_token_endpoint, '', {
+      .post<CsrfToken>(this.config.csrf_token_endpoint, '', {
         withCredentials: true
       });
   }
@@ -419,7 +419,7 @@ export class OidcService {
   /**
    * Clean up the current session: Delete the stored local tokens, state, nonce, and CSRF token.
    */
-  public cleanSessionStorage(providerIDs: string[] = [`${this.config.provider_id}`]) {
+  public cleanSessionStorage(providerIDs: string[] = [`${this.config.provider_id}`]): void {
     providerIDs.forEach((providerId: string) => {
       this.deleteStoredTokens(providerId);
       this._deleteState(providerId);
@@ -438,7 +438,7 @@ export class OidcService {
     this._log('Get Session Alive info from SSO');
 
     return this._http
-      .get(`${this.config.is_session_alive_endpoint}/${this._getSessionId()}`);
+      .get<{ status: number }>(`${this.config.is_session_alive_endpoint}/${this._getSessionId()}`);
   }
 
   /**
@@ -453,7 +453,7 @@ export class OidcService {
   /**
    * Delete all tokens in sessionStorage for this session.
    */
-  public deleteStoredTokens(providerId: string = `${this.config.provider_id}`) {
+  public deleteStoredTokens(providerId: string = `${this.config.provider_id}`): void {
     this._log(`Removed Tokens from session storage: ${providerId}`);
     OidcService._remove(`${providerId}-token`);
   }
@@ -463,7 +463,7 @@ export class OidcService {
    * The Authorisation checks if there is a valid session. If so, it returns with token hash.
    * If not authenticated, it will redirect to the login page.
    */
-  public authorizeRedirect() {
+  public authorizeRedirect(): void {
 
     // Clean up Storage before we begin
     this.cleanSessionStorage();
@@ -488,7 +488,7 @@ export class OidcService {
    * The Authorisation then upgrades the session, and will then redirect back. The next authorizeRedirect() call will
    * then return a valid token, because the session was upgraded.
    */
-  public doSessionUpgradeRedirect(token: Token) {
+  public doSessionUpgradeRedirect(token: Token): void {
     const urlVars = {
       session_upgrade_token: token.session_upgrade_token,
       redirect_uri: this.config.redirect_uri + '?flush_state=true'
@@ -607,7 +607,6 @@ export class OidcService {
             observer.next(false);
             observer.complete();
           }
-
         });
       }
     });
@@ -620,7 +619,6 @@ export class OidcService {
    * @private
    */
   private _validateToken(hashParams: Token): Observable<any> {
-
     const data = {
       nonce: this._getNonce(),
       id_token: hashParams.id_token,
@@ -630,7 +628,7 @@ export class OidcService {
     this._log('Validate token with Hawaii Backend');
 
     return this._http
-      .post(this.config.validate_token_endpoint, data);
+      .post<any>(this.config.validate_token_endpoint, data);
   }
 
   /**
@@ -643,7 +641,7 @@ export class OidcService {
     this._log('Posting session upgrade token to backend');
 
     return this._http
-      .post(this.config.upgrade_session_endpoint, data);
+      .post<any>(this.config.upgrade_session_endpoint, data);
   }
 
   /**
@@ -651,7 +649,7 @@ export class OidcService {
    * @param {State} state
    * @private
    */
-  private _saveState(state: State) {
+  private _saveState(state: State): void {
     this._log('State saved');
     OidcService._store(`${this.config.provider_id}-state`, JSON.stringify(state));
   }
@@ -670,7 +668,7 @@ export class OidcService {
    * Deletes the state from sessionStorage
    * @private
    */
-  private _deleteState(providerId: string = `${this.config.provider_id}`) {
+  private _deleteState(providerId: string = `${this.config.provider_id}`): void {
     this._log(`Deleted state: ${providerId}`);
     OidcService._remove(`${providerId}-state`);
   }
@@ -680,7 +678,7 @@ export class OidcService {
    * @param {string} nonce
    * @private
    */
-  private _saveNonce(nonce: string) {
+  private _saveNonce(nonce: string): void {
     OidcService._store(`${this.config.provider_id}-nonce`, nonce);
   }
 
@@ -697,7 +695,7 @@ export class OidcService {
    * Deletes the nonce from sessionStorage
    * @private
    */
-  private _deleteNonce(providerId: string = `${this.config.provider_id}`) {
+  private _deleteNonce(providerId: string = `${this.config.provider_id}`): void {
     OidcService._remove(`${providerId}-nonce`);
   }
 
@@ -706,7 +704,7 @@ export class OidcService {
    * @param {string} sessionId
    * @private
    */
-  private _saveSessionId(sessionId: string) {
+  private _saveSessionId(sessionId: string): void {
     OidcService._store(`${this.config.provider_id}-session-id`, sessionId);
   }
 
@@ -723,7 +721,7 @@ export class OidcService {
    * Deletes the session ID from sessionStorage
    * @private
    */
-  private _deleteSessionId(providerId: string = `${this.config.provider_id}`) {
+  private _deleteSessionId(providerId: string = `${this.config.provider_id}`): void {
     OidcService._remove(`${providerId}-session-id`);
   }
 
@@ -732,7 +730,7 @@ export class OidcService {
    * @param {Array<Token>} tokens
    * @private
    */
-  private _storeTokens(tokens: Array<Token>) {
+  private _storeTokens(tokens: Array<Token>): void {
     this._log('Saved Tokens to session storage');
     OidcService._store(`${this.config.provider_id}-token`, JSON.stringify(tokens));
   }
@@ -741,7 +739,7 @@ export class OidcService {
    * Deletes the stored CSRF Token from storage
    * @private
    */
-  private _deleteStoredCsrfToken() {
+  private _deleteStoredCsrfToken(): void {
     this._log(`Removed CSRF Token from session storage`);
     OidcService._remove(`_csrf`);
   }
@@ -790,7 +788,7 @@ export class OidcService {
    * @param {Token} token
    * @private
    */
-  private _storeToken(token: Token) {
+  private _storeToken(token: Token): void {
 
     const tokens = this._getStoredTokens();
     let tokensCleaned;
