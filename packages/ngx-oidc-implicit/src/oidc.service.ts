@@ -333,11 +333,24 @@ export class OidcService {
     // Set the new Query string params.
     for (const key in urlVars) {
       if (urlVars.hasOwnProperty(key)) {
+
+        if (key === 'redirect_uri') {
+          urlVars[key] = OidcService._cleanHashFragment(urlVars[key]);
+        }
+
         params = params.set(key, urlVars[key]);
       }
     }
 
     return params.toString();
+  }
+
+
+  /**
+   * Strip the hash fragment if it contains an access token (could happen when people use the BACK button in the browser)
+   */
+  private static _cleanHashFragment(url: string): string {
+    return url.split('#')[0];
   }
 
 
