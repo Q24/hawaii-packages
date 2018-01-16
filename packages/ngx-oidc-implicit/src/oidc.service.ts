@@ -417,7 +417,7 @@ export class OidcService {
   }
 
   /**
-   * Clean up the current session: Delete the stored local tokens, state, nonce, and CSRF token.
+   * Clean up the current session: Delete the stored local tokens, state, nonce, id token hint and CSRF token.
    */
   public cleanSessionStorage(providerIDs: string[] = [`${this.config.provider_id}`]): void {
     providerIDs.forEach((providerId: string) => {
@@ -425,6 +425,7 @@ export class OidcService {
       this._deleteState(providerId);
       this._deleteNonce(providerId);
       this._deleteSessionId(providerId);
+      this._deleteIdTokenHint(providerId);
     });
 
     this._deleteStoredCsrfToken();
@@ -725,6 +726,35 @@ export class OidcService {
     OidcService._remove(`${providerId}-session-id`);
   }
 
+
+  /**
+   * Saves the ID token hint to sessionStorage
+   * @param {string} sessionId
+   * @private
+   */
+  private _saveIdTokenHint(idTokenHint: string): void {
+    OidcService._store(`${this.config.provider_id}-id-token-hint`, idTokenHint);
+  }
+
+  /**
+   * Get the saved session ID string from storage
+   * @returns {string}
+   * @private
+   */
+  private _getIdTokenHint(): string {
+    return OidcService._read(`${this.config.provider_id}-id-token-hint`);
+  }
+
+
+  /**
+   * Deletes the ID token hint from sessionStorage
+   * @private
+   */
+  private _deleteIdTokenHint(providerId: string = `${this.config.provider_id}`): void {
+    OidcService._remove(`${providerId}-id-token-hint`);
+  }
+
+
   /**
    * Stores an array of Tokens to the session Storage
    * @param {Array<Token>} tokens
@@ -779,6 +809,7 @@ export class OidcService {
 
   /**
    * * Get the current Stored tokens
+   * * Seperately save the ID Token, as a hint for when the access token get's cleaned. This will help logout.
    * * Set the tokens expiry time. Current time in seconds + (token lifetime in seconds - x seconds)
    * * Put the new token to the beginning of the array, so it's the first one returnedy
    * * Clean expired tokens from the Array
@@ -792,6 +823,7 @@ export class OidcService {
 
     const tokens = this._getStoredTokens();
     let tokensCleaned;
+    this._saveIdTokenHint(JSON.stringify(token.id_token));
     token.expires = OidcService._epoch() + (parseInt(token.expires_in, 10) - 30);
     tokens.unshift(token);
     tokensCleaned = this._cleanExpiredTokens(tokens);
