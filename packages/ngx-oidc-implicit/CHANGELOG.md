@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.0
+
+* Added additional functionality for storing the ID token seperatly. This is for use with i.e. logout, which takes an id_token_hint parameter. So Id token's might still be valid, as access token was expired. Id token will only be cleaned when the `cleanSessionStorage` method is called. Further more it will be overwritten with each `_storeToken` call.
+
 ### 0.1.8
 
 * Typed all functions in `oidc.service.ts`
