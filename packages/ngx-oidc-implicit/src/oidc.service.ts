@@ -460,6 +460,16 @@ export class OidcService {
   }
 
   /**
+   * Get the saved session ID string from storage
+   * @returns {string}
+   * @public
+   */
+  public getIdTokenHint(): string {
+    return OidcService._read(`${this.config.provider_id}-id-token-hint`);
+  }
+
+
+  /**
    * HTTP Redirect to the Authorisation. This redirects (with authorize params) to the Authorisation
    * The Authorisation checks if there is a valid session. If so, it returns with token hash.
    * If not authenticated, it will redirect to the login page.
@@ -735,16 +745,6 @@ export class OidcService {
   private _saveIdTokenHint(idTokenHint: string): void {
     OidcService._store(`${this.config.provider_id}-id-token-hint`, idTokenHint);
   }
-
-  /**
-   * Get the saved session ID string from storage
-   * @returns {string}
-   * @private
-   */
-  private _getIdTokenHint(): string {
-    return OidcService._read(`${this.config.provider_id}-id-token-hint`);
-  }
-
 
   /**
    * Deletes the ID token hint from sessionStorage
