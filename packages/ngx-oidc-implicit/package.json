@@ -1,6 +1,6 @@
 {
   "name": "@hawaii-framework/ngx-oidc-implicit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Open ID Connect - Implicit Flow Service for Angular",
   "author": "QNH Consulting Zuid B.V.",
   "email": "info@qnh.nl",
@@ -50,6 +50,6 @@
     "transpile": "ngc",
     "package": "rollup -c",
     "minify": "uglifyjs dist/bundles/oidc.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/oidc.umd.min.js",
-    "build": "npm i && npm run transpile && npm run package && npm run minify"
+    "build": "npm run transpile && npm run package && npm run minify"
   }
 }
