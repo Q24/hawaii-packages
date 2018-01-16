@@ -823,7 +823,7 @@ export class OidcService {
 
     const tokens = this._getStoredTokens();
     let tokensCleaned;
-    this._saveIdTokenHint(JSON.stringify(token.id_token));
+    this._saveIdTokenHint(token.id_token);
     token.expires = OidcService._epoch() + (parseInt(token.expires_in, 10) - 30);
     tokens.unshift(token);
     tokensCleaned = this._cleanExpiredTokens(tokens);
