@@ -50,6 +50,6 @@
     "transpile": "ngc",
     "package": "rollup -c",
     "minify": "uglifyjs dist/bundles/oidc.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/oidc.umd.min.js",
-    "build": "npm run transpile && npm run package && npm run minify"
+    "build": "npm i && npm run transpile && npm run package && npm run minify"
   }
 }
