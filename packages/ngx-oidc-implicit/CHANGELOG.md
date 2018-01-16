@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.2.2
+
+* Removed `npm i`, because it runs a loop
+* Removed JSON.stringify when storing id token, while it's already a string, and adds unwanted `"`
+
 ### 0.2.1
 
 * Made `getIdTokenHint` a public method.

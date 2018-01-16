@@ -1,6 +1,6 @@
 {
   "name": "@hawaii-framework/ngx-oidc-implicit",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Open ID Connect - Implicit Flow Service for Angular",
   "author": "QNH Consulting Zuid B.V.",
   "email": "info@qnh.nl",
