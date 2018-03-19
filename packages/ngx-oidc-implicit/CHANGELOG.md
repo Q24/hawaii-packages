@@ -1,5 +1,8 @@
 # Changelog
 
+### 0.4.0
+* iFrame cleaning in silent Token Refresh fix
+
 ### 0.3.0
 
 * npm updates for up-to-date dev env

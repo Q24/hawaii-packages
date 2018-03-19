@@ -646,8 +646,6 @@ export class OidcService {
         window.document.body.appendChild(iframe);
         this._log('Do silent refresh redirect to SSO with options:', authorizeParams);
         iframe.src = `${this.config.authorize_endpoint}?${OidcService._createURLParameters(authorizeParams)}`;
-
-        this._log('The iFrame', iframe);
       }
 
       else {
@@ -682,12 +680,6 @@ export class OidcService {
            */
           this._parseToken(hashFragmentParams).subscribe(tokenIsValid => {
             observer.next(tokenIsValid);
-
-            // Delete the iframe
-            setTimeout(function() {
-              iframe.parentElement.removeChild(iframe);
-            }, 0);
-
             observer.complete();
           });
         }
@@ -698,14 +690,15 @@ export class OidcService {
         else {
           this._log('No token found in silent refresh return URL');
           observer.next(false);
-
-          // Delete the iframe
-          setTimeout(function() {
-            iframe.parentElement.removeChild(iframe);
-          }, 0);
-
           observer.complete();
         }
+
+        /**
+         * Cleanup the iFrame
+         */
+        setTimeout(function() {
+          iframe.parentElement.removeChild(iframe);
+        }, 0);
       };
     });
   }

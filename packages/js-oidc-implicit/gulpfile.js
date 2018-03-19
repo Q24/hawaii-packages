@@ -1,4 +1,4 @@
-var buildFiles = 'src/oidc-service.js',
+var buildFiles = 'src/*.js',
     gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglifyjs'),

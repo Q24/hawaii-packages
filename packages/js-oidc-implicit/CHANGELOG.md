@@ -4,7 +4,8 @@
 * Silent token refresh Method added
 * Refactored token parsing and validation to seperate function
 * added prompt parameter to config and redirect params.
-* Added clean hash fragment
+* Added clean hash fragment as a part of the package
+* Put generateState in line with ngx version
 
 ### 0.3.2
 * Changed `main` property in `package.json`

@@ -19,6 +19,7 @@
       response_type:            "token id_token",
       redirect_uri:             "",
       authorization:            "",
+      silent_refresh_uri:       "",
       post_logout_redirect_uri: "",
       scope:                    "openid",
       logoutButtonSelector:     "#hawaii-sso-logout",
@@ -57,9 +58,9 @@
      */
     getCsrfToken: function () {
       var options = {
-            type: 'POST'
-          },
-          self = this;
+          type: 'POST'
+        },
+        self = this;
 
       self._log('Get CSRF token promise from SSO');
       return self._ajax('/sso/csrf', options);
@@ -70,15 +71,15 @@
      */
     _validateToken: function (urlParams) {
       var self = this,
-          options = {
-            data:  JSON.stringify({
-              nonce:        self._getNonce(),
-              id_token:     urlParams.id_token,
-              access_token: urlParams.access_token
-            }),
-            type:  'POST',
-            async: false
-          };
+        options = {
+          data:  JSON.stringify({
+            nonce:        self._getNonce(),
+            id_token:     urlParams.id_token,
+            access_token: urlParams.access_token
+          }),
+          type:  'POST',
+          async: false
+        };
 
       self._log('Validate token with Hawaii Backend');
       return self._ajax('/rest/sso/check-token', options);
@@ -89,7 +90,7 @@
      */
     isSessionAlive: function () {
       var self = this,
-          sessionId = self._getSessionId();
+        sessionId = self._getSessionId();
 
       if (sessionId) {
         self._log('Get Session Alive info from SSO');
@@ -105,10 +106,10 @@
      */
     _postSessionUpgrade: function (data) {
       var self = this,
-          options = {
-            type:  'POST',
-            async: false
-          };
+        options = {
+          type:  'POST',
+          async: false
+        };
 
       self._log('Posting session upgrade token to backend');
       return self._ajax('/sso/upgrade-session?' + $.param(data), options);
@@ -136,7 +137,7 @@
      */
     _getState: function () {
       var self = this,
-          obj = JSON.parse(sessionStorage.getItem(self.config.providerID + '-state'));
+        obj = JSON.parse(sessionStorage.getItem(self.config.providerID + '-state'));
       self._log('Got state from session storage ', obj);
       return obj;
     },
@@ -156,7 +157,7 @@
      */
     _getNonce: function () {
       var self = this,
-          nonce = sessionStorage.getItem(self.config.providerID + "-nonce");
+        nonce = sessionStorage.getItem(self.config.providerID + "-nonce");
 
       self._log('Got nonce ' + nonce + ' and removed it from session storage');
       return nonce;
@@ -185,7 +186,7 @@
      */
     _getSessionId: function () {
       var self = this,
-          sessionId = sessionStorage.getItem(self.config.providerID + '-session-id');
+        sessionId = sessionStorage.getItem(self.config.providerID + '-session-id');
 
       self._log('Got session-id ' + sessionId + ' from session storage');
       return sessionId;
@@ -206,8 +207,8 @@
      */
     _cleanExpiredTokens: function (tokens) {
       var result,
-          self = this,
-          numberOfCleanedTokens;
+        self = this,
+        numberOfCleanedTokens;
 
       result = $.grep(tokens, function (item) {
         return item.expires && item.expires > (self._epoch() + 5);
@@ -235,7 +236,7 @@
      */
     _getStoredTokens: function () {
       var self = this,
-          tokens = JSON.parse(sessionStorage.getItem(self.config.providerID + '-token')) || [];
+        tokens = JSON.parse(sessionStorage.getItem(self.config.providerID + '-token')) || [];
 
       self._log('Stored tokens returned:', tokens);
       return tokens;
@@ -254,8 +255,8 @@
     _storeToken: function (token) {
 
       var self = this,
-          tokens = self._getStoredTokens(),
-          tokensCleaned;
+        tokens = self._getStoredTokens(),
+        tokensCleaned;
 
       // Set the tokens expiry time. Current time in seconds + (token lifetime in seconds - x seconds)
       token.expires = self._epoch() + (parseInt(token.expires_in) - 30);
@@ -276,8 +277,8 @@
     getStoredToken: function () {
 
       var self = this,
-          tokens = self._getStoredTokens(),
-          tokensCleaned = self._cleanExpiredTokens(tokens);
+        tokens = self._getStoredTokens(),
+        tokensCleaned = self._cleanExpiredTokens(tokens);
 
       // If there's no tokens return null
       if (tokensCleaned.length < 1) {
@@ -296,8 +297,8 @@
      */
     _generateNonce: function () {
       var self = this,
-          text = "",
-          possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        text = "",
+        possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
       for (var i = 0; i < 25; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -318,10 +319,19 @@
      * UTIL: Returns a random string used for state
      */
     _generateState: function () {
-      return 'xxxxxxxx-xxxx-14xx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-      });
+      var text = '',
+        possible = '0123456789';
+
+      for (var i = 0; i < 5; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        text += '-';
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
     },
 
     /**
@@ -330,11 +340,11 @@
     getURLParameters: function (url) {
 
       var self = this,
-          result = {},
-          searchIndex = url.indexOf('?'),
-          hashIndex = url.indexOf('#'),
-          urlStringToParse,
-          urlVariablesToParse;
+        result = {},
+        searchIndex = url.indexOf('?'),
+        hashIndex = url.indexOf('#'),
+        urlStringToParse,
+        urlVariablesToParse;
 
       if (searchIndex === -1 && hashIndex === -1) return result;
       if (searchIndex !== -1) urlStringToParse = url.substring(searchIndex + 1);
@@ -356,7 +366,7 @@
      */
     removeURLParameter: function (parameter) {
       var self = this,
-          urlVars = self.getURLParameters(window.location.href);
+        urlVars = self.getURLParameters(window.location.href);
 
       if (urlVars.hasOwnProperty(parameter)) {
         delete urlVars[parameter];
@@ -371,8 +381,8 @@
     getHashFragmentParameters: function (hash_fragment) {
 
       var self = this,
-          result = {},
-          urlVariablesToParse;
+        result = {},
+        urlVariablesToParse;
 
       // Split it into an array
       if (hash_fragment) {
@@ -401,10 +411,10 @@
     cleanRedirectUri: function () {
 
       var self = this,
-          newUrlVars = self.removeURLParameter('flush_state'),
-          loc = window.location,
-          pathname = loc.pathname,
-          returnURL = loc.protocol + '//' + loc.host;
+        newUrlVars = self.removeURLParameter('flush_state'),
+        loc = window.location,
+        pathname = loc.pathname,
+        returnURL = loc.protocol + '//' + loc.host;
 
       // Add pathname
       returnURL += pathname;
@@ -421,8 +431,8 @@
     _dump: function () {
       if (this.config.debug) {
         var txt = '',
-            self = this,
-            token = self.getStoredToken();
+          self = this,
+          token = self.getStoredToken();
         txt += 'Token: ' + "\n" + JSON.stringify(token, undefined, 4) + '\n\n';
         txt += 'Config: ' + "\n" + JSON.stringify(self.config, undefined, 4) + "\n\n";
         return txt;
@@ -441,17 +451,17 @@
       }
 
       var defaultOptions = {
-            url:         url,
-            critical:    true,
-            type:        'GET',
-            async:       true,
-            cache:       true,
-            timeout:     120000,
-            data:        {},
-            contentType: "application/json; charset=utf-8",
-            dataType:    "json"
-          },
-          ajaxOptions = $.extend({}, defaultOptions, options);
+          url:         url,
+          critical:    true,
+          type:        'GET',
+          async:       true,
+          cache:       true,
+          timeout:     120000,
+          data:        {},
+          contentType: "application/json; charset=utf-8",
+          dataType:    "json"
+        },
+        ajaxOptions = $.extend({}, defaultOptions, options);
 
       self._log('Ajax call triggered with options: ', ajaxOptions);
       return $.ajax(ajaxOptions);
@@ -470,7 +480,7 @@
         log.history.push(argumentsStyled);
         if (window.console) {
           window.console.log(
-              Array.prototype.slice.call(argumentsStyled)
+            Array.prototype.slice.call(argumentsStyled)
           );
         }
       }
@@ -481,34 +491,35 @@
      */
     _renderLogoutForm: function () {
       return $('<form id="js-logout-form" style="display: none;" method="post" action="/sso/logout">' +
-          '<input type="hidden" id="csrf" name="_csrf">' +
-          '<input type="hidden" id="state" name="state">' +
-          '<input type="hidden" id="redirect" name="post_logout_redirect_uri">' +
-          '<input type="hidden" id="id_token" name="id_token_hint">' +
-          '<input type="submit" >' +
-          '</form>');
+        '<input type="hidden" id="csrf" name="_csrf">' +
+        '<input type="hidden" id="state" name="state">' +
+        '<input type="hidden" id="redirect" name="post_logout_redirect_uri">' +
+        '<input type="hidden" id="id_token" name="id_token_hint">' +
+        '<input type="submit" >' +
+        '</form>');
     },
 
     /**
      * TEMPLATE: render a logout form
      */
-    _getAuthorizeParams: function () {
+    _getAuthorizeParams: function (promptNone) {
       var self = this,
-          stateObj = self._getState() || {
-            state:      self._generateState(),
-            providerId: self.config.providerID
-          },
-          nonce = self._getNonce() || self._generateNonce(),
-          urlVars = {
-            state:         stateObj.state,
-            nonce:         nonce,
-            authorization: self.config.authorization,
-            providerId:    self.config.providerID,
-            client_id:     self.config.client_id,
-            response_type: self.config.response_type,
-            redirect_uri:  self.cleanRedirectUri(),
-            scope:         self.config.scope
-          };
+        stateObj = self._getState() || {
+          state:      self._generateState(),
+          providerId: self.config.providerID
+        },
+        nonce = self._getNonce() || self._generateNonce(),
+        urlVars = {
+          state:         stateObj.state,
+          nonce:         nonce,
+          authorization: self.config.authorization,
+          providerId:    self.config.providerID,
+          client_id:     self.config.client_id,
+          response_type: self.config.response_type,
+          redirect_uri:  promptNone ? self.config.silent_refresh_uri : self.cleanRedirectUri(),
+          scope:         self.config.scope,
+          prompt:        promptNone ? 'none' : ''
+        };
 
       // Clean up Storage before we begin
       self.deleteStoredTokens();
@@ -523,12 +534,59 @@
     },
 
     /**
+     * Parse the token in the Hash
+     * @private
+     */
+    _parseToken: function (hashFragmentParams) {
+      var self = this,
+        defer = $.Deferred(),
+        stateObj = self._getState();
+
+      // We recieved a token from SSO, so we need to validate the state
+      if (hashFragmentParams && hashFragmentParams.state === stateObj.state) {
+
+        self._log('State from URL validated against state in session storage', stateObj);
+
+        // State validated, so now let's validate the token with Hawaii Backend
+        self._validateToken(hashFragmentParams).then(function (response) {
+          self._log('Token validated by backend', response);
+
+          if (response.status === 200) {
+
+            self._storeToken(hashFragmentParams);
+
+            if (response.data[0] !== undefined && response.data[0].user_session_id) {
+              self._saveSessionId(response.data[0].user_session_id);
+            }
+            self.setHandlers();
+
+            // We're logged in with token in URL
+            self._log('You may proceed.');
+            defer.resolve(true);
+          }
+
+          // Something's wrong with the token according to the backend
+          else {
+            self._log('Token NOT validated by backend, , rejecting _parseToken Promise', response);
+            defer.reject(false);
+          }
+        });
+      }
+      else {
+        self._log('State NOT valid, rejecting checkSession Promise');
+        defer.reject(false);
+      }
+
+      return defer;
+    },
+
+    /**
      * REDIRECT: Authorize Session with SSO through http redirect
      */
     authorizeRedirect: function () {
 
       var self = this,
-          urlVars = self._getAuthorizeParams();
+        urlVars = self._getAuthorizeParams();
 
       // Do auth call
       self._log('Do authorisation redirect to SSO with options:', urlVars);
@@ -557,9 +615,9 @@
      */
     doLogout: function () {
       var self = this,  // Set the service
-          stateObj = self._getState() || {state: null}, // Get state object from session store
-          tokenObj = self.getStoredToken(),
-          $form;
+        stateObj = self._getState() || {state: null}, // Get state object from session store
+        tokenObj = self.getStoredToken(),
+        $form;
 
       self._log('Logout function triggered');
 
@@ -572,13 +630,13 @@
         self._log('CSRF Token recieved for Logout, rendering the logout form', csrfObj, tokenObj, stateObj);
 
         // If we have an ID Token, we can logout with sso
-        if(tokenObj.id_token) {
+        if (tokenObj.id_token) {
           // Now that we have everything, let's fill the form value's and return the form
           $form
-              .find('#csrf').val(csrfObj.csrf_token).end()
-              .find('#id_token').val(tokenObj.id_token).end()
-              .find('#redirect').val(self.config.post_logout_redirect_uri).end()
-              .find('#state').val(stateObj.state).end();
+            .find('#csrf').val(csrfObj.csrf_token).end()
+            .find('#id_token').val(tokenObj.id_token).end()
+            .find('#redirect').val(self.config.post_logout_redirect_uri).end()
+            .find('#state').val(stateObj.state).end();
 
           // Submit the form
           self._log('Submitting logout form:', csrfObj.csrf_token, tokenObj.id_token, self.config.post_logout_redirect_uri, stateObj.state);
@@ -599,7 +657,7 @@
      */
     doSessionUpgradeRedirect: function (sessionUpgradeObj) {
       var self = this,
-          urlVars;
+        urlVars;
 
       self._log('Session upgrade function triggered', JSON.stringify(sessionUpgradeObj));
 
@@ -621,9 +679,9 @@
     checkSession: function () {
 
       var self = this,
-          defer = $.Deferred(),
-          urlParams = self.getURLParameters(window.location.href),
-          hashFragmentParams = self.getHashFragmentParameters(sessionStorage.hash_fragment);
+        defer = $.Deferred(),
+        urlParams = self.getURLParameters(window.location.href),
+        hashFragmentParams = self.getHashFragmentParameters(sessionStorage.hash_fragment);
 
       self._log('Checking session started');
 
@@ -646,9 +704,6 @@
 
       // No valid token found in storage, so we need to get a new one.
       else {
-
-
-
         // 2 --- There's an access_token in the URL
         if (hashFragmentParams.access_token && hashFragmentParams.state) {
 
@@ -658,42 +713,14 @@
 
             self._log('Access Token found in session storage temp, validating it', hashFragmentParams);
 
-            var stateObj = self._getState();
-
-            // We recieved a token from SSO, so we need to validate the state
-            if (hashFragmentParams.state === stateObj.state) {
-
-              self._log('State from URL validated against state in session storage', stateObj);
-
-              // State validated, so now let's validate the token with Hawaii Backend
-              self._validateToken(hashFragmentParams).then(function (response) {
-                self._log('Token validated by backend', response);
-
-                 if (response.status === 200) {
-
-                  self._storeToken(hashFragmentParams);
-
-                  if (response.data[0] !== undefined && response.data[0].user_session_id) {
-                    self._saveSessionId(response.data[0].user_session_id);
-                  }
-                  self.setHandlers();
-
-                  // We're logged in with token in URL
-                  self._log('You may proceed.');
-                  defer.resolve(true);
-                }
-
-                // Something's wrong with the token according to the backend
-                else {
-                  self._log('Token NOT validated by backend, , rejecting checkSession Promise', response);
-                  defer.reject(false);
-                }
-              });
-            }
-            else {
-              self._log('State NOT valid, rejecting checkSession Promise');
+            /**
+             * Parse and validate the token
+             */
+            self._parseToken(hashFragmentParams).then(function (tokenIsValid) {
+              defer.resolve(tokenIsValid);
+            }, function () {
               defer.reject(false);
-            }
+            });
           });
         }
 
@@ -712,7 +739,109 @@
       }
 
       return defer;
+    },
+
+    /**
+     * METHOD: Silenty refresh an access token via iFrame
+     */
+    silentRefreshAccessToken: function () {
+
+      var self = this,
+        defer = $.Deferred();
+
+      self._log('Silent refresh started');
+
+      /**
+       * Iframe element
+       */
+      var iframe = document.createElement('iframe');
+
+      /**
+       * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
+       */
+      var authorizeParams = self._getAuthorizeParams(true);
+
+      /**
+       * Get the URL params to check for errors
+       */
+      var urlParams = self.getURLParameters(window.location.href);
+
+      /**
+       * Set the iFrame Id
+       */
+      iframe.id = 'silentRefreshAccessTokenIframe';
+
+      /**
+       * Hide the iFrame
+       */
+      iframe.style.display = 'none';
+
+      /**
+       * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
+       */
+
+      if (!urlParams.error) {
+        window.document.body.appendChild(iframe);
+        self._log('Do silent refresh redirect to SSO with options:', authorizeParams);
+        iframe.src = self.config.authorization + '?' + $.param(authorizeParams);
+      }
+
+      else {
+        self._log('Error in silent refresh authorize redirect:', urlParams.error);
+        defer.reject(false);
+      }
+
+      /**
+       * Handle the result of the Authorize Redirect in the iFrame
+       */
+      iframe.onload = function () {
+
+        self._log('silent refresh iFrame loaded', iframe);
+
+        /**
+         * Get the URL from the iFrame
+         * @type {Token}
+         */
+        var hashFragmentParams = self.getHashFragmentParameters(iframe.contentWindow.location.href.split('#')[1]);
+
+        /**
+         * Check if we have a token
+         */
+        if (hashFragmentParams.access_token && hashFragmentParams.state) {
+
+          self._log('Access Token found in silent refresh return URL, validating it');
+
+          /**
+           * Parse and validate the token
+           */
+          self._parseToken(hashFragmentParams).then(function (tokenIsValid) {
+            defer.resolve(tokenIsValid);
+          }, function () {
+            defer.reject(false);
+          });
+
+        }
+
+        /**
+         * Return False if there was no token in the URL
+         */
+        else {
+          self._log('No token found in silent refresh return URL');
+          defer.reject(false);
+
+        }
+
+        /**
+         * Clean up the iFrame
+         */
+        setTimeout(function () {
+          iframe.parentElement.removeChild(iframe);
+        }, 0);
+      };
+
+      return defer;
     }
+
   };
   window.SsoService = SsoService;
 })
