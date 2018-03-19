@@ -1,5 +1,12 @@
 # Changelog
 
+### 0.3.0
+
+* npm updates for up-to-date dev env
+* Silent token refresh Method added
+* Refactored token parsing and validation to seperate function
+* added prompt parameter to config and redirect params.
+
 ### 0.2.2
 
 * Removed `npm i`, because it runs a loop
