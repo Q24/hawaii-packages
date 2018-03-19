@@ -1,5 +1,8 @@
 # Changelog
 
+### 0.3.1
+* Ignore SRC folder in `npm publish`
+
 ### 0.3.0
 
 * added as a package
