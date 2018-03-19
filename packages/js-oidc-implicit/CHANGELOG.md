@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.1
+
+* Fixed unnecessary cleanup, preventing tokenRefresh to store multiple tokens
+
 ### 0.4.0
 * Silent token refresh Method added
 * Refactored token parsing and validation to seperate function

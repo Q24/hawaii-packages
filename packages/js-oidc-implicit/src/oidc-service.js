@@ -521,11 +521,6 @@
           prompt:        promptNone ? 'none' : ''
         };
 
-      // Clean up Storage before we begin
-      self.deleteStoredTokens();
-      self._deleteNonce();
-      self.deleteState();
-
       // Save state & nonce
       self._saveState(stateObj.state, stateObj);
       self._saveNonce(nonce);
