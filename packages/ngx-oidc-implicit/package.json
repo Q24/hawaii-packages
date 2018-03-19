@@ -26,27 +26,29 @@
   "module": "index.js",
   "typings": "index.d.ts",
   "peerDependencies": {
-    "@angular/core": ">=4.3.0 || >=5.0.0"
+    "@angular/core": ">=4.3.0 || >=5.0.0",
+    "rxjs": ">=5.4.3"
   },
   "devDependencies": {
-    "@angular/common": "4.4.6",
-    "@angular/compiler": "^4.4.6",
-    "@angular/compiler-cli": "^4.4.6",
-    "@angular/core": "4.4.6",
-    "@angular/platform-browser": "4.4.6",
-    "@angular/platform-browser-dynamic": "4.4.6",
-    "@angular/platform-server": "4.4.6",
-    "codelyzer": "^3.2.0",
+    "@angular/animations": "^5.2.9",
+    "@angular/common": "^5.2.9",
+    "@angular/compiler": "^5.2.9",
+    "@angular/compiler-cli": "^5.2.9",
+    "@angular/core": "^5.2.9",
+    "@angular/platform-browser": "^5.2.9",
+    "@angular/platform-browser-dynamic": "^5.2.9",
+    "@angular/platform-server": "^5.2.9",
+    "codelyzer": "~4.2.1",
     "rollup": "^0.50.0",
-    "rxjs": ">=5.4.3",
+    "rxjs": ">=5.5.7",
     "ts-node": "^3.3.0",
-    "tslint": "^5.7.0",
-    "typescript": "^2.3.4",
+    "tslint": "^5.9.1",
+    "typescript": ">=2.4.2 <2.7",
     "uglify-js": "^3.1.8",
-    "zone.js": "^0.8.17"
+    "zone.js": "^0.8.20"
   },
   "scripts": {
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "transpile": "ngc",
     "package": "rollup -c",
     "minify": "uglifyjs dist/bundles/oidc.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/oidc.umd.min.js",
