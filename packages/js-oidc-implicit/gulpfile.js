@@ -1,4 +1,4 @@
-var buildFiles = 'src/hawaii-sso-implicit.js',
+var buildFiles = 'src/oidc-service.js',
     gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglifyjs'),

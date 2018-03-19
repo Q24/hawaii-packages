@@ -22,7 +22,7 @@
     "vanilla",
     "javascript"
   ],
-  "main": "dist/hawaii-sso-implicit.min.js",
+  "main": "dist/oidc-service.min.js",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-delete-lines": "0.0.7",
