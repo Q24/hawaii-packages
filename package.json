@@ -1,6 +1,6 @@
 {
   "name": "hawaii-framework",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Hawaii packages",
   "main": "index.js",
   "dependencies": {},
