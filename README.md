@@ -43,16 +43,13 @@ _These steps when your publishing packages for the first time:_
 * Update version information in the packages' `package.json`  
 * `npm publish ----access public`
 
+### Versioning & changelogs
+* All package versions are kept in sync.
+* Describe changes to a package in the Changelog of the package
+* Describe affected packages in this version in the main Changelog.
+
 ## Changelog
 
-### 0.0.3
-
-* Added some basic README.md stuff
-
-### 0.0.2
-
-* Renamed main package from hawaii-srcs to @hawaii
-
-### 0.0.1
-
-* Repo init
+### 0.3.0 - affected packages
+* ngx-oidc-implicit
+* js-oidc-implicit
