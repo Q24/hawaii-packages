@@ -48,6 +48,16 @@ _These steps when your publishing packages for the first time:_
 * Describe changes to a package in the Changelog of the package
 * Describe affected packages in this version in the main Changelog.
 
+To update all packages at once easily, us the Version Bump Prompt package:
+
+#### Install
+
+#### Usage
+* 0.0.XXX -> `bump --patch --grep package.json packages/js-oidc-implicit/package.json packages/ngx-oidc-implicit/package.json`
+* 0.XXX.0 -> `bump --minor --grep package.json packages/js-oidc-implicit/package.json packages/ngx-oidc-implicit/package.json`
+* XXX.0.0 -> `bump --major --grep package.json packages/js-oidc-implicit/package.json packages/ngx-oidc-implicit/package.json`
+
+
 ## Changelog
 
 ### 0.3.0 - affected packages
