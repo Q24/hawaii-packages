@@ -1,5 +1,8 @@
 # Changelog
 
+### 0.3.2
+* Changed `main` property in `package.json`
+
 ### 0.3.1
 * Ignore SRC folder in `npm publish`
 

@@ -63,6 +63,9 @@ To update all packages at once easily, us the Version Bump Prompt package:
 
 ## Changelog
 
+### 0.3.2 - affected packages
+* js-oidc-implicit
+
 ### 0.3.1 - affected packages
 * js-oidc-implicit
 
