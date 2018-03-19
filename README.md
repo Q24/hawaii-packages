@@ -51,8 +51,11 @@ _These steps when your publishing packages for the first time:_
 To update all packages at once easily, us the Version Bump Prompt package:
 
 #### Install
+`npm install -g version-bump-prompt`
 
 #### Usage
+1. `cd /opt/hawaii/workspace/hawaii-packages`
+2. Do one of the following:
 * 0.0.XXX -> `bump --patch --grep package.json packages/js-oidc-implicit/package.json packages/ngx-oidc-implicit/package.json`
 * 0.XXX.0 -> `bump --minor --grep package.json packages/js-oidc-implicit/package.json packages/ngx-oidc-implicit/package.json`
 * XXX.0.0 -> `bump --major --grep package.json packages/js-oidc-implicit/package.json packages/ngx-oidc-implicit/package.json`
