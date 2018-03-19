@@ -40,7 +40,7 @@ _These steps when your publishing packages for the first time:_
 ========================
 
 * `cd` to your package root
-* Update version information in the packages' `package.json`  
+* Update version information in *ALL* packages  
 * `npm publish ----access public`
 
 ### Versioning & changelogs
@@ -51,5 +51,5 @@ _These steps when your publishing packages for the first time:_
 ## Changelog
 
 ### 0.3.0 - affected packages
-* ngx-oidc-implicit
-* js-oidc-implicit
+* ngx-oidc-implicit (changed)
+* js-oidc-implicit (added)
