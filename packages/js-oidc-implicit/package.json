@@ -1,0 +1,53 @@
+{
+  "name": "@hawaii-framework/js-oidc-implicit",
+  "version": "0.3.0",
+  "description": "Open ID Connect - Implicit Flow Service for JS",
+  "author": "QNH Consulting Zuid B.V.",
+  "email": "info@qnh.nl",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/Q24/hawaii-packages/tree/master/packages/js-oidc-implicit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Q24/hawaii-packages.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Q24/hawaii-packages/issues"
+  },
+  "keywords": [
+    "oidc",
+    "openid",
+    "oauth2",
+    "implicit",
+    "js",
+    "vanilla",
+    "javascript"
+  ],
+  "main": "src/hawaii-sso-implicit.js",
+
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-delete-lines": "0.0.7",
+    "gulp-jshint": "^2.0.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglifyjs": "^0.6.2",
+    "jshint-stylish": "^2.2.1"
+  },
+  "jshintConfig": {
+    "curly": true,
+    "eqeqeq": true,
+    "undef": true,
+    "globals": {
+      "$": true,
+      "window": true,
+      "localStorage": true,
+      "history": true,
+      "document": true,
+      "log": true,
+      "Promise": true
+    }
+  },
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "gulp build"
+  }
+}
