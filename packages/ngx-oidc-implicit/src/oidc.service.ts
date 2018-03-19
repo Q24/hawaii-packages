@@ -25,6 +25,10 @@ export interface OidcConfig {
    */
   redirect_uri: string;
   /**
+   * The URL you want to be redirected to after redirect from Authorisation, while doing a silent acces token refresh
+   */
+  silent_refresh_uri: string;
+  /**
    * Array of URL's that are not allowed as `redirect_uri`
    */
   restricted_redirect_uris: string[];
@@ -221,6 +225,12 @@ export interface AuthorizeParams {
    * In case of implicit flow this is usually 'Bearer'
    */
   scope: string;
+
+  /**
+   * We add prompt=none to the URL when silently refreshing an access token.
+   * This way the refresh token call will not 'hang' on the (hidden) login screen, when authorize failed.
+   */
+  prompt?: string;
 }
 
 /**
@@ -564,44 +574,9 @@ export class OidcService {
 
           // 3 --- There's an access_token in the URL
           if (hashFragmentParams.access_token && hashFragmentParams.state) {
-
-            this._log('Access Token found in session storage temp, validating it');
-
-            const stateObj = this._getState();
-
-            // We received a token from SSO, so we need to validate the state
-            if (hashFragmentParams.state === stateObj.state) {
-              this._log('State from URL validated against state in session storage state object', stateObj);
-
-              // State validated, so now let's validate the token with Hawaii Backend
-              this._validateToken(hashFragmentParams).subscribe(
-                response => {
-                  this._log('Token validated by backend', response);
-
-                  // Store the token in the storage
-                  this._storeToken(hashFragmentParams);
-
-                  // Store the session ID
-                  this._saveSessionId(response.user_session_id);
-
-                  // We're logged in with token in URL
-                  this._log('Token from URL validated, you may proceed.');
-                  observer.next(true);
-                  observer.complete();
-
-
-                },
-                // Something's wrong with the token according to the backend
-                response => {
-                  this._log('Token NOT validated by backend', response);
-                  observer.next(false);
-                  observer.complete();
-                });
-            } else {
-              this._log('State NOT valid');
-              observer.next(false);
-              observer.complete();
-            }
+            this._parseToken(hashFragmentParams).subscribe(tokenIsValid => {
+              observer.next(tokenIsValid);
+            });
           }
 
           // 4 --- There's a session upgrade token in the URL
@@ -624,6 +599,118 @@ export class OidcService {
   }
 
   /**
+   * Silenty refresh an access token via iFrame
+   * @returns {Observable<boolean>}
+   */
+  public silentRefreshAccessToken(): Observable<boolean> {
+
+    this._log('Silent refresh started');
+
+    return new Observable<boolean>(observer => {
+
+      /**
+       * Iframe element
+       * @type {HTMLIFrameElement}
+       */
+      const iframe = document.createElement('iframe');
+
+      /**
+       * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
+       * @type {AuthorizeParams}
+       */
+      const authorizeParams = this._getAuthorizeParams(true);
+
+      /**
+       * Get the URL params to check for errors
+       * @type {URLParams}
+       */
+      const urlParams = this._getURLParameters();
+
+      /**
+       * Set the iFrame Id
+       * @type {string}
+       */
+      iframe.id = 'silentRefreshAccessTokenIframe';
+
+      /**
+       * Hide the iFrame
+       * @type {string}
+       */
+      iframe.style.display = 'none';
+
+      /**
+       * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
+       */
+
+      if (!urlParams['error']) {
+        window.document.body.appendChild(iframe);
+        this._log('Do silent refresh redirect to SSO with options:', authorizeParams);
+        iframe.src = `${this.config.authorize_endpoint}?${OidcService._createURLParameters(authorizeParams)}`;
+
+        this._log('The iFrame', iframe);
+      }
+
+      else {
+        this._log(`Error in silent refresh authorize redirect: ${urlParams['error']}`);
+        observer.next(false);
+        observer.complete();
+      }
+
+
+      /**
+       * Handle the result of the Authorize Redirect in the iFrame
+       */
+      iframe.onload = () => {
+
+        this._log('silent refresh iFrame loaded', iframe);
+
+        /**
+         * Get the URL from the iFrame
+         * @type {Token}
+         */
+        const hashFragmentParams = this._getHashFragmentParameters(iframe.contentWindow.location.href.split('#')[1]);
+
+        /**
+         * Check if we have a token
+         */
+        if (hashFragmentParams.access_token && hashFragmentParams.state) {
+
+          this._log('Access Token found in silent refresh return URL, validating it');
+
+          /**
+           * Parse and validate the token
+           */
+          this._parseToken(hashFragmentParams).subscribe(tokenIsValid => {
+            observer.next(tokenIsValid);
+
+            // Delete the iframe
+            setTimeout(function() {
+              iframe.parentElement.removeChild(iframe);
+            }, 0);
+
+            observer.complete();
+          });
+        }
+
+        /**
+         * Return False if there was no token in the URL
+         */
+        else {
+          this._log('No token found in silent refresh return URL');
+          observer.next(false);
+
+          // Delete the iframe
+          setTimeout(function() {
+            iframe.parentElement.removeChild(iframe);
+          }, 0);
+
+          observer.complete();
+        }
+      };
+    });
+  }
+
+  /**
    * Posts the received token to the Backend for decrypion and validation
    * @param {Token} hashParams
    * @returns {Observable<any>}
@@ -640,6 +727,55 @@ export class OidcService {
 
     return this._http
       .post<any>(this.config.validate_token_endpoint, data);
+  }
+
+  /**
+   * Parse the token in the Hash
+   * @param {Token} hashFragmentParams
+   * @returns {Observable<boolean>}
+   * @private
+   */
+  private _parseToken(hashFragmentParams: Token): Observable<boolean> {
+    this._log('Access Token found in session storage temp, validating it');
+
+    return new Observable<boolean>(observer => {
+
+      const stateObj = this._getState();
+
+      // We received a token from SSO, so we need to validate the state
+      if (hashFragmentParams.state === stateObj.state) {
+        this._log('State from URL validated against state in session storage state object', stateObj);
+
+        // State validated, so now let's validate the token with Hawaii Backend
+        this._validateToken(hashFragmentParams).subscribe(
+          response => {
+            this._log('Token validated by backend', response);
+
+            // Store the token in the storage
+            this._storeToken(hashFragmentParams);
+
+            // Store the session ID
+            this._saveSessionId(response.user_session_id);
+
+            // We're logged in with token in URL
+            this._log('Token from URL validated, you may proceed.');
+            observer.next(true);
+            observer.complete();
+
+
+          },
+          // Something's wrong with the token according to the backend
+          response => {
+            this._log('Token NOT validated by backend', response);
+            observer.next(false);
+            observer.complete();
+          });
+      } else {
+        this._log('State NOT valid');
+        observer.next(false);
+        observer.complete();
+      }
+    });
   }
 
   /**
@@ -903,22 +1039,23 @@ export class OidcService {
    * @returns {AuthorizeParams}
    * @private
    */
-  private _getAuthorizeParams(): AuthorizeParams {
+  private _getAuthorizeParams(promptNone: boolean = false): AuthorizeParams {
 
     const stateObj = this._getState() || {
         state: OidcService._generateState(),
         providerId: this.config.provider_id
       },
       nonce = this._getNonce() || OidcService._generateNonce(),
-      urlVars = {
+      urlVars: AuthorizeParams = {
         state: stateObj.state,
         nonce: nonce,
         authorization: this.config.authorisation,
         providerId: this.config.provider_id,
         client_id: this.config.client_id,
         response_type: this.config.response_type,
-        redirect_uri: this.config.redirect_uri,
-        scope: this.config.scope
+        redirect_uri: promptNone ? this.config.silent_refresh_uri : this.config.redirect_uri,
+        scope: this.config.scope,
+        prompt: promptNone ? 'none' : ''
       };
 
     // Save the generated state & nonce
