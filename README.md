@@ -1,6 +1,6 @@
-# hawaii
+# Hawaii Packages (@hawaii-framework)
 
-## Making and releasing packages
+## Making, versioning and releasing packages
 
 ### prerequisites:
 * Make sure you have an account at [npmjs.com](https://www.npmjs.com)
@@ -14,18 +14,32 @@ I.e.: `ngx-package-name` for Angular (2+) packages, `angularjs-package-name` for
 
 
 * `npm init` and follow instructions
-
+```
 _"license": "Apache-2.0",_
-
 _"repository": {"type": "git","url": "git+https://github.com/Q24/hawaii-packages.git" }_
+```
 
 * Make sure you make a **scoped name** (in the **@hawaii-framework** scope) in the `package.json` 
-
+```
 _I.e: `"name": "@hawaii-framework/ngx-package-name",`_
-
+```
 * Add linting, hinting, ignore and editor config files
+* Add a *README.me*, and add some basic information about your package, and start a changelog. Your can do this in the *README.md*, or when it gets to big, make a *CHANGELOG.md* file.
 
-* Add a README.me, and add some basic information about your package, and start a changelog. Your can do this in the README.md, or when it gets to big, make a CHANGELOG.md file.
+### Versioning & changelogs
+* All package versions are kept in sync. So if you update the version of one, update them all.
+* Describe changes to a package in the Changelog of the package
+
+To update all packages at once easily, use the Version Bump Prompt package:
+
+##### Install
+`npm install -g version-bump-prompt`
+
+##### Usage
+1. `cd /opt/hawaii/workspace/hawaii-packages`
+2. `bump --prompt --grep package.json packages/js-oidc-implicit/package.json packages/ngx-oidc-implicit/package.json --tag --push`
+
+This will update all the versions of the packages, tag them, and push the version update to git.
 
 ### Publishing Your package
 
@@ -42,16 +56,3 @@ _These steps when your publishing packages for the first time:_
 * `cd` to your package root
 * Update version information in *ALL* packages  
 * `npm publish ----access public`
-
-### Versioning & changelogs
-* All package versions are kept in sync.
-* Describe changes to a package in the Changelog of the package
-
-To update all packages at once easily, use the Version Bump Prompt package:
-
-#### Install
-`npm install -g version-bump-prompt`
-
-#### Usage
-1. `cd /opt/hawaii/workspace/hawaii-packages`
-2. `bump --prompt --grep package.json packages/js-oidc-implicit/package.json packages/ngx-oidc-implicit/package.json --tag --push`
