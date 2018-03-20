@@ -413,8 +413,6 @@ export class OidcService {
     const tokens = this._getStoredTokens(),
       tokensCleaned = this._cleanExpiredTokens(tokens);
 
-    this._log('-- tokens', JSON.stringify({tokens}));
-
     // If there's no valid token return null
     if (tokensCleaned.length < 1) {
       return null;
@@ -927,7 +925,6 @@ export class OidcService {
     const time = OidcService._epoch();
 
     cleanTokens = storedTokens.filter((element: Token) => {
-      this._log('Stored token', element.expires, time + 5);
       return (element.expires && element.expires > time + 5);
     });
 
