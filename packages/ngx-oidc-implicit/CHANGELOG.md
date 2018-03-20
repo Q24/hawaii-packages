@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.3
+
+* Fixed *any* in log function
+
 ### 0.4.0
 * iFrame cleaning in silent Token Refresh fix
 
