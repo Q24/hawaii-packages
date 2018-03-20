@@ -1,6 +1,6 @@
 {
   "name": "@hawaii-framework/js-oidc-implicit",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Open ID Connect - Implicit Flow Service for JS",
   "author": "QNH Consulting Zuid B.V.",
   "email": "info@qnh.nl",
