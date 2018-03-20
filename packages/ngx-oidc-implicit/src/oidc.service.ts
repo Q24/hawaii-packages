@@ -254,7 +254,7 @@ export class OidcService {
   /**
    * Variable for holding Log function
    */
-  private _log;
+  private _log: any;
 
   /**
    * Storage function to store key,value pair to the sessionStorage
