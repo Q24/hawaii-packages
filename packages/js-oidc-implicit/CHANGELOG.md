@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.2
+
+* Fixed Gulp build process
+
 ### 0.4.1
 
 * Fixed unnecessary cleanup, preventing tokenRefresh to store multiple tokens

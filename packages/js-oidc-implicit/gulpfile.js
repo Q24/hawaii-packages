@@ -1,5 +1,4 @@
-var buildFiles = 'src/*.js',
-    gulp = require('gulp'),
+var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglifyjs'),
     rename = require('gulp-rename'),
@@ -7,8 +6,8 @@ var buildFiles = 'src/*.js',
 
 
 // configure the jshint task
-gulp.task('build', function () {
-  return gulp.src(buildFiles)
+gulp.task('buildService', function () {
+  return gulp.src('src/oidc-service.js')
       .pipe(jshint())
       .pipe(jshint.reporter('jshint-stylish'))
       .pipe(deleteLines({
@@ -18,9 +17,22 @@ gulp.task('build', function () {
       }))
       .pipe(uglify())
       .pipe(rename(function (path) {
+        console.log(path);
         path.basename += ".min";
       }))
       .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('buildCleanHashFragment', function () {
+  return gulp.src('src/clean-hash-fragment.js')
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(uglify())
+    .pipe(rename(function (path) {
+      console.log(path);
+      path.basename += ".min";
+    }))
+    .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('watch', function () {
@@ -28,5 +40,6 @@ gulp.task('watch', function () {
 });
 
 
+gulp.task('build', ['buildService', 'buildCleanHashFragment']);
 gulp.task('default', ['build', 'watch']);
 
