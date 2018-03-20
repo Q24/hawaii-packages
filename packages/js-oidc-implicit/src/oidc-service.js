@@ -744,96 +744,102 @@
       var self = this,
         defer = $.Deferred();
 
-      self._log('Silent refresh started');
-
       /**
-       * Iframe element
+       * On
        */
-      var iframe = document.createElement('iframe');
+      if(document.getElementById('silentRefreshAccessTokenIframe') === null) {
 
-      /**
-       * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
-       */
-      var authorizeParams = self._getAuthorizeParams(true);
-
-      /**
-       * Get the URL params to check for errors
-       */
-      var urlParams = self.getURLParameters(window.location.href);
-
-      /**
-       * Set the iFrame Id
-       */
-      iframe.id = 'silentRefreshAccessTokenIframe';
-
-      /**
-       * Hide the iFrame
-       */
-      iframe.style.display = 'none';
-
-      /**
-       * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
-       */
-
-      if (!urlParams.error) {
-        window.document.body.appendChild(iframe);
-        self._log('Do silent refresh redirect to SSO with options:', authorizeParams);
-        iframe.src = self.config.authorization + '?' + $.param(authorizeParams);
-      }
-
-      else {
-        self._log('Error in silent refresh authorize redirect:', urlParams.error);
-        defer.reject(false);
-      }
-
-      /**
-       * Handle the result of the Authorize Redirect in the iFrame
-       */
-      iframe.onload = function () {
-
-        self._log('silent refresh iFrame loaded', iframe);
+        self._log('Silent refresh started');
 
         /**
-         * Get the URL from the iFrame
-         * @type {Token}
+         * Iframe element
          */
-        var hashFragmentParams = self.getHashFragmentParameters(iframe.contentWindow.location.href.split('#')[1]);
+        var iframe = document.createElement('iframe');
 
         /**
-         * Check if we have a token
+         * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
          */
-        if (hashFragmentParams.access_token && hashFragmentParams.state) {
+        var authorizeParams = self._getAuthorizeParams(true);
 
-          self._log('Access Token found in silent refresh return URL, validating it');
+        /**
+         * Get the URL params to check for errors
+         */
+        var urlParams = self.getURLParameters(window.location.href);
+
+        /**
+         * Set the iFrame Id
+         */
+        iframe.id = 'silentRefreshAccessTokenIframe';
+
+        /**
+         * Hide the iFrame
+         */
+        iframe.style.display = 'none';
+
+        /**
+         * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
+         */
+
+        if (!urlParams.error) {
+          window.document.body.appendChild(iframe);
+          self._log('Do silent refresh redirect to SSO with options:', authorizeParams);
+          iframe.src = self.config.authorization + '?' + $.param(authorizeParams);
+        }
+
+        else {
+          self._log('Error in silent refresh authorize redirect:', urlParams.error);
+          defer.reject(false);
+        }
+
+        /**
+         * Handle the result of the Authorize Redirect in the iFrame
+         */
+        iframe.onload = function () {
+
+          self._log('silent refresh iFrame loaded', iframe);
 
           /**
-           * Parse and validate the token
+           * Get the URL from the iFrame
+           * @type {Token}
            */
-          self._parseToken(hashFragmentParams).then(function (tokenIsValid) {
-            defer.resolve(tokenIsValid);
-          }, function () {
+          var hashFragmentParams = self.getHashFragmentParameters(iframe.contentWindow.location.href.split('#')[1]);
+
+          /**
+           * Check if we have a token
+           */
+          if (hashFragmentParams.access_token && hashFragmentParams.state) {
+
+            self._log('Access Token found in silent refresh return URL, validating it');
+
+            /**
+             * Parse and validate the token
+             */
+            self._parseToken(hashFragmentParams).then(function (tokenIsValid) {
+              defer.resolve(tokenIsValid);
+            }, function () {
+              defer.reject(false);
+            });
+
+          }
+
+          /**
+           * Return False if there was no token in the URL
+           */
+          else {
+            self._log('No token found in silent refresh return URL');
             defer.reject(false);
-          });
 
-        }
+          }
 
-        /**
-         * Return False if there was no token in the URL
-         */
-        else {
-          self._log('No token found in silent refresh return URL');
-          defer.reject(false);
+          /**
+           * Clean up the iFrame
+           */
+          setTimeout(function () {
+            iframe.parentElement.removeChild(iframe);
+          }, 0);
+        };
 
-        }
-
-        /**
-         * Clean up the iFrame
-         */
-        setTimeout(function () {
-          iframe.parentElement.removeChild(iframe);
-        }, 0);
-      };
-
+      }
       return defer;
     }
 

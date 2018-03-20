@@ -155,7 +155,6 @@ var OidcService = /** @class */ (function () {
     OidcService.prototype.getStoredToken = function () {
         // Get the tokens from storage, and make sure they're still valid
         var tokens = this._getStoredTokens(), tokensCleaned = this._cleanExpiredTokens(tokens);
-        this._log('-- tokens', JSON.stringify({ tokens: tokens }));
         // If there's no valid token return null
         if (tokensCleaned.length < 1) {
             return null;
@@ -583,11 +582,9 @@ var OidcService = /** @class */ (function () {
      * @private
      */
     OidcService.prototype._cleanExpiredTokens = function (storedTokens) {
-        var _this = this;
         var cleanTokens;
         var time = OidcService_1._epoch();
         cleanTokens = storedTokens.filter(function (element) {
-            _this._log('Stored token', element.expires, time + 5);
             return (element.expires && element.expires > time + 5);
         });
         this._log('Clean tokens returned:', cleanTokens);

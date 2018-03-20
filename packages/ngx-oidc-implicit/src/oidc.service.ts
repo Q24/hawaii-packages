@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import {leaveView} from '@angular/core/src/render3/instructions';
 
 /**
  * Config Object for OIDC Service
@@ -602,102 +603,107 @@ export class OidcService {
    */
   public silentRefreshAccessToken(): Observable<boolean> {
 
-    this._log('Silent refresh started');
-
     return new Observable<boolean>(observer => {
 
-      /**
-       * Iframe element
-       * @type {HTMLIFrameElement}
-       */
-      const iframe = document.createElement('iframe');
+      this._log('Silent refresh started');
 
-      /**
-       * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
-       * @type {AuthorizeParams}
-       */
-      const authorizeParams = this._getAuthorizeParams(true);
-
-      /**
-       * Get the URL params to check for errors
-       * @type {URLParams}
-       */
-      const urlParams = this._getURLParameters();
-
-      /**
-       * Set the iFrame Id
-       * @type {string}
-       */
-      iframe.id = 'silentRefreshAccessTokenIframe';
-
-      /**
-       * Hide the iFrame
-       * @type {string}
-       */
-      iframe.style.display = 'none';
-
-      /**
-       * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
-       */
-
-      if (!urlParams['error']) {
-        window.document.body.appendChild(iframe);
-        this._log('Do silent refresh redirect to SSO with options:', authorizeParams);
-        iframe.src = `${this.config.authorize_endpoint}?${OidcService._createURLParameters(authorizeParams)}`;
-      }
-
-      else {
-        this._log(`Error in silent refresh authorize redirect: ${urlParams['error']}`);
-        observer.next(false);
-        observer.complete();
-      }
-
-
-      /**
-       * Handle the result of the Authorize Redirect in the iFrame
-       */
-      iframe.onload = () => {
-
-        this._log('silent refresh iFrame loaded', iframe);
+      if (document.getElementById('silentRefreshAccessTokenIframe') === null) {
+        /**
+         * Iframe element
+         * @type {HTMLIFrameElement}
+         */
+        const iframe = document.createElement('iframe');
 
         /**
-         * Get the URL from the iFrame
-         * @type {Token}
+         * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
+         * @type {AuthorizeParams}
          */
-        const hashFragmentParams = this._getHashFragmentParameters(iframe.contentWindow.location.href.split('#')[1]);
+        const authorizeParams = this._getAuthorizeParams(true);
 
         /**
-         * Check if we have a token
+         * Get the URL params to check for errors
+         * @type {URLParams}
          */
-        if (hashFragmentParams.access_token && hashFragmentParams.state) {
+        const urlParams = this._getURLParameters();
 
-          this._log('Access Token found in silent refresh return URL, validating it');
+        /**
+         * Set the iFrame Id
+         * @type {string}
+         */
+        iframe.id = 'silentRefreshAccessTokenIframe';
 
-          /**
-           * Parse and validate the token
-           */
-          this._parseToken(hashFragmentParams).subscribe(tokenIsValid => {
-            observer.next(tokenIsValid);
-            observer.complete();
-          });
+        /**
+         * Hide the iFrame
+         * @type {string}
+         */
+        iframe.style.display = 'none';
+
+        /**
+         * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
+         */
+
+        if (!urlParams['error']) {
+          window.document.body.appendChild(iframe);
+          this._log('Do silent refresh redirect to SSO with options:', authorizeParams);
+          iframe.src = `${this.config.authorize_endpoint}?${OidcService._createURLParameters(authorizeParams)}`;
         }
 
-        /**
-         * Return False if there was no token in the URL
-         */
         else {
-          this._log('No token found in silent refresh return URL');
+          this._log(`Error in silent refresh authorize redirect: ${urlParams['error']}`);
           observer.next(false);
           observer.complete();
         }
 
+
         /**
-         * Cleanup the iFrame
+         * Handle the result of the Authorize Redirect in the iFrame
          */
-        setTimeout(function() {
-          iframe.parentElement.removeChild(iframe);
-        }, 0);
-      };
+        iframe.onload = () => {
+
+          this._log('silent refresh iFrame loaded', iframe);
+
+          /**
+           * Get the URL from the iFrame
+           * @type {Token}
+           */
+          const hashFragmentParams = this._getHashFragmentParameters(iframe.contentWindow.location.href.split('#')[1]);
+
+          /**
+           * Check if we have a token
+           */
+          if (hashFragmentParams.access_token && hashFragmentParams.state) {
+
+            this._log('Access Token found in silent refresh return URL, validating it');
+
+            /**
+             * Parse and validate the token
+             */
+            this._parseToken(hashFragmentParams).subscribe(tokenIsValid => {
+              observer.next(tokenIsValid);
+              observer.complete();
+            });
+          }
+
+          /**
+           * Return False if there was no token in the URL
+           */
+          else {
+            this._log('No token found in silent refresh return URL');
+            observer.next(false);
+            observer.complete();
+          }
+
+          /**
+           * Cleanup the iFrame
+           */
+          setTimeout(function () {
+            iframe.parentElement.removeChild(iframe);
+          }, 0);
+        };
+      } else {
+        observer.next(false);
+        observer.complete();
+      }
     });
   }
 

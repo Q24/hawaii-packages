@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.5
+
+* Prevent multiple iFrames with silent refresh at once
+
 ### 0.4.4
 
 * Fixed .npmignore

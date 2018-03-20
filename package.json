@@ -4,9 +4,14 @@
   "description": "Hawaii packages",
   "main": "index.js",
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "glob": "^7.1.2"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "buildAll": "node tasks/buildAll.js",
+    "bumpVersions": "bump --prompt --grep package.json packages/js-oidc-implicit/package.json packages/ngx-oidc-implicit/package.json --tag --push",
+    "publishAll": "node tasks/publishAll.js"
+
   },
   "repository": {
     "type": "git",
