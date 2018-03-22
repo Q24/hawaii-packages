@@ -22,12 +22,12 @@ _"repository": {"type": "git","url": "git+https://github.com/Q24/hawaii-packages
 
 * Make sure you make a **scoped name** (in the **@hawaii-framework** scope) in the `package.json` 
 ```
-_I.e: `"name": "@hawaii-framework/ngx-package-name",`_
+I.e: `"name": "@hawaii-framework/ngx-package-name",`
 ```
 * Add linting, hinting, ignore and editor config files
 * Add a *README.me*, and add some basic information about your package, and start a changelog. Your can do this in the *README.md*, or when it gets to big, make a *CHANGELOG.md* file.
 
-#### Versioning and changelogs
+### Versioning and changelogs
 * All package versions are kept in sync. So if you update the version of one, update them all.
 * Describe changes to a package in the Changelog of the package
 
