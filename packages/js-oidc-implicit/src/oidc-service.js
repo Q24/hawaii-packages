@@ -217,6 +217,7 @@
       numberOfCleanedTokens = tokens.length - result.length;
 
       if (numberOfCleanedTokens > 0) {
+        self._storeTokens(result);
         self._log('Cleaned ' + numberOfCleanedTokens + ' expired tokens from storage');
       }
 

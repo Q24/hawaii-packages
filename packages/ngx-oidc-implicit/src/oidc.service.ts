@@ -920,6 +920,7 @@ export class OidcService {
   /**
    * Compare the expiry time of a stored token with the current time.
    * If the token has expired, remove it from the array.
+   * If something was removed from the Array, cleanup the session storage by re-saving the cleaned token array.
    * Return the cleaned Array.
    * @param {Token[]} storedTokens
    * @returns {Token[]}
@@ -933,6 +934,10 @@ export class OidcService {
     cleanTokens = storedTokens.filter((element: Token) => {
       return (element.expires && element.expires > time + 5);
     });
+
+    if (storedTokens.length > cleanTokens.length) {
+      this._storeTokens(cleanTokens);
+    }
 
     this._log('Clean tokens returned:', cleanTokens);
 

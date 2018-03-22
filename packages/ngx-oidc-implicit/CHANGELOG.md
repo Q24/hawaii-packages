@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.6
+
+* Re-save cleaned tokens array to session storage, if a token was cleaned.
+
 ### 0.4.5
 
 * Prevent multiple iFrames with silent refresh at once
