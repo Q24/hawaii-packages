@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.7
+
+* [ngx-oidc-implicit] - Removed unnecessary import 
+
 ### 0.4.6
 
 * Re-save cleaned tokens array to session storage, if a token was cleaned.
