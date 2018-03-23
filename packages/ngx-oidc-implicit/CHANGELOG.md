@@ -1,8 +1,15 @@
 # Changelog
 
+### [Unreleased]
+
+* Fixed TypeScript error in `clean-hash-fragment`
+* Fixed typos
+* Some TypeScript edits
+* Ignore `yarn-error.log` 
+
 ### 0.4.7
 
-* [ngx-oidc-implicit] - Removed unnecessary import 
+* Removed unnecessary import 
 
 ### 0.4.6
 

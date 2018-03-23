@@ -13,7 +13,7 @@
     // Gracefull Degredation
     else {
       // Prevent scrolling by storing the page's current scroll offset
-      var scrollV = document.body.scrollTop,
+      const scrollV = document.body.scrollTop,
         scrollH = document.body.scrollLeft;
 
       window.location.hash = '';

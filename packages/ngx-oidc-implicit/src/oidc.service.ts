@@ -234,7 +234,7 @@ export interface AuthorizeParams {
 }
 
 /**
- * Open ID Connect Implimicit Flow Service for Angular
+ * Open ID Connect Implicit Flow Service for Angular
  */
 @Injectable()
 export class OidcService {
@@ -597,7 +597,7 @@ export class OidcService {
   }
 
   /**
-   * Silenty refresh an access token via iFrame
+   * Silently refresh an access token via iFrame
    * @returns {Observable<boolean>}
    */
   public silentRefreshAccessToken(): Observable<boolean> {
@@ -608,10 +608,10 @@ export class OidcService {
 
       if (document.getElementById('silentRefreshAccessTokenIframe') === null) {
         /**
-         * Iframe element
+         * IFrame element
          * @type {HTMLIFrameElement}
          */
-        const iframe = document.createElement('iframe');
+        const iFrame = document.createElement('iframe');
 
         /**
          * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
@@ -629,22 +629,23 @@ export class OidcService {
          * Set the iFrame Id
          * @type {string}
          */
-        iframe.id = 'silentRefreshAccessTokenIframe';
+        iFrame.id = 'silentRefreshAccessTokenIframe';
 
         /**
          * Hide the iFrame
          * @type {string}
          */
-        iframe.style.display = 'none';
+        iFrame.style.display = 'none';
 
         /**
          * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
+         * For older FireFox and IE versions first append the iFrame and then set its source attribute.
          */
 
         if (!urlParams['error']) {
-          window.document.body.appendChild(iframe);
+          window.document.body.appendChild(iFrame);
           this._log('Do silent refresh redirect to SSO with options:', authorizeParams);
-          iframe.src = `${this.config.authorize_endpoint}?${OidcService._createURLParameters(authorizeParams)}`;
+          iFrame.src = `${this.config.authorize_endpoint}?${OidcService._createURLParameters(authorizeParams)}`;
         }
 
         else {
@@ -657,15 +658,15 @@ export class OidcService {
         /**
          * Handle the result of the Authorize Redirect in the iFrame
          */
-        iframe.onload = () => {
+        iFrame.onload = () => {
 
-          this._log('silent refresh iFrame loaded', iframe);
+          this._log('silent refresh iFrame loaded', iFrame);
 
           /**
            * Get the URL from the iFrame
            * @type {Token}
            */
-          const hashFragmentParams = this._getHashFragmentParameters(iframe.contentWindow.location.href.split('#')[1]);
+          const hashFragmentParams = this._getHashFragmentParameters(iFrame.contentWindow.location.href.split('#')[1]);
 
           /**
            * Check if we have a token
@@ -677,7 +678,7 @@ export class OidcService {
             /**
              * Parse and validate the token
              */
-            this._parseToken(hashFragmentParams).subscribe(tokenIsValid => {
+            this._parseToken(hashFragmentParams).subscribe((tokenIsValid: boolean) => {
               observer.next(tokenIsValid);
               observer.complete();
             });
@@ -695,9 +696,7 @@ export class OidcService {
           /**
            * Cleanup the iFrame
            */
-          setTimeout(function () {
-            iframe.parentElement.removeChild(iframe);
-          }, 0);
+          setTimeout(() => iFrame.parentElement.removeChild(iFrame), 0);
         };
       } else {
         observer.next(false);
@@ -707,7 +706,7 @@ export class OidcService {
   }
 
   /**
-   * Posts the received token to the Backend for decrypion and validation
+   * Posts the received token to the Backend for decryption and validation
    * @param {Token} hashParams
    * @returns {Observable<any>}
    * @private

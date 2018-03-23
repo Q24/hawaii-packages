@@ -1,5 +1,9 @@
 # Changelog
 
+### [Unreleased]
+
+* Ignore `yarn-error.log` 
+
 ### 0.4.6
 
 * Re-save cleaned tokens array to session storage, if a token was cleaned.
