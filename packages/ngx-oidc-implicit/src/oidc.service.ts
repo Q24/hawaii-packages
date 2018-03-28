@@ -25,9 +25,9 @@ export interface OidcConfig {
    */
   redirect_uri: string;
   /**
-   * The URL you want to be redirected to after redirect from Authorisation, while doing a silent acces token refresh
+   * The URL you want to be redirected to after redirect from Authorisation, while doing a silent access token refresh
    */
-  silent_refresh_uri: string;
+  silent_refresh_uri?: string;
   /**
    * Array of URL's that are not allowed as `redirect_uri`
    */
@@ -82,7 +82,6 @@ export interface OidcConfig {
    * List of provider ids to be cleaned from storage
    */
   post_logout_provider_ids_to_be_cleaned?: string[];
-
   /**
    * Config object for QR login with websocket
    */
