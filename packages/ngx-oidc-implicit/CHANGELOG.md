@@ -1,6 +1,6 @@
 # Changelog
 
-### [Unreleased]
+### 0.4.8
 
 * Fixed TypeScript error in `clean-hash-fragment`
 * Fixed typos
