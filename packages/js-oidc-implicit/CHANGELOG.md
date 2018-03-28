@@ -1,6 +1,14 @@
 # Changelog
 
-### [Unreleased]
+### 0.4.9
+
+* Updated changelog
+
+### 0.4.8
+
+* -
+
+### 0.4.7
 
 * Ignore `yarn-error.log` 
 

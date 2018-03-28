@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.9
+
+* Updated changelog
+
 ### 0.4.8
 
 * Fixed TypeScript error in `clean-hash-fragment`
