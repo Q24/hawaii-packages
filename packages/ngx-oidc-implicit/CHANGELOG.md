@@ -5,7 +5,8 @@
 * Fixed TypeScript error in `clean-hash-fragment`
 * Fixed typos
 * Some TypeScript edits
-* Ignore `yarn-error.log` 
+* Ignore `yarn-error.log`
+* silent_refresh_uri is now an optional parameter in the OidcConfig interface
 
 ### 0.4.7
 
