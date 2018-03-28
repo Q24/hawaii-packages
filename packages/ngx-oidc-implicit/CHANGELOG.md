@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.10
+
+* Proper release&hellip;
+
 ### 0.4.9
 
 * Updated changelog
