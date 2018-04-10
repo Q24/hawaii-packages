@@ -660,7 +660,7 @@
       // Gather the data for post Session upgrade call
       urlVars = {
         session_upgrade_token: sessionUpgradeObj.session_upgrade_token,
-        redirect_uri:          self.config.defaultRedirectUri + '?flush_state=true'
+        redirect_uri:          self.config.redirect_uri + '?flush_state=true'
       };
 
       // Clean up session storage temp
