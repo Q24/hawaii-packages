@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {Observer} from 'rxjs/internal/types';
 
 /**
  * Config Object for OIDC Service
@@ -230,6 +230,14 @@ export interface AuthorizeParams {
    * This way the refresh token call will not 'hang' on the (hidden) login screen, when authorize failed.
    */
   prompt?: string;
+}
+
+/**
+ * User Session ID is a response given from the token validation call
+ * and used to trigger session related calls through backend (i.e. kill all sessions)
+ */
+export interface ValidSession {
+  user_session_id: string;
 }
 
 /**
@@ -543,7 +551,7 @@ export class OidcService {
 
     this._log('Check session with params:', urlParams);
 
-    return new Observable<boolean>(observer => {
+    return new Observable<boolean>((observer: Observer<boolean>) => {
 
 
       this._log('Flush state ?', urlParams.flush_state);
@@ -564,14 +572,14 @@ export class OidcService {
       else {
 
         // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
-        this.getCsrfToken().subscribe(token => {
+        this.getCsrfToken().subscribe((csrfToken: CsrfToken) => {
 
           // Store the CSRF Token for future calls that need it. I.e. Logout
-          OidcService._store('_csrf', token.csrf_token);
+          OidcService._store('_csrf', csrfToken.csrf_token);
 
           // 3 --- There's an access_token in the URL
           if (hashFragmentParams.access_token && hashFragmentParams.state) {
-            this._parseToken(hashFragmentParams).subscribe(tokenIsValid => {
+            this._parseToken(hashFragmentParams).subscribe((tokenIsValid: boolean) => {
               observer.next(tokenIsValid);
             });
           }
@@ -601,7 +609,7 @@ export class OidcService {
    */
   public silentRefreshAccessToken(): Observable<boolean> {
 
-    return new Observable<boolean>(observer => {
+    return new Observable<boolean>((observer: Observer<boolean>) => {
 
       this._log('Silent refresh started');
 
@@ -710,7 +718,8 @@ export class OidcService {
    * @returns {Observable<any>}
    * @private
    */
-  private _validateToken(hashParams: Token): Observable<any> {
+
+  private _validateToken(hashParams: Token): Observable<ValidSession> {
     const data = {
       nonce: this._getNonce(),
       id_token: hashParams.id_token,
@@ -732,7 +741,7 @@ export class OidcService {
   private _parseToken(hashFragmentParams: Token): Observable<boolean> {
     this._log('Access Token found in session storage temp, validating it');
 
-    return new Observable<boolean>(observer => {
+    return new Observable<boolean>((observer: Observer<boolean>) => {
 
       const stateObj = this._getState();
 
@@ -741,8 +750,7 @@ export class OidcService {
         this._log('State from URL validated against state in session storage state object', stateObj);
 
         // State validated, so now let's validate the token with Hawaii Backend
-        this._validateToken(hashFragmentParams).subscribe(
-          response => {
+        this._validateToken(hashFragmentParams).subscribe((response: ValidSession) => {
             this._log('Token validated by backend', response);
 
             // Store the token in the storage
@@ -759,7 +767,7 @@ export class OidcService {
 
           },
           // Something's wrong with the token according to the backend
-          response => {
+          (response: HttpErrorResponse) => {
             this._log('Token NOT validated by backend', response);
             observer.next(false);
             observer.complete();

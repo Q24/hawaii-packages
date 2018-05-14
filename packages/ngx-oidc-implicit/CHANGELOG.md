@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.0.0
+
+* BREAKING CHANGE: Angular > 6.0.0 compliant
+
 ### 0.4.10
 
 * Proper release&hellip;
