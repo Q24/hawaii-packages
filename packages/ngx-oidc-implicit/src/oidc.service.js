@@ -11,7 +11,7 @@ var http_1 = require("@angular/common/http");
 var Observable_1 = require("rxjs/Observable");
 require("rxjs/add/operator/map");
 /**
- * Open ID Connect Implimicit Flow Service for Angular
+ * Open ID Connect Implicit Flow Service for Angular
  */
 var OidcService = /** @class */ (function () {
     /**
@@ -307,90 +307,95 @@ var OidcService = /** @class */ (function () {
         });
     };
     /**
-     * Silenty refresh an access token via iFrame
+     * Silently refresh an access token via iFrame
      * @returns {Observable<boolean>}
      */
     OidcService.prototype.silentRefreshAccessToken = function () {
         var _this = this;
-        this._log('Silent refresh started');
         return new Observable_1.Observable(function (observer) {
-            /**
-             * Iframe element
-             * @type {HTMLIFrameElement}
-             */
-            var iframe = document.createElement('iframe');
-            /**
-             * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
-             * @type {AuthorizeParams}
-             */
-            var authorizeParams = _this._getAuthorizeParams(true);
-            /**
-             * Get the URL params to check for errors
-             * @type {URLParams}
-             */
-            var urlParams = _this._getURLParameters();
-            /**
-             * Set the iFrame Id
-             * @type {string}
-             */
-            iframe.id = 'silentRefreshAccessTokenIframe';
-            /**
-             * Hide the iFrame
-             * @type {string}
-             */
-            iframe.style.display = 'none';
-            /**
-             * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
-             */
-            if (!urlParams['error']) {
-                window.document.body.appendChild(iframe);
-                _this._log('Do silent refresh redirect to SSO with options:', authorizeParams);
-                iframe.src = _this.config.authorize_endpoint + "?" + OidcService_1._createURLParameters(authorizeParams);
-            }
-            else {
-                _this._log("Error in silent refresh authorize redirect: " + urlParams['error']);
-                observer.next(false);
-                observer.complete();
-            }
-            /**
-             * Handle the result of the Authorize Redirect in the iFrame
-             */
-            iframe.onload = function () {
-                _this._log('silent refresh iFrame loaded', iframe);
+            _this._log('Silent refresh started');
+            if (document.getElementById('silentRefreshAccessTokenIframe') === null) {
                 /**
-                 * Get the URL from the iFrame
-                 * @type {Token}
+                 * IFrame element
+                 * @type {HTMLIFrameElement}
                  */
-                var hashFragmentParams = _this._getHashFragmentParameters(iframe.contentWindow.location.href.split('#')[1]);
+                var iFrame_1 = document.createElement('iframe');
                 /**
-                 * Check if we have a token
+                 * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
+                 * @type {AuthorizeParams}
                  */
-                if (hashFragmentParams.access_token && hashFragmentParams.state) {
-                    _this._log('Access Token found in silent refresh return URL, validating it');
-                    /**
-                     * Parse and validate the token
-                     */
-                    _this._parseToken(hashFragmentParams).subscribe(function (tokenIsValid) {
-                        observer.next(tokenIsValid);
-                        observer.complete();
-                    });
+                var authorizeParams = _this._getAuthorizeParams(true);
+                /**
+                 * Get the URL params to check for errors
+                 * @type {URLParams}
+                 */
+                var urlParams = _this._getURLParameters();
+                /**
+                 * Set the iFrame Id
+                 * @type {string}
+                 */
+                iFrame_1.id = 'silentRefreshAccessTokenIframe';
+                /**
+                 * Hide the iFrame
+                 * @type {string}
+                 */
+                iFrame_1.style.display = 'none';
+                /**
+                 * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
+                 * For older FireFox and IE versions first append the iFrame and then set its source attribute.
+                 */
+                if (!urlParams['error']) {
+                    window.document.body.appendChild(iFrame_1);
+                    _this._log('Do silent refresh redirect to SSO with options:', authorizeParams);
+                    iFrame_1.src = _this.config.authorize_endpoint + "?" + OidcService_1._createURLParameters(authorizeParams);
                 }
                 else {
-                    _this._log('No token found in silent refresh return URL');
+                    _this._log("Error in silent refresh authorize redirect: " + urlParams['error']);
                     observer.next(false);
                     observer.complete();
                 }
                 /**
-                 * Cleanup the iFrame
+                 * Handle the result of the Authorize Redirect in the iFrame
                  */
-                setTimeout(function () {
-                    iframe.parentElement.removeChild(iframe);
-                }, 0);
-            };
+                iFrame_1.onload = function () {
+                    _this._log('silent refresh iFrame loaded', iFrame_1);
+                    /**
+                     * Get the URL from the iFrame
+                     * @type {Token}
+                     */
+                    var hashFragmentParams = _this._getHashFragmentParameters(iFrame_1.contentWindow.location.href.split('#')[1]);
+                    /**
+                     * Check if we have a token
+                     */
+                    if (hashFragmentParams.access_token && hashFragmentParams.state) {
+                        _this._log('Access Token found in silent refresh return URL, validating it');
+                        /**
+                         * Parse and validate the token
+                         */
+                        _this._parseToken(hashFragmentParams).subscribe(function (tokenIsValid) {
+                            observer.next(tokenIsValid);
+                            observer.complete();
+                        });
+                    }
+                    else {
+                        _this._log('No token found in silent refresh return URL');
+                        observer.next(false);
+                        observer.complete();
+                    }
+                    /**
+                     * Cleanup the iFrame
+                     */
+                    setTimeout(function () { return iFrame_1.parentElement.removeChild(iFrame_1); }, 0);
+                };
+            }
+            else {
+                observer.next(false);
+                observer.complete();
+            }
         });
     };
     /**
-     * Posts the received token to the Backend for decrypion and validation
+     * Posts the received token to the Backend for decryption and validation
      * @param {Token} hashParams
      * @returns {Observable<any>}
      * @private
@@ -576,6 +581,7 @@ var OidcService = /** @class */ (function () {
     /**
      * Compare the expiry time of a stored token with the current time.
      * If the token has expired, remove it from the array.
+     * If something was removed from the Array, cleanup the session storage by re-saving the cleaned token array.
      * Return the cleaned Array.
      * @param {Token[]} storedTokens
      * @returns {Token[]}
@@ -587,6 +593,9 @@ var OidcService = /** @class */ (function () {
         cleanTokens = storedTokens.filter(function (element) {
             return (element.expires && element.expires > time + 5);
         });
+        if (storedTokens.length > cleanTokens.length) {
+            this._storeTokens(cleanTokens);
+        }
         this._log('Clean tokens returned:', cleanTokens);
         return cleanTokens;
     };

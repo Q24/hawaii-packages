@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.11
+
+* doSessionUpgradeRedirect now uses redirect_uri, instead of defaultRedirectUri
+
 ### 0.4.10
 
 * Proper release&hellip;
