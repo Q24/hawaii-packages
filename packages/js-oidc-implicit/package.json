@@ -48,7 +48,7 @@
     }
   },
   "scripts": {
-    "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
     "build": "gulp build"
   }
 }
