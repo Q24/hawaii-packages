@@ -1,0 +1,313 @@
+0 silly input []
+1 silly flags { _: [ 'bootstrap' ],
+1 silly flags   'reject-cycles': false,
+1 silly flags   rejectCycles: false,
+1 silly flags   args: [] }
+2 verbose rootPath /opt/hawaii/workspace/hawaii-packages
+3 info version 2.11.0
+4 silly existsSync /opt/hawaii/workspace/hawaii-packages/VERSION
+5 silly initialize attempt
+6 silly npmConfig { registry: undefined,
+6 silly npmConfig   npmClient: undefined,
+6 silly npmConfig   npmClientArgs: undefined,
+6 silly npmConfig   mutex: undefined }
+7 silly initialize success
+8 silly execute attempt
+9 info Bootstrapping 2 packages
+10 info lifecycle preinstall
+11 silly runScript preinstall @hawaii-framework/js-oidc-implicit
+12 silly @hawaii-framework/js-oidc-implicit
+13 silly runScript preinstall @hawaii-framework/ngx-oidc-implicit
+14 silly @hawaii-framework/ngx-oidc-implicit
+15 silly hasDependencyInstalled @hawaii-framework/js-oidc-implicit fancy-log
+16 silly dependencyIsSatisfied [ 'fancy-log',
+16 silly dependencyIsSatisfied   '^1.3.2',
+16 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/js-oidc-implicit/node_modules' ]
+17 verbose dependencyIsSatisfied fancy-log true
+18 silly hasDependencyInstalled @hawaii-framework/js-oidc-implicit gulp
+19 silly dependencyIsSatisfied [ 'gulp',
+19 silly dependencyIsSatisfied   '^3.9.1',
+19 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/js-oidc-implicit/node_modules' ]
+20 verbose dependencyIsSatisfied gulp true
+21 silly hasDependencyInstalled @hawaii-framework/js-oidc-implicit gulp-delete-lines
+22 silly dependencyIsSatisfied [ 'gulp-delete-lines',
+22 silly dependencyIsSatisfied   '0.0.7',
+22 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/js-oidc-implicit/node_modules' ]
+23 verbose dependencyIsSatisfied gulp-delete-lines true
+24 silly hasDependencyInstalled @hawaii-framework/js-oidc-implicit gulp-jshint
+25 silly dependencyIsSatisfied [ 'gulp-jshint',
+25 silly dependencyIsSatisfied   '^2.0.2',
+25 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/js-oidc-implicit/node_modules' ]
+26 verbose dependencyIsSatisfied gulp-jshint true
+27 silly hasDependencyInstalled @hawaii-framework/js-oidc-implicit gulp-rename
+28 silly dependencyIsSatisfied [ 'gulp-rename',
+28 silly dependencyIsSatisfied   '^1.2.2',
+28 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/js-oidc-implicit/node_modules' ]
+29 verbose dependencyIsSatisfied gulp-rename true
+30 silly hasDependencyInstalled @hawaii-framework/js-oidc-implicit gulp-uglifyjs
+31 silly dependencyIsSatisfied [ 'gulp-uglifyjs',
+31 silly dependencyIsSatisfied   '^0.6.2',
+31 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/js-oidc-implicit/node_modules' ]
+32 verbose dependencyIsSatisfied gulp-uglifyjs true
+33 silly hasDependencyInstalled @hawaii-framework/js-oidc-implicit jshint
+34 silly dependencyIsSatisfied [ 'jshint',
+34 silly dependencyIsSatisfied   '^2.9.5',
+34 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/js-oidc-implicit/node_modules' ]
+35 verbose dependencyIsSatisfied jshint true
+36 silly hasDependencyInstalled @hawaii-framework/js-oidc-implicit jshint-stylish
+37 silly dependencyIsSatisfied [ 'jshint-stylish',
+37 silly dependencyIsSatisfied   '^2.2.1',
+37 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/js-oidc-implicit/node_modules' ]
+38 verbose dependencyIsSatisfied jshint-stylish true
+39 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit @angular/animations
+40 silly dependencyIsSatisfied [ '@angular/animations',
+40 silly dependencyIsSatisfied   '^6.0.0',
+40 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+41 verbose dependencyIsSatisfied @angular/animations true
+42 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit @angular/common
+43 silly dependencyIsSatisfied [ '@angular/common',
+43 silly dependencyIsSatisfied   '^6.0.0',
+43 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+44 verbose dependencyIsSatisfied @angular/common true
+45 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit @angular/compiler
+46 silly dependencyIsSatisfied [ '@angular/compiler',
+46 silly dependencyIsSatisfied   '^6.0.0',
+46 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+47 verbose dependencyIsSatisfied @angular/compiler true
+48 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit @angular/compiler-cli
+49 silly dependencyIsSatisfied [ '@angular/compiler-cli',
+49 silly dependencyIsSatisfied   '^6.0.0',
+49 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+50 verbose dependencyIsSatisfied @angular/compiler-cli true
+51 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit @angular/core
+52 silly dependencyIsSatisfied [ '@angular/core',
+52 silly dependencyIsSatisfied   '^6.0.0',
+52 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+53 verbose dependencyIsSatisfied @angular/core true
+54 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit @angular/platform-browser
+55 silly dependencyIsSatisfied [ '@angular/platform-browser',
+55 silly dependencyIsSatisfied   '^6.0.0',
+55 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+56 verbose dependencyIsSatisfied @angular/platform-browser true
+57 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit @angular/platform-browser-dynamic
+58 silly dependencyIsSatisfied [ '@angular/platform-browser-dynamic',
+58 silly dependencyIsSatisfied   '^6.0.0',
+58 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+59 verbose dependencyIsSatisfied @angular/platform-browser-dynamic true
+60 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit @angular/platform-server
+61 silly dependencyIsSatisfied [ '@angular/platform-server',
+61 silly dependencyIsSatisfied   '^6.0.0',
+61 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+62 verbose dependencyIsSatisfied @angular/platform-server true
+63 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit codelyzer
+64 silly dependencyIsSatisfied [ 'codelyzer',
+64 silly dependencyIsSatisfied   '~4.3.0',
+64 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+65 verbose dependencyIsSatisfied codelyzer true
+66 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit rollup
+67 silly dependencyIsSatisfied [ 'rollup',
+67 silly dependencyIsSatisfied   '^0.58.2',
+67 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+68 verbose dependencyIsSatisfied rollup true
+69 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit rxjs
+70 silly dependencyIsSatisfied [ 'rxjs',
+70 silly dependencyIsSatisfied   '>=6.0.0',
+70 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+71 verbose dependencyIsSatisfied rxjs true
+72 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit ts-node
+73 silly dependencyIsSatisfied [ 'ts-node',
+73 silly dependencyIsSatisfied   '^6.0.3',
+73 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+74 verbose dependencyIsSatisfied ts-node true
+75 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit tslint
+76 silly dependencyIsSatisfied [ 'tslint',
+76 silly dependencyIsSatisfied   '^5.10.0',
+76 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+77 verbose dependencyIsSatisfied tslint true
+78 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit typescript
+79 silly dependencyIsSatisfied [ 'typescript',
+79 silly dependencyIsSatisfied   '>=2.7.2 and <2.8.0',
+79 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+80 verbose dependencyIsSatisfied typescript false
+81 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit uglify-js
+82 silly dependencyIsSatisfied [ 'uglify-js',
+82 silly dependencyIsSatisfied   '^3.3.25',
+82 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+83 verbose dependencyIsSatisfied uglify-js true
+84 silly hasDependencyInstalled @hawaii-framework/ngx-oidc-implicit zone.js
+85 silly dependencyIsSatisfied [ 'zone.js',
+85 silly dependencyIsSatisfied   '^0.8.26',
+85 silly dependencyIsSatisfied   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/node_modules' ]
+86 verbose dependencyIsSatisfied zone.js true
+87 silly root dependencies []
+88 silly leaf dependencies {
+88 silly leaf dependencies   "@hawaii-framework/js-oidc-implicit": [
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "fancy-log@^1.3.2",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "gulp@^3.9.1",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "gulp-delete-lines@0.0.7",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "gulp-jshint@^2.0.2",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "gulp-rename@^1.2.2",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "gulp-uglifyjs@^0.6.2",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "jshint@^2.9.5",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "jshint-stylish@^2.2.1",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     }
+88 silly leaf dependencies   ],
+88 silly leaf dependencies   "@hawaii-framework/ngx-oidc-implicit": [
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "@angular/animations@^6.0.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "@angular/common@^6.0.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "@angular/compiler@^6.0.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "@angular/compiler-cli@^6.0.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "@angular/core@^6.0.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "@angular/platform-browser@^6.0.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "@angular/platform-browser-dynamic@^6.0.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "@angular/platform-server@^6.0.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "codelyzer@~4.3.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "rollup@^0.58.2",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "rxjs@>=6.0.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "ts-node@^6.0.3",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "tslint@^5.10.0",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "typescript@>=2.7.2 and <2.8.0",
+88 silly leaf dependencies       "isSatisfied": false
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "uglify-js@^3.3.25",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     },
+88 silly leaf dependencies     {
+88 silly leaf dependencies       "dependency": "zone.js@^0.8.26",
+88 silly leaf dependencies       "isSatisfied": true
+88 silly leaf dependencies     }
+88 silly leaf dependencies   ]
+88 silly leaf dependencies }
+89 info Installing external dependencies
+90 verbose actions 1 actions, concurrency 4
+91 silly installInDir ngx-oidc-implicit [ '@angular/animations@^6.0.0',
+91 silly installInDir   '@angular/common@^6.0.0',
+91 silly installInDir   '@angular/compiler@^6.0.0',
+91 silly installInDir   '@angular/compiler-cli@^6.0.0',
+91 silly installInDir   '@angular/core@^6.0.0',
+91 silly installInDir   '@angular/platform-browser@^6.0.0',
+91 silly installInDir   '@angular/platform-browser-dynamic@^6.0.0',
+91 silly installInDir   '@angular/platform-server@^6.0.0',
+91 silly installInDir   'codelyzer@~4.3.0',
+91 silly installInDir   'rollup@^0.58.2',
+91 silly installInDir   'rxjs@>=6.0.0',
+91 silly installInDir   'ts-node@^6.0.3',
+91 silly installInDir   'tslint@^5.10.0',
+91 silly installInDir   'typescript@>=2.7.2 and <2.8.0',
+91 silly installInDir   'uglify-js@^3.3.25',
+91 silly installInDir   'zone.js@^0.8.26' ]
+92 silly installInDir backup /opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/package.json
+93 silly rename [ '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/package.json',
+93 silly rename   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/package.json.lerna_backup' ]
+94 silly installInDir writing tempJson { dependencies:
+94 silly installInDir    { '@angular/animations': '^6.0.0',
+94 silly installInDir      '@angular/common': '^6.0.0',
+94 silly installInDir      '@angular/compiler': '^6.0.0',
+94 silly installInDir      '@angular/compiler-cli': '^6.0.0',
+94 silly installInDir      '@angular/core': '^6.0.0',
+94 silly installInDir      '@angular/platform-browser': '^6.0.0',
+94 silly installInDir      '@angular/platform-browser-dynamic': '^6.0.0',
+94 silly installInDir      '@angular/platform-server': '^6.0.0',
+94 silly installInDir      codelyzer: '~4.3.0',
+94 silly installInDir      rollup: '^0.58.2',
+94 silly installInDir      rxjs: '>=6.0.0',
+94 silly installInDir      'ts-node': '^6.0.3',
+94 silly installInDir      tslint: '^5.10.0',
+94 silly installInDir      typescript: '>=2.7.2 and <2.8.0',
+94 silly installInDir      'uglify-js': '^3.3.25',
+94 silly installInDir      'zone.js': '^0.8.26' } }
+95 silly getExecOpts { cwd: '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit' }
+96 silly installInDir [ 'npm', [ 'install' ] ]
+97 silly installInDir cleanup /opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/package.json
+98 silly renameSync [ '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/package.json.lerna_backup',
+98 silly renameSync   '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit/package.json' ]
+99 verbose installed leaf @hawaii-framework/ngx-oidc-implicit
+100 info Symlinking packages and binaries
+101 silly packageActions finished @hawaii-framework/js-oidc-implicit
+102 silly packageActions finished @hawaii-framework/ngx-oidc-implicit
+103 info lifecycle postinstall
+104 silly runScript postinstall @hawaii-framework/js-oidc-implicit
+105 silly @hawaii-framework/js-oidc-implicit
+106 silly runScript postinstall @hawaii-framework/ngx-oidc-implicit
+107 silly @hawaii-framework/ngx-oidc-implicit
+108 info lifecycle prepublish
+109 silly runScript prepublish @hawaii-framework/js-oidc-implicit
+110 silly @hawaii-framework/js-oidc-implicit
+111 silly runScript prepublish @hawaii-framework/ngx-oidc-implicit
+112 silly @hawaii-framework/ngx-oidc-implicit
+113 info lifecycle prepare
+114 silly runScript prepare @hawaii-framework/js-oidc-implicit
+115 silly runScriptInDir prepare [] js-oidc-implicit
+116 silly getExecOpts { cwd: '/opt/hawaii/workspace/hawaii-packages/packages/js-oidc-implicit' }
+117 silly runScript prepare @hawaii-framework/ngx-oidc-implicit
+118 silly runScriptInDir prepare [] ngx-oidc-implicit
+119 silly getExecOpts { cwd: '/opt/hawaii/workspace/hawaii-packages/packages/ngx-oidc-implicit' }
+120 silly @hawaii-framework/js-oidc-implicit
+121 error execute Error occured with '@hawaii-framework/js-oidc-implicit' while running 'npm run prepare'
+122 error npm run prepare [@hawaii-framework/js-oidc-implicit] Output from stdout:
+123 error npm run prepare [@hawaii-framework/js-oidc-implicit] Output from stderr:
+124 error execute Error occured with '@hawaii-framework/js-oidc-implicit' while running 'npm run prepare'
