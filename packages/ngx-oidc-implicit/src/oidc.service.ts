@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {Observer} from 'rxjs/internal/types';
+import {Observable, Observer, timer} from 'rxjs';
+import {finalize, skipWhile, take, timeout} from 'rxjs/internal/operators';
 
 /**
  * Config Object for OIDC Service
@@ -28,6 +28,12 @@ export interface OidcConfig {
    * The URL you want to be redirected to after redirect from Authorisation, while doing a silent access token refresh
    */
   silent_refresh_uri?: string;
+
+  /**
+   * The URL you want to use for a silent Logout, if your stack supports it.
+   */
+  silent_logout_uri?: string;
+
   /**
    * Array of URL's that are not allowed as `redirect_uri`
    */
@@ -422,11 +428,11 @@ export class OidcService {
 
     // If there's no valid token return null
     if (tokensCleaned.length < 1) {
+      this._log('No valid token found in storage');
       return null;
     }
     // Return the first valid token
     else {
-      this._log('Valid token returned from session storage', tokensCleaned[0]);
       return tokensCleaned[0];
     }
   }
@@ -713,6 +719,116 @@ export class OidcService {
   }
 
   /**
+   * Silently logout via iFrame. The URL should do the POST to SSO.
+   * This is merely a service tool to create the iFrame for you, and handle it's result.
+   * This _DOES NOT_ logout in itself.
+   *
+   * Returns 'true' if logout was successful and ended up on the configured `post_logout_redirect_uri`
+   * @returns {Observable<boolean>}
+   */
+  public silentLogoutByUrl(url = this.config.silent_logout_uri): Observable<boolean> {
+
+    return new Observable<boolean>((observer: Observer<boolean>) => {
+
+      this._log('Silent logout by URL started');
+
+      if (document.getElementById('silentLogoutIframe') === null) {
+        /**
+         * IFrame element
+         * @type {HTMLIFrameElement}
+         */
+        const iFrame = document.createElement('iframe');
+
+        /**
+         * Set the iFrame Id
+         * @type {string}
+         */
+        iFrame.id = 'silentLogoutIframe';
+
+        /**
+         * Hide the iFrame
+         * @type {string}
+         */
+        iFrame.style.display = 'none';
+
+        /**
+         * Append the iFrame, get a CsrfToken and set the source if the iFrame to the logout URL,
+         * and add the id token hint as a query param, because we don't want to create a full new session tab,
+         * to reduce unneeded load on SSO
+         * For older FireFox and IE versions first append the iFrame and then set its source attribute.
+         */
+        window.document.body.appendChild(iFrame);
+
+        // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
+        this.getCsrfToken()
+          .subscribe(
+            (csrfToken: CsrfToken) => {
+              this._log(`Do silent logout with URL ${url}?id_token_hint=${this.getIdTokenHint()}&csrf_token=${csrfToken.csrf_token}`);
+              iFrame.src = `${url}?id_token_hint=${this.getIdTokenHint()}&csrf_token=${csrfToken.csrf_token}`;
+            },
+            () => {
+              this._log('no CsrfToken');
+              observer.next(false);
+              observer.complete();
+            });
+
+
+        /**
+         * Handle the result of the Authorize Redirect in the iFrame
+         */
+        iFrame.onload = () => {
+
+          this._log('silent logout iFrame onload triggered', iFrame);
+
+
+          timer(0, 50)
+            .pipe(
+              skipWhile(() => {
+                /**
+                 * Get the URL from the iFrame
+                 * @type {Token}
+                 */
+                const currentIframeURL = iFrame.contentWindow.location.href;
+
+                /**
+                 * Check if we the page ended up on the post_logout_redirect_uri from the config. This mean the logout was successful.
+                 */
+                return (currentIframeURL.indexOf(this.config.post_logout_redirect_uri) === 0);
+              }),
+              /**
+               * Max 5000ms, after that, it will probably fail
+               */
+              timeout(5000),
+              /**
+               * Complete the timer after the predicate passes and returns a 'next' value
+               */
+              take(1),
+              /**
+               * Cleanup the iFrame
+               */
+              finalize(() => setTimeout(() => iFrame.parentElement.removeChild(iFrame), 0))
+            )
+            .subscribe(
+              () => {
+                this._log('Silent logout successful', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
+                observer.next(true);
+                observer.complete();
+              },
+              () => {
+                this._log('Silent logout failed after 5000', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
+                observer.next(false);
+                observer.complete();
+              });
+        };
+      } else {
+        this._log('Already a silent logout in progress. Try again later.');
+        observer.next(false);
+        observer.complete();
+      }
+    });
+  }
+
+  /**
    * Posts the received token to the Backend for decryption and validation
    * @param {Token} hashParams
    * @returns {Observable<any>}
@@ -918,7 +1034,6 @@ export class OidcService {
    * @private
    */
   private _getStoredTokens(): Array<Token> {
-    this._log(`Got Tokens from session storage with name '${this.config.provider_id}-token'`);
     return JSON.parse(OidcService._read(`${this.config.provider_id}-token`)) || [];
   }
 
@@ -941,10 +1056,9 @@ export class OidcService {
     });
 
     if (storedTokens.length > cleanTokens.length) {
+      this._log('Updated token storage after clean.');
       this._storeTokens(cleanTokens);
     }
-
-    this._log('Clean tokens returned:', cleanTokens);
 
     return cleanTokens;
   }

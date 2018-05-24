@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.1.0
+
+* Implemeted silent logout feature. This is merely a tool, it does not perform the logout itself, but instead takes care of the iframe creation, redirects and url checking. 
+* Updated config to include the `silent_logout_uri`
+* Optimized RXJS 6+ imports
+
 ### 1.0.0
 
 * BREAKING CHANGE: Angular > 6.0.0 compliant
