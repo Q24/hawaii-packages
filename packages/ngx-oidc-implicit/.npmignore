@@ -2,3 +2,7 @@
 .gitignore
 index.ts
 rollup.config.js
+src
+.editorconfig
+package-lock.json
+yarn.lock
