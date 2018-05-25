@@ -3,6 +3,7 @@
 index.ts
 rollup.config.js
 src
+!dist/src
 .editorconfig
 package-lock.json
 yarn.lock

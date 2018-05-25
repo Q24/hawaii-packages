@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.1
+
+* NPM ignore fix
+
 ### 1.1.0
 
 * Implemeted silent logout feature. This is merely a tool, it does not perform the logout itself, but instead takes care of the iframe creation, redirects and url checking. 
