@@ -81,6 +81,10 @@ export interface OidcConfig {
    */
   login_endpoint: string;
   /**
+   * `POST` to this endpoint in the login form
+   */
+  twofactor_endpoint?: string;
+  /**
    * `POST` to this endpoint in the logout form
    */
   logout_endpoint: string;

@@ -8,8 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/common/http");
-var Observable_1 = require("rxjs/Observable");
-require("rxjs/add/operator/map");
+var rxjs_1 = require("rxjs");
+var operators_1 = require("rxjs/internal/operators");
 /**
  * Open ID Connect Implicit Flow Service for Angular
  */
@@ -157,10 +157,10 @@ var OidcService = /** @class */ (function () {
         var tokens = this._getStoredTokens(), tokensCleaned = this._cleanExpiredTokens(tokens);
         // If there's no valid token return null
         if (tokensCleaned.length < 1) {
+            this._log('No valid token found in storage');
             return null;
         }
         else {
-            this._log('Valid token returned from session storage', tokensCleaned[0]);
             return tokensCleaned[0];
         }
     };
@@ -268,7 +268,7 @@ var OidcService = /** @class */ (function () {
         var _this = this;
         var urlParams = this._getURLParameters(window.location.href), hashFragmentParams = this._getHashFragmentParameters(OidcService_1._read('hash_fragment'));
         this._log('Check session with params:', urlParams);
-        return new Observable_1.Observable(function (observer) {
+        return new rxjs_1.Observable(function (observer) {
             _this._log('Flush state ?', urlParams.flush_state);
             // 1 Make sure the state is 'clean' when doing a session upgrade
             if (urlParams.flush_state) {
@@ -283,9 +283,9 @@ var OidcService = /** @class */ (function () {
             }
             else {
                 // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
-                _this.getCsrfToken().subscribe(function (token) {
+                _this.getCsrfToken().subscribe(function (csrfToken) {
                     // Store the CSRF Token for future calls that need it. I.e. Logout
-                    OidcService_1._store('_csrf', token.csrf_token);
+                    OidcService_1._store('_csrf', csrfToken.csrf_token);
                     // 3 --- There's an access_token in the URL
                     if (hashFragmentParams.access_token && hashFragmentParams.state) {
                         _this._parseToken(hashFragmentParams).subscribe(function (tokenIsValid) {
@@ -312,7 +312,7 @@ var OidcService = /** @class */ (function () {
      */
     OidcService.prototype.silentRefreshAccessToken = function () {
         var _this = this;
-        return new Observable_1.Observable(function (observer) {
+        return new rxjs_1.Observable(function (observer) {
             _this._log('Silent refresh started');
             if (document.getElementById('silentRefreshAccessTokenIframe') === null) {
                 /**
@@ -395,6 +395,99 @@ var OidcService = /** @class */ (function () {
         });
     };
     /**
+     * Silently logout via iFrame. The URL should do the POST to SSO.
+     * This is merely a service tool to create the iFrame for you, and handle it's result.
+     * This _DOES NOT_ logout in itself.
+     *
+     * Returns 'true' if logout was successful and ended up on the configured `post_logout_redirect_uri`
+     * @returns {Observable<boolean>}
+     */
+    OidcService.prototype.silentLogoutByUrl = function (url) {
+        var _this = this;
+        if (url === void 0) { url = this.config.silent_logout_uri; }
+        return new rxjs_1.Observable(function (observer) {
+            _this._log('Silent logout by URL started');
+            if (document.getElementById('silentLogoutIframe') === null) {
+                /**
+                 * IFrame element
+                 * @type {HTMLIFrameElement}
+                 */
+                var iFrame_2 = document.createElement('iframe');
+                /**
+                 * Set the iFrame Id
+                 * @type {string}
+                 */
+                iFrame_2.id = 'silentLogoutIframe';
+                /**
+                 * Hide the iFrame
+                 * @type {string}
+                 */
+                iFrame_2.style.display = 'none';
+                /**
+                 * Append the iFrame, get a CsrfToken and set the source if the iFrame to the logout URL,
+                 * and add the id token hint as a query param, because we don't want to create a full new session tab,
+                 * to reduce unneeded load on SSO
+                 * For older FireFox and IE versions first append the iFrame and then set its source attribute.
+                 */
+                window.document.body.appendChild(iFrame_2);
+                // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
+                _this.getCsrfToken()
+                    .subscribe(function (csrfToken) {
+                    _this._log("Do silent logout with URL " + url + "?id_token_hint=" + _this.getIdTokenHint() + "&csrf_token=" + csrfToken.csrf_token);
+                    iFrame_2.src = url + "?id_token_hint=" + _this.getIdTokenHint() + "&csrf_token=" + csrfToken.csrf_token;
+                }, function () {
+                    _this._log('no CsrfToken');
+                    observer.next(false);
+                    observer.complete();
+                });
+                /**
+                 * Handle the result of the Authorize Redirect in the iFrame
+                 */
+                iFrame_2.onload = function () {
+                    _this._log('silent logout iFrame onload triggered', iFrame_2);
+                    rxjs_1.timer(0, 50)
+                        .pipe(operators_1.skipWhile(function () {
+                        /**
+                         * Get the URL from the iFrame
+                         * @type {Token}
+                         */
+                        var currentIframeURL = iFrame_2.contentWindow.location.href;
+                        /**
+                         * Check if we the page ended up on the post_logout_redirect_uri from the config. This mean the logout was successful.
+                         */
+                        return (currentIframeURL.indexOf(_this.config.post_logout_redirect_uri) === 0);
+                    }), 
+                    /**
+                     * Max 5000ms, after that, it will probably fail
+                     */
+                    operators_1.timeout(5000), 
+                    /**
+                     * Complete the timer after the predicate passes and returns a 'next' value
+                     */
+                    operators_1.take(1), 
+                    /**
+                     * Cleanup the iFrame
+                     */
+                    operators_1.finalize(function () { return setTimeout(function () { return iFrame_2.parentElement.removeChild(iFrame_2); }, 0); }))
+                        .subscribe(function () {
+                        _this._log('Silent logout successful', iFrame_2.contentWindow.location.href, _this.config.post_logout_redirect_uri);
+                        observer.next(true);
+                        observer.complete();
+                    }, function () {
+                        _this._log('Silent logout failed after 5000', iFrame_2.contentWindow.location.href, _this.config.post_logout_redirect_uri);
+                        observer.next(false);
+                        observer.complete();
+                    });
+                };
+            }
+            else {
+                _this._log('Already a silent logout in progress. Try again later.');
+                observer.next(false);
+                observer.complete();
+            }
+        });
+    };
+    /**
      * Posts the received token to the Backend for decryption and validation
      * @param {Token} hashParams
      * @returns {Observable<any>}
@@ -419,7 +512,7 @@ var OidcService = /** @class */ (function () {
     OidcService.prototype._parseToken = function (hashFragmentParams) {
         var _this = this;
         this._log('Access Token found in session storage temp, validating it');
-        return new Observable_1.Observable(function (observer) {
+        return new rxjs_1.Observable(function (observer) {
             var stateObj = _this._getState();
             // We received a token from SSO, so we need to validate the state
             if (hashFragmentParams.state === stateObj.state) {
@@ -575,7 +668,6 @@ var OidcService = /** @class */ (function () {
      * @private
      */
     OidcService.prototype._getStoredTokens = function () {
-        this._log("Got Tokens from session storage with name '" + this.config.provider_id + "-token'");
         return JSON.parse(OidcService_1._read(this.config.provider_id + "-token")) || [];
     };
     /**
@@ -594,9 +686,9 @@ var OidcService = /** @class */ (function () {
             return (element.expires && element.expires > time + 5);
         });
         if (storedTokens.length > cleanTokens.length) {
+            this._log('Updated token storage after clean.');
             this._storeTokens(cleanTokens);
         }
-        this._log('Clean tokens returned:', cleanTokens);
         return cleanTokens;
     };
     /**

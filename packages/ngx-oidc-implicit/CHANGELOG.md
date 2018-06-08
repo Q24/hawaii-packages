@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.2
+
+* Added optional 2-factor endpoint to the OIDC Config interface
+
 ### 1.1.1
 
 * NPM ignore fix
