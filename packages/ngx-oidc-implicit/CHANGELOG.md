@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.3
+
+* Added optional 2-factor provide msisdn endpoint to the OIDC Config interface
+
 ### 1.1.2
 
 * Added optional 2-factor endpoint to the OIDC Config interface

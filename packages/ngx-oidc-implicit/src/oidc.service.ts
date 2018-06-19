@@ -81,9 +81,13 @@ export interface OidcConfig {
    */
   login_endpoint: string;
   /**
-   * `POST` to this endpoint in the login form
+   * `POST` to this endpoint in the two-factor form
    */
   twofactor_endpoint?: string;
+  /**
+   * `POST` to this endpoint in the two-factor provide MSISDN form
+   */
+  twofactor_msisdn_endpoint?: string;
   /**
    * `POST` to this endpoint in the logout form
    */
