@@ -273,6 +273,31 @@
     },
 
     /**
+     * STORAGE: Get id token hint token from sessionStorage
+     */
+    _getIdTokenHint: function () {
+      var self = this;
+
+        return  JSON.parse(sessionStorage.getItem(self.config.providerID + '-id-token-hint')) || [];
+    },
+
+    /**
+     * STORAGE: save id token hint
+     */
+    _storeIdTokenHint: function (idTokenHint) {
+      sessionStorage.setItem(this.config.providerID + '-id-token-hint', idTokenHint);
+    },
+
+
+    deleteIdTokenHint: function () {
+      var self = this;
+
+      self._log('Removing hint tokens for with prefix: ', [self.config.providerID + '-id-token-hint']);
+      sessionStorage.removeItem(self.config.providerID + '-id-token-hint');
+    },
+
+
+    /**
      * STORAGE: Get a token for a provider
      */
     getStoredToken: function () {
@@ -551,6 +576,8 @@
 
             self._storeToken(hashFragmentParams);
 
+            self._storeIdTokenHint(hashFragmentParams.id_token);
+
             if (response.data[0] !== undefined && response.data[0].user_session_id) {
               self._saveSessionId(response.data[0].user_session_id);
             }
@@ -686,6 +713,7 @@
         self.deleteState();
         self.deleteSessionId();
         self.deleteStoredTokens();
+        self.deleteIdTokenHint();
 
         self._log('Flush state present, so cleaning the storage');
 

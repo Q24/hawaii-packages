@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.2.0
+* _getIdTokenHint, _storeIdTokenHint and deleteIdTokenHint added
+
 ### 0.4.11
 
 * doSessionUpgradeRedirect now uses redirect_uri, instead of defaultRedirectUri
