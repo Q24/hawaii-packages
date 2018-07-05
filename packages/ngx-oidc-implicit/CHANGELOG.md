@@ -1,6 +1,6 @@
 # Changelog
 
-### 1.1.4
+### 1.2.2
 
 * checkSession returns a boolean value also when getting an error response
 
