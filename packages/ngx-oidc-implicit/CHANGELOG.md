@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.1.4
+
+* checkSession returns a boolean value also when getting an error response
+
 ### 1.1.3
 
 * Added optional 2-factor provide msisdn endpoint to the OIDC Config interface

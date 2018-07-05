@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
 import {Observable, Observer, timer} from 'rxjs';
-import {finalize, skipWhile, take, timeout} from 'rxjs/internal/operators';
+import {finalize, skipWhile, take, timeout} from 'rxjs/operators';
 
 /**
  * Config Object for OIDC Service
@@ -588,31 +588,35 @@ export class OidcService {
         // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
         this.getCsrfToken().subscribe((csrfToken: CsrfToken) => {
 
-          // Store the CSRF Token for future calls that need it. I.e. Logout
-          OidcService._store('_csrf', csrfToken.csrf_token);
+            // Store the CSRF Token for future calls that need it. I.e. Logout
+            OidcService._store('_csrf', csrfToken.csrf_token);
 
-          // 3 --- There's an access_token in the URL
-          if (hashFragmentParams.access_token && hashFragmentParams.state) {
-            this._parseToken(hashFragmentParams).subscribe((tokenIsValid: boolean) => {
-              observer.next(tokenIsValid);
-            });
-          }
+            // 3 --- There's an access_token in the URL
+            if (hashFragmentParams.access_token && hashFragmentParams.state) {
+              this._parseToken(hashFragmentParams).subscribe((tokenIsValid: boolean) => {
+                observer.next(tokenIsValid);
+              });
+            }
 
-          // 4 --- There's a session upgrade token in the URL
-          else if (hashFragmentParams.session_upgrade_token) {
+            // 4 --- There's a session upgrade token in the URL
+            else if (hashFragmentParams.session_upgrade_token) {
 
-            this._log('Session Upgrade Token found in URL');
-            this.doSessionUpgradeRedirect(hashFragmentParams);
-          }
+              this._log('Session Upgrade Token found in URL');
+              this.doSessionUpgradeRedirect(hashFragmentParams);
+            }
 
-          // 5 --- No token in URL or Storage, so we need to get one from SSO
-          else {
-            this._log('No valid token in Storage or URL, Authorize Redirect!');
-            this.authorizeRedirect();
+            // 5 --- No token in URL or Storage, so we need to get one from SSO
+            else {
+              this._log('No valid token in Storage or URL, Authorize Redirect!');
+              this.authorizeRedirect();
+              observer.next(false);
+              observer.complete();
+            }
+          },
+          (error: HttpErrorResponse) => {
             observer.next(false);
             observer.complete();
-          }
-        });
+          });
       }
     });
   }
