@@ -282,6 +282,23 @@ export class OidcService {
   private _log: any;
 
   /**
+   * Constructor
+   * @param {HttpClient} _http
+   */
+  constructor(private _http: HttpClient) {
+
+    /**
+     * Logging wrapper function
+     */
+    if (this._debug && (typeof console !== 'undefined')) {
+      this._log = console.log.bind(console);
+    } else {
+      this._log = function () {
+      };
+    }
+  }
+
+  /**
    * Storage function to store key,value pair to the sessionStorage
    * @param {string} key
    * @param {string} value
@@ -380,30 +397,11 @@ export class OidcService {
     return params.toString();
   }
 
-
   /**
    * Strip the hash fragment if it contains an access token (could happen when people use the BACK button in the browser)
    */
   private static _cleanHashFragment(url: string): string {
     return url.split('#')[0];
-  }
-
-
-  /**
-   * Constructor
-   * @param {HttpClient} _http
-   */
-  constructor(private _http: HttpClient) {
-
-    /**
-     * Logging wrapper function
-     */
-    if (this._debug && (typeof console !== 'undefined')) {
-      this._log = console.log.bind(console);
-    } else {
-      this._log = function () {
-      };
-    }
   }
 
   /**
@@ -590,7 +588,8 @@ export class OidcService {
       else {
 
         // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
-        this.getCsrfToken().subscribe((csrfToken: CsrfToken) => {
+        this.getCsrfToken().subscribe(
+          (csrfToken: CsrfToken) => {
 
             // Store the CSRF Token for future calls that need it. I.e. Logout
             OidcService._store('_csrf', csrfToken.csrf_token);
@@ -617,10 +616,7 @@ export class OidcService {
               observer.complete();
             }
           },
-          (error: HttpErrorResponse) => {
-            observer.next(false);
-            observer.complete();
-          });
+          (error: HttpErrorResponse) => observer.error(error));
       }
     });
   }

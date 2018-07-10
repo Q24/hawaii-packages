@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.2.4
+
+* CheckSession now returns a HttpErrorResponse error  
+
 ### 1.2.3
 
 * Added `twofactor_msisdn_reset` to config interface
