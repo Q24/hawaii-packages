@@ -89,6 +89,10 @@ export interface OidcConfig {
    */
   twofactor_msisdn_endpoint?: string;
   /**
+   * `POST` to this endpoint in to remove an unconfirmed MSISDN
+   */
+  twofactor_msisdn_reset?: string;
+  /**
    * `POST` to this endpoint in the logout form
    */
   logout_endpoint: string;

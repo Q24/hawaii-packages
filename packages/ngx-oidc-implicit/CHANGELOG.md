@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.2.3
+
+* Added `twofactor_msisdn_reset` to config interface
+
 ### 1.2.2
 
 * checkSession returns a boolean value also when getting an error response

@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/common/http");
 var rxjs_1 = require("rxjs");
-var operators_1 = require("rxjs/internal/operators");
+var operators_1 = require("rxjs/operators");
 /**
  * Open ID Connect Implicit Flow Service for Angular
  */
@@ -302,6 +302,9 @@ var OidcService = /** @class */ (function () {
                         observer.next(false);
                         observer.complete();
                     }
+                }, function (error) {
+                    observer.next(false);
+                    observer.complete();
                 });
             }
         });
