@@ -14,6 +14,7 @@ export default {
   external: [
     '@angular/core',
     '@angular/common/http',
-    'rxjs'
+    'rxjs',
+    'rxjs/operators'
   ]
 }
