@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.2.5
+
+* Updated .gitnignore to exclude transpiled js files in src.
+* Added Authorize Errors constant to handle error handling in Authorize redirect.
+
 ### 1.2.4
 
 * CheckSession now returns a HttpErrorResponse error  
