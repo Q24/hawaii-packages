@@ -1,4 +1,8 @@
 /node_modules/
 /dist/
 yarn-error.log
-/src/*.js
+/src/clean-hash-fragment.js
+/src/oidc.service.js
+/src/oidc.service.ngsummary.json
+/index.js
+/index.ngfactory.js
