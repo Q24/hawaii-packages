@@ -750,8 +750,8 @@ export class OidcService {
 
   /**
    * Saves the ID token hint to sessionStorage
-   * @param {string} sessionId
    * @private
+   * @param idTokenHint
    */
   private _saveIdTokenHint(idTokenHint: string): void {
     OidcService._store(`${this.config.provider_id}-id-token-hint`, idTokenHint);

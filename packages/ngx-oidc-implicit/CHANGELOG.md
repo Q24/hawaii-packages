@@ -1,5 +1,12 @@
 # Changelog
 
+### 1.3.0
+
+* Refactored models into seperate files
+* Refactored constants into seperate files
+* Updated rollup config
+* Git Ignore update
+
 ### 1.2.5
 
 * Updated .gitnignore to exclude transpiled js files in src.
