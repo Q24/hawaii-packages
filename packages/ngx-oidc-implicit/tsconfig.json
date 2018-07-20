@@ -31,10 +31,9 @@
       "dom"
     ]
   },
+  "include": ["./src/**/*"],
   "files": [
-    "index.ts",
-    "./src/oidc.service.ts",
-    "./src/clean-hash-fragment.ts"
+    "index.ts"
   ],
   "angularCompilerOptions": {
     "strictMetadataEmit": true
