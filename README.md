@@ -7,8 +7,6 @@
 ### prerequisites:
 * Make sure you have an account at [npmjs.com](https://www.npmjs.com)
 * Have yourself added to the [@hawaii-framework](https://www.npmjs.com/org/hawaii-framework/) team
-* Install Lerna globally: `npm install -g lerna`
-* More info on Lerna [here](https://github.com/lerna/lerna#commands) 
 
 ### Create your package
 * Go to `./packages/` and add a directory for you package, keeping naming conventions in mind. 
@@ -44,25 +42,30 @@ So, when you're ready to commit your work, run:
 `npx git-cz`  
 
 ### Publishing
-* All package versions are kept in sync by Lerna automatically.
+We use [Lerna](https://github.com/lerna/lerna#commands) 
+
+* All package versions are kept in sync by [Lerna](https://github.com/lerna/lerna#commands) automatically.
 * Describe changes to a package in the _CHANGELOG.md_ of **_that_** package
 * Update changelogs, and commit your work.
 * `cd /opt/hawaii/workspace/hawaii-packages`
 * `lerrna publish`
 * Choose the update type (patch, minor, major, etc)<br>_`patch` is for bugfixes, `minor` is for feature. Use a `major` update **only** in case of breaking changes._
 
-`lerna publish` will determine which packages need to be published, increment the version keys in `lerna.json` and each of the `package.json` files, update depedencies with a `^`, create a new git commit, tag the new version and publish all non-private packages to npm.  
+`lerna publish` will:
+ 1. determine which packages need to be published
+ 1. increment the version keys in `lerna.json` and each of the `package.json` files
+ 1. update depedencies with a `^`
+ 1. create a new git commit
+ 1. tag the new version on the remote
+ 1. publish all non-private packages to npm.  
 
 ### Other Commands
-
-* `cd /opt/hawaii/workspace/hawaii-packages`
-* `lerna bootstrap` - Build all packages
 * `lerna updated` - See which packages have been updated since the latest release
 * `lerna add ${package}` - Add dependency to all packages
 * `lerna clean` - Remove all _node_modules_ from the packages
 * `lerna ls` - List all packages
-* `lerna run -- [..args]` - Runs `npm run my-script` in all packages that have it
-* `lerna exec -- [..args]` -- Runs  a command in each of the packages, i.e. `npm i`
+* `lerna run -- [..args]` - Runs `npm run my-script` in all packages that have it, i.e. `build`
+* `lerna exec -- [..args]` -- Runs  a command in each of the packages, i.e. `'npm i'`
 
 ### FAQ
 1. **`lerna publish` will build, but not publish the packages?** 
