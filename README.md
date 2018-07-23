@@ -38,6 +38,7 @@ I.e: `"name": "@hawaii-framework/ngx-package-name",`
 This package uses [commitizen](https://github.com/commitizen/cz-cli). 
 Don't install it globally, just just `npx`.
 So, when you're ready to commit your work, run:
+`git add .`
 `npx git-cz`  
 
 ### Publishing
