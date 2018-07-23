@@ -4,7 +4,6 @@
   "description": "Hawaii packages",
   "main": "index.js",
   "devDependencies": {
-    "glob": "^7.1.2",
     "lerna": "^2.11.0"
   },
   "scripts": {
