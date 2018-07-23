@@ -33,6 +33,13 @@ I.e: `"name": "@hawaii-framework/ngx-package-name",`
 * **Make sure version nr of `package.json` is the same as version nr. `lerna.json`.**
 * `npm publish ----access public`
 
+### Commiting
+
+This package uses [commitizen](https://github.com/commitizen/cz-cli). 
+Don't install it globally, just just `npx`.
+So, when you're ready to commit your work, run:
+`npx git-cz`  
+
 ### Publishing
 * All package versions are kept in sync by Lerna automatically.
 * Describe changes to a package in the _CHANGELOG.md_ of **_that_** package
