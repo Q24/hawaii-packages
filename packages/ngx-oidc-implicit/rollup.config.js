@@ -1,3 +1,5 @@
+import resolve from 'rollup-plugin-node-resolve';
+
 export default {
   input: 'dist/index.js',
   output: {
@@ -16,5 +18,11 @@ export default {
     '@angular/common/http',
     'rxjs',
     'rxjs/operators'
+  ],
+  plugins: [
+    resolve({
+      // use "module" field for ES6 module if possible
+      module: true // Default: true
+    })
   ]
 }
