@@ -1,7 +1,5 @@
 import {Token, URLParams} from '../models';
-import {OidcService} from '../oidc.service';
 import {HttpParams} from '@angular/common/http';
-import {StorageUtils} from './index';
 
 export class UrlUtils {
   /**
@@ -37,8 +35,6 @@ export class UrlUtils {
       const parameter = urlVar.split('=');
       result[parameter[0]] = parameter[1];
     }
-
-    // TODO: Debug - this._log('URL params', result);
 
     return result;
   }
@@ -84,8 +80,6 @@ export class UrlUtils {
         const parameter = urlVar.split('=');
         result[parameter[0]] = parameter[1];
       }
-
-      // TODO: Debug - this._log('Hash Fragment params from sessionStorage', result);
     }
 
     return result;
