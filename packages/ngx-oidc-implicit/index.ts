@@ -1,5 +1,7 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
 import {OidcService} from './src/oidc.service';
+import {LogService} from './src/services';
+
 
 export * from './src/models';
 export * from './src/constants/authorize.constants';
@@ -17,7 +19,8 @@ export class OidcModule {
     return {
       ngModule: OidcModule,
       providers: [
-        OidcService
+        OidcService,
+        LogService
       ]
     };
   }
@@ -30,7 +33,8 @@ export class OidcModule {
     return {
       ngModule: OidcModule,
       providers: [
-        OidcService
+        OidcService,
+        LogService
       ]
     };
   }

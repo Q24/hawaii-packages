@@ -1,25 +1,27 @@
 import {Log} from '../models';
+import {Injectable} from '@angular/core';
 
-export class LogUtils implements Log {
+@Injectable()
+export class LogService implements Log {
 
   public debug(msg: string, ...supportingDetails: any[]): void {
-    this._emitLog('debug', msg, supportingDetails);
+    LogService._emitLog('debug', msg, supportingDetails);
   }
 
   public info(msg: string, ...supportingDetails: any[]): void {
-    this._emitLog('info', msg, supportingDetails);
+    LogService._emitLog('info', msg, supportingDetails);
   }
 
   public warn(msg: string, ...supportingDetails: any[]): void {
-    this._emitLog('warn', msg, supportingDetails);
+    LogService._emitLog('warn', msg, supportingDetails);
   }
 
   public error(msg: string, ...supportingDetails: any[]): void {
-    this._emitLog('error', msg, supportingDetails);
+    LogService._emitLog('error', msg, supportingDetails);
   }
 
 
-  private _emitLog(logType: 'debug' | 'info' | 'warn' | 'error', msg: string, supportingDetails: any[]) {
+  private static _emitLog(logType: 'debug' | 'info' | 'warn' | 'error', msg: string, supportingDetails: any[]) {
     if (supportingDetails.length > 0) {
       console[logType](msg, supportingDetails);
     } else {

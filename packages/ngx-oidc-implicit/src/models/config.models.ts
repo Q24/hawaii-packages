@@ -99,6 +99,10 @@ export interface OidcConfig {
    * Config object for QR login with websocket
    */
   qr?: QrCodeLoginConfig;
+  /**
+   * Debug On/Off (Logs to console)
+   */
+  debug?: boolean;
 }
 
 /**

@@ -4,6 +4,7 @@ import {Observable, Observer, timer} from 'rxjs';
 import {finalize, skipWhile, take, timeout} from 'rxjs/operators';
 import {AuthorizeParams, CsrfToken, OidcConfig, State, Token, URLParams, ValidSession} from './models';
 import {GeneratorUtils, StorageUtils, UrlUtils} from './utils';
+import {LogService} from './services';
 
 /**
  * Open ID Connect Implicit Flow Service for Angular
@@ -17,30 +18,14 @@ export class OidcService {
   public config: OidcConfig;
 
   /**
-   * Debug logging on or off
-   * @type {boolean}
-   * @private
-   */
-  private _debug = false;
-
-  /**
-   * Variable for holding Log function
-   */
-  private _log: any;
-
-  /**
    * Constructor
    * @param {HttpClient} _http
+   * @param _log
    */
-  constructor(private _http: HttpClient) {
-
-    /**
-     * Logging wrapper function
-     */
-    if (this._debug && (typeof console !== 'undefined')) {
-      this._log = console.log.bind(console);
-    } else {
-      this._log = function () {
+  constructor(private _http: HttpClient,
+              private _log: LogService) {
+    if (!this.config.debug) {
+      this._log.debug = function () {
       };
     }
   }
@@ -50,7 +35,7 @@ export class OidcService {
    * @returns {Observable<CsrfToken>}
    */
   public getCsrfToken(): Observable<CsrfToken> {
-    this._log('Get CSRF token from Authorisation');
+    this._log.debug('Get CSRF token from Authorisation');
 
     return this._http
       .post<CsrfToken>(this.config.csrf_token_endpoint, '', {
@@ -59,11 +44,11 @@ export class OidcService {
   }
 
   /**
-   * Get the CSRF Token from the Local Storage
+   * Get the CSRF Token from the Storage
    * @returns {string}
    */
   public getStoredCsrfToken(): string {
-    this._log('CSRF Token from storage', StorageUtils.read('_csrf'));
+    this._log.debug('CSRF Token from storage', StorageUtils.read('_csrf'));
     return StorageUtils.read('_csrf');
   }
 
@@ -79,7 +64,7 @@ export class OidcService {
 
     // If there's no valid token return null
     if (tokensCleaned.length < 1) {
-      this._log('No valid token found in storage');
+      this._log.debug('No valid token found in storage');
       return null;
     }
     // Return the first valid token
@@ -108,7 +93,7 @@ export class OidcService {
    * @returns {Observable<Object>}
    */
   public isSessionAlive(): Observable<{ status: number }> {
-    this._log('Get Session Alive info from SSO');
+    this._log.debug('Get Session Alive info from SSO');
 
     return this._http
       .get<{ status: number }>(`${this.config.is_session_alive_endpoint}/${this._getSessionId()}`);
@@ -127,7 +112,7 @@ export class OidcService {
    * Delete all tokens in sessionStorage for this session.
    */
   public deleteStoredTokens(providerId: string = `${this.config.provider_id}`): void {
-    this._log(`Removed Tokens from session storage: ${providerId}`);
+    this._log.debug(`Removed Tokens from session storage: ${providerId}`);
     StorageUtils.remove(`${providerId}-token`);
   }
 
@@ -156,12 +141,13 @@ export class OidcService {
     // All clear ->
     // Do the authorize redirect
     if (!urlParams['error']) {
-      this._log('Do authorisation redirect to SSO with options:', authorizeParams);
+      this._log.debug('Do authorisation redirect to SSO with options:', authorizeParams);
       window.location.href = `${this.config.authorize_endpoint}?${UrlUtils.createURLParameters(authorizeParams)}`;
     }
     // Error in authorize redirect
     else {
-      this._log(`Error in authorize redirect: ${urlParams['error']}`);
+      this._log.error('Redirecting to Authorisation failed');
+      this._log.debug(`Error in authorize redirect: ${urlParams['error']}`);
     }
   }
 
@@ -176,7 +162,7 @@ export class OidcService {
       redirect_uri: this.config.redirect_uri + '?flush_state=true'
     };
 
-    this._log('Session upgrade function triggered with token: ', token.session_upgrade_token);
+    this._log.debug('Session upgrade function triggered with token: ', token.session_upgrade_token);
 
     // Do the authorize redirect
     window.location.href = `${this.config.authorisation}/sso/upgrade-session?${UrlUtils.createURLParameters(urlVars)}`;
@@ -210,22 +196,22 @@ export class OidcService {
       StorageUtils.remove('hash_fragment');
     }
 
-    this._log('Check session with params:', urlParams);
+    this._log.debug('Check session with params:', urlParams);
 
     return new Observable<boolean>((observer: Observer<boolean>) => {
 
 
-      this._log('Flush state ?', urlParams.flush_state);
+      this._log.debug('Flush state ?', urlParams.flush_state);
 
       // 1 Make sure the state is 'clean' when doing a session upgrade
       if (urlParams.flush_state) {
         this.cleanSessionStorage();
-        this._log('Flush state present, so cleaning the storage');
+        this._log.debug('Flush state present, so cleaning the storage');
       }
 
       // 2 --- Let's first check if we still have a valid token stored locally, if so use that token
       if (this.getStoredToken()) {
-        this._log('Local token found, you may proceed');
+        this._log.debug('Local token found, you may proceed');
         observer.next(true);
         observer.complete();
       }
@@ -249,13 +235,13 @@ export class OidcService {
             // 4 --- There's a session upgrade token in the URL
             else if (hashFragmentParams.session_upgrade_token) {
 
-              this._log('Session Upgrade Token found in URL');
+              this._log.debug('Session Upgrade Token found in URL');
               this.doSessionUpgradeRedirect(hashFragmentParams);
             }
 
             // 5 --- No token in URL or Storage, so we need to get one from SSO
             else {
-              this._log('No valid token in Storage or URL, Authorize Redirect!');
+              this._log.debug('No valid token in Storage or URL, Authorize Redirect!');
               this.authorizeRedirect();
               observer.next(false);
               observer.complete();
@@ -274,7 +260,7 @@ export class OidcService {
 
     return new Observable<boolean>((observer: Observer<boolean>) => {
 
-      this._log('Silent refresh started');
+      this._log.debug('Silent refresh started');
 
       if (document.getElementById('silentRefreshAccessTokenIframe') === null) {
         /**
@@ -314,12 +300,12 @@ export class OidcService {
 
         if (!urlParams['error']) {
           window.document.body.appendChild(iFrame);
-          this._log('Do silent refresh redirect to SSO with options:', authorizeParams);
+          this._log.debug('Do silent refresh redirect to SSO with options:', authorizeParams);
           iFrame.src = `${this.config.authorize_endpoint}?${UrlUtils.createURLParameters(authorizeParams)}`;
         }
 
         else {
-          this._log(`Error in silent refresh authorize redirect: ${urlParams['error']}`);
+          this._log.debug(`Error in silent refresh authorize redirect: ${urlParams['error']}`);
           observer.next(false);
           observer.complete();
         }
@@ -330,7 +316,7 @@ export class OidcService {
          */
         iFrame.onload = () => {
 
-          this._log('silent refresh iFrame loaded', iFrame);
+          this._log.debug('silent refresh iFrame loaded', iFrame);
 
           /**
            * Get the URL from the iFrame
@@ -342,6 +328,7 @@ export class OidcService {
            * Clean the hashfragment from storage
            */
           if (hashFragmentParams) {
+            this._log.debug('Hash Fragment params from sessionStorage', hashFragmentParams);
             StorageUtils.remove('hash_fragment');
           }
 
@@ -350,7 +337,7 @@ export class OidcService {
            */
           if (hashFragmentParams.access_token && hashFragmentParams.state) {
 
-            this._log('Access Token found in silent refresh return URL, validating it');
+            this._log.debug('Access Token found in silent refresh return URL, validating it');
 
             /**
              * Parse and validate the token
@@ -365,7 +352,7 @@ export class OidcService {
            * Return False if there was no token in the URL
            */
           else {
-            this._log('No token found in silent refresh return URL');
+            this._log.debug('No token found in silent refresh return URL');
             observer.next(false);
             observer.complete();
           }
@@ -394,7 +381,7 @@ export class OidcService {
 
     return new Observable<boolean>((observer: Observer<boolean>) => {
 
-      this._log('Silent logout by URL started');
+      this._log.debug('Silent logout by URL started');
 
       if (document.getElementById('silentLogoutIframe') === null) {
         /**
@@ -427,11 +414,11 @@ export class OidcService {
         this.getCsrfToken()
           .subscribe(
             (csrfToken: CsrfToken) => {
-              this._log(`Do silent logout with URL ${url}?id_token_hint=${this.getIdTokenHint()}&csrf_token=${csrfToken.csrf_token}`);
+              this._log.debug(`Do silent logout with URL ${url}?id_token_hint=${this.getIdTokenHint()}&csrf_token=${csrfToken.csrf_token}`);
               iFrame.src = `${url}?id_token_hint=${this.getIdTokenHint()}&csrf_token=${csrfToken.csrf_token}`;
             },
             () => {
-              this._log('no CsrfToken');
+              this._log.debug('no CsrfToken');
               observer.next(false);
               observer.complete();
             });
@@ -442,7 +429,7 @@ export class OidcService {
          */
         iFrame.onload = () => {
 
-          this._log('silent logout iFrame onload triggered', iFrame);
+          this._log.debug('silent logout iFrame onload triggered', iFrame);
 
 
           timer(0, 50)
@@ -474,18 +461,18 @@ export class OidcService {
             )
             .subscribe(
               () => {
-                this._log('Silent logout successful', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
+                this._log.debug('Silent logout successful', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
                 observer.next(true);
                 observer.complete();
               },
               () => {
-                this._log('Silent logout failed after 5000', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
+                this._log.debug('Silent logout failed after 5000', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
                 observer.next(false);
                 observer.complete();
               });
         };
       } else {
-        this._log('Already a silent logout in progress. Try again later.');
+        this._log.debug('Already a silent logout in progress. Try again later.');
         observer.next(false);
         observer.complete();
       }
@@ -506,7 +493,7 @@ export class OidcService {
       access_token: hashParams.access_token
     };
 
-    this._log('Validate token with Hawaii Backend');
+    this._log.debug('Validate token with Hawaii Backend');
 
     return this._http
       .post<any>(this.config.validate_token_endpoint, data);
@@ -519,7 +506,7 @@ export class OidcService {
    * @private
    */
   private _parseToken(hashFragmentParams: Token): Observable<boolean> {
-    this._log('Access Token found in session storage temp, validating it');
+    this._log.debug('Access Token found in session storage temp, validating it');
 
     return new Observable<boolean>((observer: Observer<boolean>) => {
 
@@ -527,11 +514,11 @@ export class OidcService {
 
       // We received a token from SSO, so we need to validate the state
       if (hashFragmentParams.state === stateObj.state) {
-        this._log('State from URL validated against state in session storage state object', stateObj);
+        this._log.debug('State from URL validated against state in session storage state object', stateObj);
 
         // State validated, so now let's validate the token with Hawaii Backend
         this._validateToken(hashFragmentParams).subscribe((response: ValidSession) => {
-            this._log('Token validated by backend', response);
+            this._log.debug('Token validated by backend', response);
 
             // Store the token in the storage
             this._storeToken(hashFragmentParams);
@@ -540,7 +527,7 @@ export class OidcService {
             this._saveSessionId(response.user_session_id);
 
             // We're logged in with token in URL
-            this._log('Token from URL validated, you may proceed.');
+            this._log.debug('Token from URL validated, you may proceed.');
             observer.next(true);
             observer.complete();
 
@@ -548,12 +535,14 @@ export class OidcService {
           },
           // Something's wrong with the token according to the backend
           (response: HttpErrorResponse) => {
-            this._log('Token NOT validated by backend', response);
+            this._log.error('Authorisation Token not valid');
+            this._log.debug('Token NOT validated by backend', response);
             observer.next(false);
             observer.complete();
           });
       } else {
-        this._log('State NOT valid');
+        this._log.error('Authorisation Token not valid');
+        this._log.debug('State NOT valid');
         observer.next(false);
         observer.complete();
       }
@@ -567,7 +556,7 @@ export class OidcService {
    * @private
    */
   private _postSessionUpgrade(data: Object): Observable<any> {
-    this._log('Posting session upgrade token to backend');
+    this._log.debug('Posting session upgrade token to backend');
 
     return this._http
       .post<any>(this.config.upgrade_session_endpoint, data);
@@ -579,7 +568,7 @@ export class OidcService {
    * @private
    */
   private _saveState(state: State): void {
-    this._log('State saved');
+    this._log.debug('State saved');
     StorageUtils.store(`${this.config.provider_id}-state`, JSON.stringify(state));
   }
 
@@ -589,7 +578,7 @@ export class OidcService {
    * @private
    */
   private _getState(): State {
-    this._log('Got state from storage', StorageUtils.read(`${this.config.provider_id}-state`));
+    this._log.debug('Got state from storage', StorageUtils.read(`${this.config.provider_id}-state`));
     return JSON.parse(StorageUtils.read(`${this.config.provider_id}-state`));
   }
 
@@ -598,7 +587,7 @@ export class OidcService {
    * @private
    */
   private _deleteState(providerId: string = `${this.config.provider_id}`): void {
-    this._log(`Deleted state: ${providerId}`);
+    this._log.debug(`Deleted state: ${providerId}`);
     StorageUtils.remove(`${providerId}-state`);
   }
 
@@ -679,7 +668,7 @@ export class OidcService {
    * @private
    */
   private _storeTokens(tokens: Array<Token>): void {
-    this._log('Saved Tokens to session storage');
+    this._log.debug('Saved Tokens to session storage');
     StorageUtils.store(`${this.config.provider_id}-token`, JSON.stringify(tokens));
   }
 
@@ -688,7 +677,7 @@ export class OidcService {
    * @private
    */
   private _deleteStoredCsrfToken(): void {
-    this._log(`Removed CSRF Token from session storage`);
+    this._log.debug(`Removed CSRF Token from session storage`);
     StorageUtils.remove(`_csrf`);
   }
 
@@ -720,7 +709,7 @@ export class OidcService {
     });
 
     if (storedTokens.length > cleanTokens.length) {
-      this._log('Updated token storage after clean.');
+      this._log.debug('Updated token storage after clean.');
       this._storeTokens(cleanTokens);
     }
 
@@ -778,7 +767,7 @@ export class OidcService {
     this._saveState(stateObj);
     this._saveNonce(nonce);
 
-    this._log('Gather the Authorize Params', urlVars);
+    this._log.debug('Gather the Authorize Params', urlVars);
     return urlVars;
   }
 }
