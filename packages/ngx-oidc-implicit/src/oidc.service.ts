@@ -4,6 +4,7 @@ import {Observable, Observer, timer} from 'rxjs';
 import {finalize, skipWhile, take, timeout} from 'rxjs/operators';
 import {AuthorizeParams, CsrfToken, OidcConfig, State, Token, URLParams, ValidSession} from './models';
 import {StorageService} from './services';
+import Utils from './utils.class';
 
 /**
  * Open ID Connect Implicit Flow Service for Angular
@@ -47,51 +48,6 @@ export class OidcService {
     }
   }
 
-  /**
-   * Return the current time in seconds since 1970
-   * @returns {number}
-   * @private
-   */
-  private static _epoch(): number {
-    return Math.round(new Date().getTime() / 1000.0);
-  }
-
-  /**
-   * Generates a random 'state' string
-   * @returns {string}
-   * @private
-   */
-  private static _generateState(): string {
-
-    let text = '';
-    const possible = '0123456789';
-
-    for (let i = 0; i < 5; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-      text += '-';
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-  }
-
-  /**
-   * Generates a random 'nonce' string
-   * @returns {string}
-   * @private
-   */
-  private static _generateNonce(): string {
-    let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-    for (let i = 0; i < 25; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-  }
 
   /**
    * Convert Object to URL Query string
@@ -780,7 +736,7 @@ export class OidcService {
   private _cleanExpiredTokens(storedTokens: Token[]): Token[] {
 
     let cleanTokens: Token[];
-    const time = OidcService._epoch();
+    const time = Utils.epoch();
 
     cleanTokens = storedTokens.filter((element: Token) => {
       return (element.expires && element.expires > time + 5);
@@ -811,7 +767,7 @@ export class OidcService {
     const tokens = this._getStoredTokens();
     let tokensCleaned;
     this._saveIdTokenHint(token.id_token);
-    token.expires = OidcService._epoch() + (parseInt(token.expires_in, 10) - 30);
+    token.expires = Utils.epoch() + (parseInt(token.expires_in, 10) - 30);
     tokens.unshift(token);
     tokensCleaned = this._cleanExpiredTokens(tokens);
     this._storeTokens(tokensCleaned);
@@ -893,10 +849,10 @@ export class OidcService {
   private _getAuthorizeParams(promptNone: boolean = false): AuthorizeParams {
 
     const stateObj = this._getState() || {
-        state: OidcService._generateState(),
+        state: Utils.generateState(),
         providerId: this.config.provider_id
       },
-      nonce = this._getNonce() || OidcService._generateNonce(),
+      nonce = this._getNonce() || Utils.generateNonce(),
       urlVars: AuthorizeParams = {
         state: stateObj.state,
         nonce: nonce,
