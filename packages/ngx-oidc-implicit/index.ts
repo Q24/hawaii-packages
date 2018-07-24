@@ -3,6 +3,7 @@ import {OidcService} from './src/oidc.service';
 
 export * from './src/models';
 export * from './src/constants/authorize.constants';
+export * from './src/services';
 export * from './src/oidc.service';
 
 

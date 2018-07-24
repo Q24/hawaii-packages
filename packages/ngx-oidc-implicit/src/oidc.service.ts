@@ -2,7 +2,8 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
 import {Observable, Observer, timer} from 'rxjs';
 import {finalize, skipWhile, take, timeout} from 'rxjs/operators';
-import {AuthorizeParams, CsrfToken, Token, URLParams, OidcConfig, State, ValidSession} from './models';
+import {AuthorizeParams, CsrfToken, OidcConfig, State, Token, URLParams, ValidSession} from './models';
+import {StorageService} from './services';
 
 /**
  * Open ID Connect Implicit Flow Service for Angular
@@ -30,8 +31,10 @@ export class OidcService {
   /**
    * Constructor
    * @param {HttpClient} _http
+   * @param _storage
    */
-  constructor(private _http: HttpClient) {
+  constructor(private _http: HttpClient,
+              private _storage: StorageService) {
 
     /**
      * Logging wrapper function
@@ -42,35 +45,6 @@ export class OidcService {
       this._log = function () {
       };
     }
-  }
-
-  /**
-   * Storage function to store key,value pair to the sessionStorage
-   * @param {string} key
-   * @param {string} value
-   * @private
-   */
-  private static _store(key: string, value: string) {
-    sessionStorage.setItem(key, value);
-  }
-
-  /**
-   * Storage function to remove key from the sessionStorage
-   * @param {string} key
-   * @private
-   */
-  private static _remove(key: string) {
-    sessionStorage.removeItem(key);
-  }
-
-  /**
-   * Storage function to read a key from the sessionStorage
-   * @param {string} key
-   * @returns {string}
-   * @private
-   */
-  private static _read(key: string): string {
-    return sessionStorage.getItem(key);
   }
 
   /**
@@ -168,8 +142,8 @@ export class OidcService {
    * @returns {string}
    */
   public getStoredCsrfToken(): string {
-    this._log('CSRF Token from storage', OidcService._read('_csrf'));
-    return OidcService._read('_csrf');
+    this._log('CSRF Token from storage', this._storage.read('_csrf'));
+    return this._storage.read('_csrf');
   }
 
   /**
@@ -233,7 +207,7 @@ export class OidcService {
    */
   public deleteStoredTokens(providerId: string = `${this.config.provider_id}`): void {
     this._log(`Removed Tokens from session storage: ${providerId}`);
-    OidcService._remove(`${providerId}-token`);
+    this._storage.remove(`${providerId}-token`);
   }
 
   /**
@@ -242,7 +216,7 @@ export class OidcService {
    * @public
    */
   public getIdTokenHint(): string {
-    return OidcService._read(`${this.config.provider_id}-id-token-hint`);
+    return this._storage.read(`${this.config.provider_id}-id-token-hint`);
   }
 
   /**
@@ -308,7 +282,7 @@ export class OidcService {
   public checkSession(): Observable<boolean> {
 
     const urlParams = this._getURLParameters(window.location.href),
-      hashFragmentParams = this._getHashFragmentParameters(OidcService._read('hash_fragment'));
+      hashFragmentParams = this._getHashFragmentParameters(this._storage.read('hash_fragment'));
 
     this._log('Check session with params:', urlParams);
 
@@ -337,7 +311,7 @@ export class OidcService {
           (csrfToken: CsrfToken) => {
 
             // Store the CSRF Token for future calls that need it. I.e. Logout
-            OidcService._store('_csrf', csrfToken.csrf_token);
+            this._storage.store('_csrf', csrfToken.csrf_token);
 
             // 3 --- There's an access_token in the URL
             if (hashFragmentParams.access_token && hashFragmentParams.state) {
@@ -673,7 +647,7 @@ export class OidcService {
    */
   private _saveState(state: State): void {
     this._log('State saved');
-    OidcService._store(`${this.config.provider_id}-state`, JSON.stringify(state));
+    this._storage.store(`${this.config.provider_id}-state`, JSON.stringify(state));
   }
 
   /**
@@ -682,8 +656,8 @@ export class OidcService {
    * @private
    */
   private _getState(): State {
-    this._log('Got state from storage', OidcService._read(`${this.config.provider_id}-state`));
-    return JSON.parse(OidcService._read(`${this.config.provider_id}-state`));
+    this._log('Got state from storage', this._storage.read(`${this.config.provider_id}-state`));
+    return JSON.parse(this._storage.read(`${this.config.provider_id}-state`));
   }
 
   /**
@@ -692,7 +666,7 @@ export class OidcService {
    */
   private _deleteState(providerId: string = `${this.config.provider_id}`): void {
     this._log(`Deleted state: ${providerId}`);
-    OidcService._remove(`${providerId}-state`);
+    this._storage.remove(`${providerId}-state`);
   }
 
   /**
@@ -701,7 +675,7 @@ export class OidcService {
    * @private
    */
   private _saveNonce(nonce: string): void {
-    OidcService._store(`${this.config.provider_id}-nonce`, nonce);
+    this._storage.store(`${this.config.provider_id}-nonce`, nonce);
   }
 
   /**
@@ -710,7 +684,7 @@ export class OidcService {
    * @private
    */
   private _getNonce(): string {
-    return OidcService._read(`${this.config.provider_id}-nonce`);
+    return this._storage.read(`${this.config.provider_id}-nonce`);
   }
 
   /**
@@ -718,7 +692,7 @@ export class OidcService {
    * @private
    */
   private _deleteNonce(providerId: string = `${this.config.provider_id}`): void {
-    OidcService._remove(`${providerId}-nonce`);
+    this._storage.remove(`${providerId}-nonce`);
   }
 
   /**
@@ -727,7 +701,7 @@ export class OidcService {
    * @private
    */
   private _saveSessionId(sessionId: string): void {
-    OidcService._store(`${this.config.provider_id}-session-id`, sessionId);
+    this._storage.store(`${this.config.provider_id}-session-id`, sessionId);
   }
 
   /**
@@ -736,7 +710,7 @@ export class OidcService {
    * @private
    */
   private _getSessionId(): string {
-    return OidcService._read(`${this.config.provider_id}-session-id`);
+    return this._storage.read(`${this.config.provider_id}-session-id`);
   }
 
   /**
@@ -744,7 +718,7 @@ export class OidcService {
    * @private
    */
   private _deleteSessionId(providerId: string = `${this.config.provider_id}`): void {
-    OidcService._remove(`${providerId}-session-id`);
+    this._storage.remove(`${providerId}-session-id`);
   }
 
 
@@ -754,7 +728,7 @@ export class OidcService {
    * @param idTokenHint
    */
   private _saveIdTokenHint(idTokenHint: string): void {
-    OidcService._store(`${this.config.provider_id}-id-token-hint`, idTokenHint);
+    this._storage.store(`${this.config.provider_id}-id-token-hint`, idTokenHint);
   }
 
   /**
@@ -762,7 +736,7 @@ export class OidcService {
    * @private
    */
   private _deleteIdTokenHint(providerId: string = `${this.config.provider_id}`): void {
-    OidcService._remove(`${providerId}-id-token-hint`);
+    this._storage.remove(`${providerId}-id-token-hint`);
   }
 
 
@@ -773,7 +747,7 @@ export class OidcService {
    */
   private _storeTokens(tokens: Array<Token>): void {
     this._log('Saved Tokens to session storage');
-    OidcService._store(`${this.config.provider_id}-token`, JSON.stringify(tokens));
+    this._storage.store(`${this.config.provider_id}-token`, JSON.stringify(tokens));
   }
 
   /**
@@ -782,7 +756,7 @@ export class OidcService {
    */
   private _deleteStoredCsrfToken(): void {
     this._log(`Removed CSRF Token from session storage`);
-    OidcService._remove(`_csrf`);
+    this._storage.remove(`_csrf`);
   }
 
   /**
@@ -791,7 +765,7 @@ export class OidcService {
    * @private
    */
   private _getStoredTokens(): Array<Token> {
-    return JSON.parse(OidcService._read(`${this.config.provider_id}-token`)) || [];
+    return JSON.parse(this._storage.read(`${this.config.provider_id}-token`)) || [];
   }
 
   /**
@@ -863,7 +837,7 @@ export class OidcService {
         result[parameter[0]] = parameter[1];
       }
 
-      OidcService._remove('hash_fragment');
+      this._storage.remove('hash_fragment');
 
       this._log('Hash Fragment params from sessionStorage', result);
     }
