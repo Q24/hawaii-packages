@@ -58,6 +58,15 @@ We use [Lerna](https://github.com/lerna/lerna#commands)
  1. create a new git commit
  1. tag the new version on the remote
  1. publish all non-private packages to npm.  
+ 
+ ### Publish Alpha/Beta/Nightly/Whatever
+ You'll want to use the `--npm-tag`. This way, you can publically install your dev version, but it won't 'release' it to people using the plugin.
+ 
+ How this works? https://docs.npmjs.com/cli/dist-tag
+ Please use their conventions.
+ 
+ So, do this:
+ * `lerrna publish --npm-tag=next`
 
 ### Other Commands
 * `lerna updated` - See which packages have been updated since the latest release
