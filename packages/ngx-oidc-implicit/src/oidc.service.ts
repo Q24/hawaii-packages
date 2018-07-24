@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Observable, Observer, timer} from 'rxjs';
 import {finalize, skipWhile, take, timeout} from 'rxjs/operators';
 import {AuthorizeParams, CsrfToken, OidcConfig, State, Token, URLParams, ValidSession} from './models';
-import {StorageService} from './services';
-import Utils from './utils.class';
+import {GeneratorUtils, StorageUtils, UrlUtils} from './utils';
 
 /**
  * Open ID Connect Implicit Flow Service for Angular
@@ -32,10 +31,8 @@ export class OidcService {
   /**
    * Constructor
    * @param {HttpClient} _http
-   * @param _storage
    */
-  constructor(private _http: HttpClient,
-              private _storage: StorageService) {
+  constructor(private _http: HttpClient) {
 
     /**
      * Logging wrapper function
@@ -46,38 +43,6 @@ export class OidcService {
       this._log = function () {
       };
     }
-  }
-
-
-  /**
-   * Convert Object to URL Query string
-   * @param {Object} urlVars
-   * @returns {string}
-   * @private
-   */
-  private static _createURLParameters(urlVars: Object): string {
-    let params = new HttpParams();
-
-    // Set the new Query string params.
-    for (const key in urlVars) {
-      if (urlVars.hasOwnProperty(key)) {
-
-        if (key === 'redirect_uri') {
-          urlVars[key] = OidcService._cleanHashFragment(urlVars[key]);
-        }
-
-        params = params.set(key, urlVars[key]);
-      }
-    }
-
-    return params.toString();
-  }
-
-  /**
-   * Strip the hash fragment if it contains an access token (could happen when people use the BACK button in the browser)
-   */
-  private static _cleanHashFragment(url: string): string {
-    return url.split('#')[0];
   }
 
   /**
@@ -98,8 +63,8 @@ export class OidcService {
    * @returns {string}
    */
   public getStoredCsrfToken(): string {
-    this._log('CSRF Token from storage', this._storage.read('_csrf'));
-    return this._storage.read('_csrf');
+    this._log('CSRF Token from storage', StorageUtils.read('_csrf'));
+    return StorageUtils.read('_csrf');
   }
 
   /**
@@ -163,7 +128,7 @@ export class OidcService {
    */
   public deleteStoredTokens(providerId: string = `${this.config.provider_id}`): void {
     this._log(`Removed Tokens from session storage: ${providerId}`);
-    this._storage.remove(`${providerId}-token`);
+    StorageUtils.remove(`${providerId}-token`);
   }
 
   /**
@@ -172,7 +137,7 @@ export class OidcService {
    * @public
    */
   public getIdTokenHint(): string {
-    return this._storage.read(`${this.config.provider_id}-id-token-hint`);
+    return StorageUtils.read(`${this.config.provider_id}-id-token-hint`);
   }
 
   /**
@@ -186,13 +151,13 @@ export class OidcService {
     this.cleanSessionStorage();
 
     const authorizeParams = this._getAuthorizeParams();
-    const urlParams = this._getURLParameters();
+    const urlParams = UrlUtils.getURLParameters();
 
     // All clear ->
     // Do the authorize redirect
     if (!urlParams['error']) {
       this._log('Do authorisation redirect to SSO with options:', authorizeParams);
-      window.location.href = `${this.config.authorize_endpoint}?${OidcService._createURLParameters(authorizeParams)}`;
+      window.location.href = `${this.config.authorize_endpoint}?${UrlUtils.createURLParameters(authorizeParams)}`;
     }
     // Error in authorize redirect
     else {
@@ -214,7 +179,7 @@ export class OidcService {
     this._log('Session upgrade function triggered with token: ', token.session_upgrade_token);
 
     // Do the authorize redirect
-    window.location.href = `${this.config.authorisation}/sso/upgrade-session?${OidcService._createURLParameters(urlVars)}`;
+    window.location.href = `${this.config.authorisation}/sso/upgrade-session?${UrlUtils.createURLParameters(urlVars)}`;
   }
 
   /**
@@ -237,8 +202,13 @@ export class OidcService {
    */
   public checkSession(): Observable<boolean> {
 
-    const urlParams = this._getURLParameters(window.location.href),
-      hashFragmentParams = this._getHashFragmentParameters(this._storage.read('hash_fragment'));
+    const urlParams = UrlUtils.getURLParameters(window.location.href),
+      hashFragmentParams = UrlUtils.getHashFragmentParameters(StorageUtils.read('hash_fragment'));
+
+    // Clean the hashfragment from storage
+    if (hashFragmentParams) {
+      StorageUtils.remove('hash_fragment');
+    }
 
     this._log('Check session with params:', urlParams);
 
@@ -267,7 +237,7 @@ export class OidcService {
           (csrfToken: CsrfToken) => {
 
             // Store the CSRF Token for future calls that need it. I.e. Logout
-            this._storage.store('_csrf', csrfToken.csrf_token);
+            StorageUtils.store('_csrf', csrfToken.csrf_token);
 
             // 3 --- There's an access_token in the URL
             if (hashFragmentParams.access_token && hashFragmentParams.state) {
@@ -323,7 +293,7 @@ export class OidcService {
          * Get the URL params to check for errors
          * @type {URLParams}
          */
-        const urlParams = this._getURLParameters();
+        const urlParams = UrlUtils.getURLParameters();
 
         /**
          * Set the iFrame Id
@@ -345,7 +315,7 @@ export class OidcService {
         if (!urlParams['error']) {
           window.document.body.appendChild(iFrame);
           this._log('Do silent refresh redirect to SSO with options:', authorizeParams);
-          iFrame.src = `${this.config.authorize_endpoint}?${OidcService._createURLParameters(authorizeParams)}`;
+          iFrame.src = `${this.config.authorize_endpoint}?${UrlUtils.createURLParameters(authorizeParams)}`;
         }
 
         else {
@@ -366,7 +336,14 @@ export class OidcService {
            * Get the URL from the iFrame
            * @type {Token}
            */
-          const hashFragmentParams = this._getHashFragmentParameters(iFrame.contentWindow.location.href.split('#')[1]);
+          const hashFragmentParams = UrlUtils.getHashFragmentParameters(iFrame.contentWindow.location.href.split('#')[1]);
+
+          /**
+           * Clean the hashfragment from storage
+           */
+          if (hashFragmentParams) {
+            StorageUtils.remove('hash_fragment');
+          }
 
           /**
            * Check if we have a token
@@ -603,7 +580,7 @@ export class OidcService {
    */
   private _saveState(state: State): void {
     this._log('State saved');
-    this._storage.store(`${this.config.provider_id}-state`, JSON.stringify(state));
+    StorageUtils.store(`${this.config.provider_id}-state`, JSON.stringify(state));
   }
 
   /**
@@ -612,8 +589,8 @@ export class OidcService {
    * @private
    */
   private _getState(): State {
-    this._log('Got state from storage', this._storage.read(`${this.config.provider_id}-state`));
-    return JSON.parse(this._storage.read(`${this.config.provider_id}-state`));
+    this._log('Got state from storage', StorageUtils.read(`${this.config.provider_id}-state`));
+    return JSON.parse(StorageUtils.read(`${this.config.provider_id}-state`));
   }
 
   /**
@@ -622,7 +599,7 @@ export class OidcService {
    */
   private _deleteState(providerId: string = `${this.config.provider_id}`): void {
     this._log(`Deleted state: ${providerId}`);
-    this._storage.remove(`${providerId}-state`);
+    StorageUtils.remove(`${providerId}-state`);
   }
 
   /**
@@ -631,7 +608,7 @@ export class OidcService {
    * @private
    */
   private _saveNonce(nonce: string): void {
-    this._storage.store(`${this.config.provider_id}-nonce`, nonce);
+    StorageUtils.store(`${this.config.provider_id}-nonce`, nonce);
   }
 
   /**
@@ -640,7 +617,7 @@ export class OidcService {
    * @private
    */
   private _getNonce(): string {
-    return this._storage.read(`${this.config.provider_id}-nonce`);
+    return StorageUtils.read(`${this.config.provider_id}-nonce`);
   }
 
   /**
@@ -648,7 +625,7 @@ export class OidcService {
    * @private
    */
   private _deleteNonce(providerId: string = `${this.config.provider_id}`): void {
-    this._storage.remove(`${providerId}-nonce`);
+    StorageUtils.remove(`${providerId}-nonce`);
   }
 
   /**
@@ -657,7 +634,7 @@ export class OidcService {
    * @private
    */
   private _saveSessionId(sessionId: string): void {
-    this._storage.store(`${this.config.provider_id}-session-id`, sessionId);
+    StorageUtils.store(`${this.config.provider_id}-session-id`, sessionId);
   }
 
   /**
@@ -666,7 +643,7 @@ export class OidcService {
    * @private
    */
   private _getSessionId(): string {
-    return this._storage.read(`${this.config.provider_id}-session-id`);
+    return StorageUtils.read(`${this.config.provider_id}-session-id`);
   }
 
   /**
@@ -674,7 +651,7 @@ export class OidcService {
    * @private
    */
   private _deleteSessionId(providerId: string = `${this.config.provider_id}`): void {
-    this._storage.remove(`${providerId}-session-id`);
+    StorageUtils.remove(`${providerId}-session-id`);
   }
 
 
@@ -684,7 +661,7 @@ export class OidcService {
    * @param idTokenHint
    */
   private _saveIdTokenHint(idTokenHint: string): void {
-    this._storage.store(`${this.config.provider_id}-id-token-hint`, idTokenHint);
+    StorageUtils.store(`${this.config.provider_id}-id-token-hint`, idTokenHint);
   }
 
   /**
@@ -692,7 +669,7 @@ export class OidcService {
    * @private
    */
   private _deleteIdTokenHint(providerId: string = `${this.config.provider_id}`): void {
-    this._storage.remove(`${providerId}-id-token-hint`);
+    StorageUtils.remove(`${providerId}-id-token-hint`);
   }
 
 
@@ -703,7 +680,7 @@ export class OidcService {
    */
   private _storeTokens(tokens: Array<Token>): void {
     this._log('Saved Tokens to session storage');
-    this._storage.store(`${this.config.provider_id}-token`, JSON.stringify(tokens));
+    StorageUtils.store(`${this.config.provider_id}-token`, JSON.stringify(tokens));
   }
 
   /**
@@ -712,7 +689,7 @@ export class OidcService {
    */
   private _deleteStoredCsrfToken(): void {
     this._log(`Removed CSRF Token from session storage`);
-    this._storage.remove(`_csrf`);
+    StorageUtils.remove(`_csrf`);
   }
 
   /**
@@ -721,7 +698,7 @@ export class OidcService {
    * @private
    */
   private _getStoredTokens(): Array<Token> {
-    return JSON.parse(this._storage.read(`${this.config.provider_id}-token`)) || [];
+    return JSON.parse(StorageUtils.read(`${this.config.provider_id}-token`)) || [];
   }
 
   /**
@@ -736,7 +713,7 @@ export class OidcService {
   private _cleanExpiredTokens(storedTokens: Token[]): Token[] {
 
     let cleanTokens: Token[];
-    const time = Utils.epoch();
+    const time = GeneratorUtils.epoch();
 
     cleanTokens = storedTokens.filter((element: Token) => {
       return (element.expires && element.expires > time + 5);
@@ -767,78 +744,10 @@ export class OidcService {
     const tokens = this._getStoredTokens();
     let tokensCleaned;
     this._saveIdTokenHint(token.id_token);
-    token.expires = Utils.epoch() + (parseInt(token.expires_in, 10) - 30);
+    token.expires = GeneratorUtils.epoch() + (parseInt(token.expires_in, 10) - 30);
     tokens.unshift(token);
     tokensCleaned = this._cleanExpiredTokens(tokens);
     this._storeTokens(tokensCleaned);
-  }
-
-
-  /**
-   * Get Hash Fragment parameters from sessionStorage
-   * @param {string} hash_fragment
-   * @returns {Token}
-   * @private
-   */
-  private _getHashFragmentParameters(hash_fragment: string): Token {
-
-    const result = {};
-    let urlVariablesToParse;
-
-    if (hash_fragment) {
-      urlVariablesToParse = hash_fragment.split('&');
-
-      for (const urlVar of urlVariablesToParse) {
-        const parameter = urlVar.split('=');
-        result[parameter[0]] = parameter[1];
-      }
-
-      this._storage.remove('hash_fragment');
-
-      this._log('Hash Fragment params from sessionStorage', result);
-    }
-
-    return result;
-  }
-
-  /**
-   * Return an object with URL parameters
-   * @param {string} url
-   * @returns {URLParams}
-   * @private
-   */
-  private _getURLParameters(url: string = window.location.href): URLParams {
-
-    const result = {},
-      searchIndex = url.indexOf('?'),
-      hashIndex = url.indexOf('#');
-
-    let urlStringToParse,
-      urlVariablesToParse;
-
-    if (searchIndex === -1 && hashIndex === -1) {
-      return result;
-    }
-
-    if (searchIndex !== -1) {
-      urlStringToParse = url.substring(searchIndex + 1);
-    }
-
-    if (hashIndex !== -1) {
-      urlStringToParse = url.substring(hashIndex + 1);
-    }
-
-    urlVariablesToParse = urlStringToParse.split('&');
-
-
-    for (const urlVar of urlVariablesToParse) {
-      const parameter = urlVar.split('=');
-      result[parameter[0]] = parameter[1];
-    }
-
-    this._log('URL params', result);
-
-    return result;
   }
 
   /**
@@ -849,10 +758,10 @@ export class OidcService {
   private _getAuthorizeParams(promptNone: boolean = false): AuthorizeParams {
 
     const stateObj = this._getState() || {
-        state: Utils.generateState(),
+        state: GeneratorUtils.generateState(),
         providerId: this.config.provider_id
       },
-      nonce = this._getNonce() || Utils.generateNonce(),
+      nonce = this._getNonce() || GeneratorUtils.generateNonce(),
       urlVars: AuthorizeParams = {
         state: stateObj.state,
         nonce: nonce,

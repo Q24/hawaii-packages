@@ -1,4 +1,4 @@
-export default class Utils {
+export class GeneratorUtils {
   /**
    * Return the current time in seconds since 1970
    * @returns {number}

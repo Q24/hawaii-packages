@@ -1,4 +1,4 @@
-export class StorageService {
+export class StorageUtils {
 
   static storage = sessionStorage;
 
@@ -7,8 +7,8 @@ export class StorageService {
    * @param {string} key
    * @returns {string}
    */
-  public read(key: string): string {
-    return this.storage.getItem(key);
+  static read(key: string): string {
+    return StorageUtils.storage.getItem(key);
   }
 
   /**
@@ -16,18 +16,15 @@ export class StorageService {
    * @param {string} key
    * @param {string} value
    */
-   public store(key: string, value: string) {
-    this.storage.setItem(key, value);
+  static store(key: string, value: string) {
+    StorageUtils.storage.setItem(key, value);
   }
 
   /**
    * Storage function to remove key from the sessionStorage
    * @param {string} key
    */
-  public remove(key: string) {
-    this.storage.removeItem(key);
+  static remove(key: string) {
+    StorageUtils.storage.removeItem(key);
   }
-
-
-
 }
