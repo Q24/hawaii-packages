@@ -1,5 +1,13 @@
 # Changelog
 
+### 1.2.2
+
+* Return out of silentRefreshAccessToken, when default config was loaded.
+
+### 1.2.1
+
+* Return out of checkSession, when default config was loaded.
+
 ### 1.2.0
 * _getIdTokenHint, _storeIdTokenHint and deleteIdTokenHint added
 

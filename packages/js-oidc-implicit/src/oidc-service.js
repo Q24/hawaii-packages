@@ -278,7 +278,7 @@
     _getIdTokenHint: function () {
       var self = this;
 
-        return  JSON.parse(sessionStorage.getItem(self.config.providerID + '-id-token-hint')) || [];
+      return JSON.parse(sessionStorage.getItem(self.config.providerID + '-id-token-hint')) || [];
     },
 
     /**
@@ -288,14 +288,12 @@
       sessionStorage.setItem(this.config.providerID + '-id-token-hint', idTokenHint);
     },
 
-
     deleteIdTokenHint: function () {
       var self = this;
 
       self._log('Removing hint tokens for with prefix: ', [self.config.providerID + '-id-token-hint']);
       sessionStorage.removeItem(self.config.providerID + '-id-token-hint');
     },
-
 
     /**
      * STORAGE: Get a token for a provider
@@ -708,6 +706,14 @@
 
       self._log('Checking session started');
 
+      // Check if the config is not the default, because thisw will mean the implicit flow was triggered, without a proper config, which will fail miserably
+      // So we need to resolve the promise, and return out of the function immediatly, so no further code will be executed.
+      if (self.config.client_id === 'hawaii') {
+        console.error('No SSO config provided. So stop.');
+        defer.resolve(false);
+        return defer;
+      }
+
       // Make sure the state is 'clean' when doing a session upgrade
       if (urlParams.flush_state) {
         self.deleteState();
@@ -773,10 +779,18 @@
       var self = this,
         defer = $.Deferred();
 
+      // Check if the config is not the default, because thisw will mean the implicit flow was triggered, without a proper config, which will fail miserably
+      // So we need to resolve the promise, and return out of the function immediatly, so no further code will be executed.
+      if (self.config.client_id === 'hawaii') {
+        console.error('No SSO config provided. So stop.');
+        defer.resolve(false);
+        return defer;
+      }
+
       /**
        * On
        */
-      if(document.getElementById('silentRefreshAccessTokenIframe') === null) {
+      if (document.getElementById('silentRefreshAccessTokenIframe') === null) {
 
         self._log('Silent refresh started');
 
