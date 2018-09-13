@@ -1,5 +1,9 @@
 # Changelog
 
+### xxx
+
+* Add openNewTab parameter to doSessionUpgradeRedirect, by default do not open in new tab
+
 ### 1.2.2
 
 * Return out of silentRefreshAccessToken, when default config was loaded.
