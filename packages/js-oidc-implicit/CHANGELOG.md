@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.3.0
+
+* Implemented silentLogoutByUrl method
+
 ### 1.2.2
 
 * Return out of silentRefreshAccessToken, when default config was loaded.

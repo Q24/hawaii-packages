@@ -278,7 +278,7 @@
     _getIdTokenHint: function () {
       var self = this;
 
-      return JSON.parse(sessionStorage.getItem(self.config.providerID + '-id-token-hint')) || [];
+      return sessionStorage.getItem(self.config.providerID + '-id-token-hint');
     },
 
     /**
@@ -437,11 +437,10 @@
       var self = this,
         newUrlVars = self.removeURLParameter('flush_state'),
         loc = window.location,
-        pathname = loc.pathname,
         returnURL = loc.protocol + '//' + loc.host;
 
       // Add pathname
-      returnURL += pathname;
+      returnURL += loc.pathname;
 
       // If URL params, add params, flush_state filtered out
       returnURL += newUrlVars ? '?' + $.param(newUrlVars) : '';
@@ -880,6 +879,93 @@
           setTimeout(function () {
             iframe.parentElement.removeChild(iframe);
           }, 0);
+        };
+
+      }
+      return defer;
+    },
+
+    /**
+     * METHOD: Silently logout via iFrame
+     */
+    silentLogoutByUrl: function (logoutUrl) {
+
+      var self = this,
+        defer = $.Deferred();
+
+      // Check if the config is not the default, because thisw will mean the implicit flow was triggered, without a proper config, which will fail miserably
+      // So we need to resolve the promise, and return out of the function immediatly, so no further code will be executed.
+      if (self.config.client_id === 'hawaii') {
+        console.error('No SSO config provided. So stop.');
+        defer.resolve(false);
+        return defer;
+      }
+
+      /**
+       * On
+       */
+      if (document.getElementById('silentLogoutByUrlIframe') === null) {
+
+        self._log('Silent logout started');
+
+        /**
+         * Iframe element
+         */
+        var iframe = document.createElement('iframe');
+
+        /**
+         * Set the iFrame Id
+         */
+        iframe.id = 'silentLogoutByUrlIframe';
+
+        /**
+         * Hide the iFrame
+         */
+        iframe.style.display = 'none';
+
+        /**
+         * Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
+         */
+        window.document.body.appendChild(iframe);
+
+        /**
+         * Get a CSRF token and ID Token hint, and set the logout URL in the iFrame
+         */
+        this.getCsrfToken()
+          .then(function (csrfToken) {
+            iframe.src = logoutUrl + '?id_token_hint=' + self._getIdTokenHint() + '&csrf_token=' + csrfToken.csrf_token;
+          });
+        /**
+         * Handle the result of the Authorize Redirect in the iFrame
+         */
+        iframe.onload = function () {
+
+          self._log('silent logout iFrame loaded', iframe);
+
+          var interval = setInterval(function () {
+            /**
+             * Get the URL from the iFrame
+             */
+            var currentIframeURL = iframe.contentWindow.location.href;
+
+            /**
+             * Check if we the page ended up on the post_logout_redirect_uri from the config. This mean the logout was successful.
+             */
+            if (currentIframeURL.indexOf(self.config.post_logout_redirect_uri) !== -1) {
+              clearInterval(interval);
+              defer.resolve(true);
+            }
+          }, 50);
+
+          /**
+           * Clear the interval, Clean up the iFrame, and reject te promise, if the timeout runs out.
+           */
+          setTimeout(function () {
+            clearInterval(interval);
+            iframe.parentElement.removeChild(iframe);
+            defer.resolve(false);
+          }, 3000);
+
         };
 
       }
