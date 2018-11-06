@@ -6,6 +6,7 @@ export interface State {
    * State string
    */
   state: string;
+  providerId?: string;
 }
 
 /**

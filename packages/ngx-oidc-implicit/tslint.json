@@ -1,4 +1,5 @@
 {
+  "extends": "tslint-config-airbnb",
   "rulesDirectory": [
     "node_modules/codelyzer"
   ],
@@ -11,6 +12,9 @@
       "check-space"
     ],
     "curly": true,
+    "deprecation": {
+      "severity": "warn"
+    },
     "eofline": true,
     "forin": true,
     "import-blacklist": [
@@ -26,21 +30,17 @@
     "label-position": true,
     "max-line-length": [
       true,
-      140
+      250
     ],
     "member-access": false,
     "member-ordering": [
       true,
       {
         "order": [
-          "public-static-field",
-          "private-static-field",
-          "public-instance-field",
-          "private-instance-field",
-          "public-static-method",
-          "private-static-method",
-          "public-instance-method",
-          "private-instance-method"
+          "static-field",
+          "instance-field",
+          "static-method",
+          "instance-method"
         ]
       }
     ],
@@ -60,17 +60,14 @@
     "no-empty": false,
     "no-empty-interface": true,
     "no-eval": true,
-    "no-inferrable-types": [
-      true,
-      "ignore-params"
-    ],
+    "no-inferrable-types": true,
     "no-misused-new": true,
     "no-non-null-assertion": true,
     "no-shadowed-variable": true,
     "no-string-literal": false,
     "no-string-throw": true,
     "no-switch-case-fall-through": true,
-    "no-trailing-whitespace": false,
+    "no-trailing-whitespace": true,
     "no-unnecessary-initializer": true,
     "no-unused-expression": true,
     "no-use-before-declare": true,
@@ -90,6 +87,7 @@
     "radix": true,
     "semicolon": [
       true,
+      "always",
       "ignore-bound-class-methods"
     ],
     "triple-equals": [
@@ -106,7 +104,6 @@
         "variable-declaration": "nospace"
       }
     ],
-    "typeof-compare": true,
     "unified-signatures": true,
     "variable-name": false,
     "whitespace": [
@@ -129,17 +126,15 @@
       "app",
       "kebab-case"
     ],
+    "no-output-on-prefix": true,
     "use-input-property-decorator": true,
     "use-output-property-decorator": true,
-    "use-host-property-decorator": true,
+    "use-host-property-decorator": false,
     "no-input-rename": true,
     "no-output-rename": true,
     "use-life-cycle-interface": true,
     "use-pipe-transform-interface": true,
     "component-class-suffix": true,
-    "directive-class-suffix": true,
-    "no-access-missing-member": true,
-    "templates-use-public": true,
-    "invoke-injectable": true
+    "directive-class-suffix": true
   }
 }

@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {Observable, Observer, timer} from 'rxjs';
-import {finalize, skipWhile, take, timeout} from 'rxjs/operators';
-import {AuthorizeParams, CsrfToken, OidcConfig, State, Token, URLParams, ValidSession} from './models';
-import {GeneratorUtils, StorageUtils, UrlUtils} from './utils';
-import {LogService} from './services';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, Observer, timer } from 'rxjs';
+import { finalize, skipWhile, take, timeout } from 'rxjs/operators';
+import { AuthorizeParams, CsrfToken, OidcConfig, State, Token, URLParams, ValidSession } from './models';
+import { GeneratorUtils, StorageUtils, UrlUtils } from './utils';
+import { LogService } from './services';
 
 /**
  * Open ID Connect Implicit Flow Service for Angular
@@ -39,7 +39,7 @@ export class OidcService {
 
     return this._http
       .post<CsrfToken>(this.config.csrf_token_endpoint, '', {
-        withCredentials: true
+        withCredentials: true,
       });
   }
 
@@ -59,8 +59,8 @@ export class OidcService {
   public getStoredToken(): Token | null {
 
     // Get the tokens from storage, and make sure they're still valid
-    const tokens = this._getStoredTokens(),
-      tokensCleaned = this._cleanExpiredTokens(tokens);
+    const tokens = this.getStoredTokens();
+    const tokensCleaned = this.cleanExpiredTokens(tokens);
 
     // If there's no valid token return null
     if (tokensCleaned.length < 1) {
@@ -68,9 +68,7 @@ export class OidcService {
       return null;
     }
     // Return the first valid token
-    else {
-      return tokensCleaned[0];
-    }
+    return tokensCleaned[0];
   }
 
   /**
@@ -79,13 +77,13 @@ export class OidcService {
   public cleanSessionStorage(providerIDs: string[] = [`${this.config.provider_id}`]): void {
     providerIDs.forEach((providerId: string) => {
       this.deleteStoredTokens(providerId);
-      this._deleteState(providerId);
-      this._deleteNonce(providerId);
-      this._deleteSessionId(providerId);
-      this._deleteIdTokenHint(providerId);
+      this.deleteState(providerId);
+      this.deleteNonce(providerId);
+      this.deleteSessionId(providerId);
+      this.deleteIdTokenHint(providerId);
     });
 
-    this._deleteStoredCsrfToken();
+    this.deleteStoredCsrfToken();
   }
 
   /**
@@ -96,7 +94,7 @@ export class OidcService {
     this._log.debug('Get Session Alive info from SSO');
 
     return this._http
-      .get<{ status: number }>(`${this.config.is_session_alive_endpoint}/${this._getSessionId()}`);
+      .get<{ status: number }>(`${this.config.is_session_alive_endpoint}/${this.getSessionId()}`);
   }
 
   /**
@@ -111,7 +109,7 @@ export class OidcService {
   /**
    * Delete all tokens in sessionStorage for this session.
    */
-  public deleteStoredTokens(providerId: string = `${this.config.provider_id}`): void {
+  public deleteStoredTokens(providerId = `${this.config.provider_id}`): void {
     this._log.debug(`Removed Tokens from session storage: ${providerId}`);
     StorageUtils.remove(`${providerId}-token`);
   }
@@ -135,7 +133,7 @@ export class OidcService {
     // Clean up Storage before we begin
     this.cleanSessionStorage();
 
-    const authorizeParams = this._getAuthorizeParams();
+    const authorizeParams = this.getAuthorizeParams();
     const urlParams = UrlUtils.getURLParameters();
 
     // All clear ->
@@ -143,9 +141,8 @@ export class OidcService {
     if (!urlParams['error']) {
       this._log.debug('Do authorisation redirect to SSO with options:', authorizeParams);
       window.location.href = `${this.config.authorize_endpoint}?${UrlUtils.createURLParameters(authorizeParams)}`;
-    }
-    // Error in authorize redirect
-    else {
+    } else {
+      // Error in authorize redirect
       this._log.error('Redirecting to Authorisation failed');
       this._log.debug(`Error in authorize redirect: ${urlParams['error']}`);
     }
@@ -159,7 +156,7 @@ export class OidcService {
   public doSessionUpgradeRedirect(token: Token): void {
     const urlVars = {
       session_upgrade_token: token.session_upgrade_token,
-      redirect_uri: this.config.redirect_uri + '?flush_state=true'
+      redirect_uri: `${this.config.redirect_uri}?flush_state=true`,
     };
 
     this._log.debug('Session upgrade function triggered with token: ', token.session_upgrade_token);
@@ -188,8 +185,8 @@ export class OidcService {
    */
   public checkSession(): Observable<boolean> {
 
-    const urlParams = UrlUtils.getURLParameters(window.location.href),
-      hashFragmentParams = UrlUtils.getHashFragmentParameters(StorageUtils.read('hash_fragment'));
+    const urlParams = UrlUtils.getURLParameters(window.location.href);
+    const hashFragmentParams = UrlUtils.getHashFragmentParameters(StorageUtils.read('hash_fragment'));
 
     // Clean the hashfragment from storage
     if (hashFragmentParams) {
@@ -199,7 +196,6 @@ export class OidcService {
     this._log.debug('Check session with params:', urlParams);
 
     return new Observable<boolean>((observer: Observer<boolean>) => {
-
 
       this._log.debug('Flush state ?', urlParams.flush_state);
 
@@ -214,10 +210,9 @@ export class OidcService {
         this._log.debug('Local token found, you may proceed');
         observer.next(true);
         observer.complete();
-      }
-      // No valid token found in storage, so we need to get a new one.
-      else {
+      } else {
 
+        // 3 --- No valid token found in storage, so we need to get a new one.
         // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
         this.getCsrfToken().subscribe(
           (csrfToken: CsrfToken) => {
@@ -227,20 +222,15 @@ export class OidcService {
 
             // 3 --- There's an access_token in the URL
             if (hashFragmentParams.access_token && hashFragmentParams.state) {
-              this._parseToken(hashFragmentParams).subscribe((tokenIsValid: boolean) => {
+              this.parseToken(hashFragmentParams).subscribe((tokenIsValid: boolean) => {
                 observer.next(tokenIsValid);
               });
-            }
-
-            // 4 --- There's a session upgrade token in the URL
-            else if (hashFragmentParams.session_upgrade_token) {
-
+            } else if (hashFragmentParams.session_upgrade_token) {
+              // 4 --- There's a session upgrade token in the URL
               this._log.debug('Session Upgrade Token found in URL');
               this.doSessionUpgradeRedirect(hashFragmentParams);
-            }
-
-            // 5 --- No token in URL or Storage, so we need to get one from SSO
-            else {
+            } else {
+              // 5 --- No token in URL or Storage, so we need to get one from SSO
               this._log.debug('No valid token in Storage or URL, Authorize Redirect!');
               this.authorizeRedirect();
               observer.next(false);
@@ -267,19 +257,19 @@ export class OidcService {
          * IFrame element
          * @type {HTMLIFrameElement}
          */
-        const iFrame = document.createElement('iframe');
+        const iFrame: HTMLIFrameElement = document.createElement('iframe');
 
         /**
          * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
          * @type {AuthorizeParams}
          */
-        const authorizeParams = this._getAuthorizeParams(true);
+        const authorizeParams: AuthorizeParams = this.getAuthorizeParams(true);
 
         /**
          * Get the URL params to check for errors
          * @type {URLParams}
          */
-        const urlParams = UrlUtils.getURLParameters();
+        const urlParams: URLParams = UrlUtils.getURLParameters();
 
         /**
          * Set the iFrame Id
@@ -302,14 +292,11 @@ export class OidcService {
           window.document.body.appendChild(iFrame);
           this._log.debug('Do silent refresh redirect to SSO with options:', authorizeParams);
           iFrame.src = `${this.config.authorize_endpoint}?${UrlUtils.createURLParameters(authorizeParams)}`;
-        }
-
-        else {
+        } else {
           this._log.debug(`Error in silent refresh authorize redirect: ${urlParams['error']}`);
           observer.next(false);
           observer.complete();
         }
-
 
         /**
          * Handle the result of the Authorize Redirect in the iFrame
@@ -322,7 +309,7 @@ export class OidcService {
            * Get the URL from the iFrame
            * @type {Token}
            */
-          const hashFragmentParams = UrlUtils.getHashFragmentParameters(iFrame.contentWindow.location.href.split('#')[1]);
+          const hashFragmentParams: Token = UrlUtils.getHashFragmentParameters(iFrame.contentWindow.location.href.split('#')[1]);
 
           /**
            * Clean the hashfragment from storage
@@ -342,16 +329,11 @@ export class OidcService {
             /**
              * Parse and validate the token
              */
-            this._parseToken(hashFragmentParams).subscribe((tokenIsValid: boolean) => {
+            this.parseToken(hashFragmentParams).subscribe((tokenIsValid: boolean) => {
               observer.next(tokenIsValid);
               observer.complete();
             });
-          }
-
-          /**
-           * Return False if there was no token in the URL
-           */
-          else {
+          } else {
             this._log.debug('No token found in silent refresh return URL');
             observer.next(false);
             observer.complete();
@@ -423,14 +405,12 @@ export class OidcService {
               observer.complete();
             });
 
-
         /**
          * Handle the result of the Authorize Redirect in the iFrame
          */
         iFrame.onload = () => {
 
           this._log.debug('silent logout iFrame onload triggered', iFrame);
-
 
           timer(0, 50)
             .pipe(
@@ -457,16 +437,18 @@ export class OidcService {
               /**
                * Cleanup the iFrame
                */
-              finalize(() => setTimeout(() => iFrame.parentElement.removeChild(iFrame), 0))
+              finalize(() => setTimeout(() => iFrame.parentElement.removeChild(iFrame), 0)),
             )
             .subscribe(
               () => {
-                this._log.debug('Silent logout successful', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
+                this._log
+                  .debug('Silent logout successful', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
                 observer.next(true);
                 observer.complete();
               },
               () => {
-                this._log.debug('Silent logout failed after 5000', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
+                this._log
+                  .debug('Silent logout failed after 5000', iFrame.contentWindow.location.href, this.config.post_logout_redirect_uri);
                 observer.next(false);
                 observer.complete();
               });
@@ -486,11 +468,11 @@ export class OidcService {
    * @private
    */
 
-  private _validateToken(hashParams: Token): Observable<ValidSession> {
+  private validateToken(hashParams: Token): Observable<ValidSession> {
     const data = {
-      nonce: this._getNonce(),
+      nonce: this.getNonce(),
       id_token: hashParams.id_token,
-      access_token: hashParams.access_token
+      access_token: hashParams.access_token,
     };
 
     this._log.debug('Validate token with Hawaii Backend');
@@ -505,41 +487,42 @@ export class OidcService {
    * @returns {Observable<boolean>}
    * @private
    */
-  private _parseToken(hashFragmentParams: Token): Observable<boolean> {
+  private parseToken(hashFragmentParams: Token): Observable<boolean> {
     this._log.debug('Access Token found in session storage temp, validating it');
 
     return new Observable<boolean>((observer: Observer<boolean>) => {
 
-      const stateObj = this._getState();
+      const stateObj = this.getState();
 
       // We received a token from SSO, so we need to validate the state
       if (hashFragmentParams.state === stateObj.state) {
         this._log.debug('State from URL validated against state in session storage state object', stateObj);
 
         // State validated, so now let's validate the token with Hawaii Backend
-        this._validateToken(hashFragmentParams).subscribe((response: ValidSession) => {
-            this._log.debug('Token validated by backend', response);
+        this.validateToken(hashFragmentParams)
+          .subscribe(
+            (response: ValidSession) => {
 
-            // Store the token in the storage
-            this._storeToken(hashFragmentParams);
+              this._log.debug('Token validated by backend', response);
 
-            // Store the session ID
-            this._saveSessionId(response.user_session_id);
+              // Store the token in the storage
+              this.storeToken(hashFragmentParams);
 
-            // We're logged in with token in URL
-            this._log.debug('Token from URL validated, you may proceed.');
-            observer.next(true);
-            observer.complete();
+              // Store the session ID
+              this.saveSessionId(response.user_session_id);
 
-
-          },
-          // Something's wrong with the token according to the backend
-          (response: HttpErrorResponse) => {
-            this._log.error('Authorisation Token not valid');
-            this._log.debug('Token NOT validated by backend', response);
-            observer.next(false);
-            observer.complete();
-          });
+              // We're logged in with token in URL
+              this._log.debug('Token from URL validated, you may proceed.');
+              observer.next(true);
+              observer.complete();
+            },
+            // Something's wrong with the token according to the backend
+            (response: HttpErrorResponse) => {
+              this._log.error('Authorisation Token not valid');
+              this._log.debug('Token NOT validated by backend', response);
+              observer.next(false);
+              observer.complete();
+            });
       } else {
         this._log.error('Authorisation Token not valid');
         this._log.debug('State NOT valid');
@@ -555,7 +538,7 @@ export class OidcService {
    * @returns {Observable<any>}
    * @private
    */
-  private _postSessionUpgrade(data: Object): Observable<any> {
+  private postSessionUpgrade(data: Object): Observable<any> {
     this._log.debug('Posting session upgrade token to backend');
 
     return this._http
@@ -567,7 +550,7 @@ export class OidcService {
    * @param {State} state
    * @private
    */
-  private _saveState(state: State): void {
+  private saveState(state: State): void {
     this._log.debug('State saved');
     StorageUtils.store(`${this.config.provider_id}-state`, JSON.stringify(state));
   }
@@ -577,7 +560,7 @@ export class OidcService {
    * @returns {State}
    * @private
    */
-  private _getState(): State {
+  private getState(): State {
     this._log.debug('Got state from storage', StorageUtils.read(`${this.config.provider_id}-state`));
     return JSON.parse(StorageUtils.read(`${this.config.provider_id}-state`));
   }
@@ -586,7 +569,7 @@ export class OidcService {
    * Deletes the state from sessionStorage
    * @private
    */
-  private _deleteState(providerId: string = `${this.config.provider_id}`): void {
+  private deleteState(providerId = `${this.config.provider_id}`): void {
     this._log.debug(`Deleted state: ${providerId}`);
     StorageUtils.remove(`${providerId}-state`);
   }
@@ -596,7 +579,7 @@ export class OidcService {
    * @param {string} nonce
    * @private
    */
-  private _saveNonce(nonce: string): void {
+  private saveNonce(nonce: string): void {
     StorageUtils.store(`${this.config.provider_id}-nonce`, nonce);
   }
 
@@ -605,7 +588,7 @@ export class OidcService {
    * @returns {string}
    * @private
    */
-  private _getNonce(): string {
+  private getNonce(): string {
     return StorageUtils.read(`${this.config.provider_id}-nonce`);
   }
 
@@ -613,7 +596,7 @@ export class OidcService {
    * Deletes the nonce from sessionStorage
    * @private
    */
-  private _deleteNonce(providerId: string = `${this.config.provider_id}`): void {
+  private deleteNonce(providerId = `${this.config.provider_id}`): void {
     StorageUtils.remove(`${providerId}-nonce`);
   }
 
@@ -622,7 +605,7 @@ export class OidcService {
    * @param {string} sessionId
    * @private
    */
-  private _saveSessionId(sessionId: string): void {
+  private saveSessionId(sessionId: string): void {
     StorageUtils.store(`${this.config.provider_id}-session-id`, sessionId);
   }
 
@@ -631,7 +614,7 @@ export class OidcService {
    * @returns {string}
    * @private
    */
-  private _getSessionId(): string {
+  private getSessionId(): string {
     return StorageUtils.read(`${this.config.provider_id}-session-id`);
   }
 
@@ -639,17 +622,16 @@ export class OidcService {
    * Deletes the session ID from sessionStorage
    * @private
    */
-  private _deleteSessionId(providerId: string = `${this.config.provider_id}`): void {
+  private deleteSessionId(providerId = `${this.config.provider_id}`): void {
     StorageUtils.remove(`${providerId}-session-id`);
   }
-
 
   /**
    * Saves the ID token hint to sessionStorage
    * @private
    * @param idTokenHint
    */
-  private _saveIdTokenHint(idTokenHint: string): void {
+  private saveIdTokenHint(idTokenHint: string): void {
     StorageUtils.store(`${this.config.provider_id}-id-token-hint`, idTokenHint);
   }
 
@@ -657,17 +639,16 @@ export class OidcService {
    * Deletes the ID token hint from sessionStorage
    * @private
    */
-  private _deleteIdTokenHint(providerId: string = `${this.config.provider_id}`): void {
+  private deleteIdTokenHint(providerId = `${this.config.provider_id}`): void {
     StorageUtils.remove(`${providerId}-id-token-hint`);
   }
-
 
   /**
    * Stores an array of Tokens to the session Storage
    * @param {Array<Token>} tokens
    * @private
    */
-  private _storeTokens(tokens: Array<Token>): void {
+  private storeTokens(tokens: Token[]): void {
     this._log.debug('Saved Tokens to session storage');
     StorageUtils.store(`${this.config.provider_id}-token`, JSON.stringify(tokens));
   }
@@ -676,7 +657,7 @@ export class OidcService {
    * Deletes the stored CSRF Token from storage
    * @private
    */
-  private _deleteStoredCsrfToken(): void {
+  private deleteStoredCsrfToken(): void {
     this._log.debug(`Removed CSRF Token from session storage`);
     StorageUtils.remove(`_csrf`);
   }
@@ -686,7 +667,7 @@ export class OidcService {
    * @returns {Array<Token>}
    * @private
    */
-  private _getStoredTokens(): Array<Token> {
+  private getStoredTokens(): Token[] {
     return JSON.parse(StorageUtils.read(`${this.config.provider_id}-token`)) || [];
   }
 
@@ -699,7 +680,7 @@ export class OidcService {
    * @returns {Token[]}
    * @private
    */
-  private _cleanExpiredTokens(storedTokens: Token[]): Token[] {
+  private cleanExpiredTokens(storedTokens: Token[]): Token[] {
 
     let cleanTokens: Token[];
     const time = GeneratorUtils.epoch();
@@ -710,7 +691,7 @@ export class OidcService {
 
     if (storedTokens.length > cleanTokens.length) {
       this._log.debug('Updated token storage after clean.');
-      this._storeTokens(cleanTokens);
+      this.storeTokens(cleanTokens);
     }
 
     return cleanTokens;
@@ -728,15 +709,15 @@ export class OidcService {
    * @param {Token} token
    * @private
    */
-  private _storeToken(token: Token): void {
+  private storeToken(token: Token): void {
 
-    const tokens = this._getStoredTokens();
+    const tokens = this.getStoredTokens();
     let tokensCleaned;
-    this._saveIdTokenHint(token.id_token);
+    this.saveIdTokenHint(token.id_token);
     token.expires = GeneratorUtils.epoch() + (parseInt(token.expires_in, 10) - 30);
     tokens.unshift(token);
-    tokensCleaned = this._cleanExpiredTokens(tokens);
-    this._storeTokens(tokensCleaned);
+    tokensCleaned = this.cleanExpiredTokens(tokens);
+    this.storeTokens(tokensCleaned);
   }
 
   /**
@@ -744,31 +725,30 @@ export class OidcService {
    * @returns {AuthorizeParams}
    * @private
    */
-  private _getAuthorizeParams(promptNone: boolean = false): AuthorizeParams {
+  private getAuthorizeParams(promptNone = false): AuthorizeParams {
 
-    const stateObj = this._getState() || {
-        state: GeneratorUtils.generateState(),
-        providerId: this.config.provider_id
-      },
-      nonce = this._getNonce() || GeneratorUtils.generateNonce(),
-      urlVars: AuthorizeParams = {
-        state: stateObj.state,
-        nonce: nonce,
-        authorization: this.config.authorisation,
-        providerId: this.config.provider_id,
-        client_id: this.config.client_id,
-        response_type: this.config.response_type,
-        redirect_uri: promptNone ? this.config.silent_refresh_uri : this.config.redirect_uri,
-        scope: this.config.scope,
-        prompt: promptNone ? 'none' : ''
-      };
+    const stateObj = this.getState() || {
+      state: GeneratorUtils.generateState(),
+      providerId: this.config.provider_id,
+    };
+    const nonce = this.getNonce() || GeneratorUtils.generateNonce();
+    const urlVars: AuthorizeParams = {
+      nonce,
+      state: stateObj.state,
+      providerId: stateObj.providerId,
+      authorization: this.config.authorisation,
+      client_id: this.config.client_id,
+      response_type: this.config.response_type,
+      redirect_uri: promptNone ? this.config.silent_refresh_uri : this.config.redirect_uri,
+      scope: this.config.scope,
+      prompt: promptNone ? 'none' : '',
+    };
 
     // Save the generated state & nonce
-    this._saveState(stateObj);
-    this._saveNonce(nonce);
+    this.saveState(stateObj);
+    this.saveNonce(nonce);
 
     this._log.debug('Gather the Authorize Params', urlVars);
     return urlVars;
   }
 }
-
