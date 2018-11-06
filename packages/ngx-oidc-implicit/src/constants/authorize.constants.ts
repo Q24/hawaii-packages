@@ -1,4 +1,4 @@
-import {authorizeErrors} from '../models';
+import { authorizeErrors } from '../models';
 
 export const AUTHORIZE_ERRORS: authorizeErrors[] = [
   'invalid_client',

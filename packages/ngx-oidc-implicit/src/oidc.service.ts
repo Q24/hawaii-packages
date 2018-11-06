@@ -370,7 +370,7 @@ export class OidcService {
          * IFrame element
          * @type {HTMLIFrameElement}
          */
-        const iFrame = document.createElement('iframe');
+        const iFrame: HTMLIFrameElement = document.createElement('iframe');
 
         /**
          * Set the iFrame Id

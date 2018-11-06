@@ -16,14 +16,17 @@ export class GeneratorUtils {
     let text = '';
     const possible = '0123456789';
 
-    for (let i = 0; i < 5; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    for (let i = 0; i < 5;) {
+      for (let j = 0; i < 3;) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        j += 1;
+      }
       text += '-';
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
+      for (let k = 0; i < 3;) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        k += 1;
+      }
+      i += 1;
     }
     return text;
   }
@@ -36,8 +39,9 @@ export class GeneratorUtils {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 25;) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
+      i += 1;
     }
     return text;
   }

@@ -8,13 +8,11 @@
     // Modern browsers do this
     if ('pushState' in history) {
       history.pushState('', document.title, window.location.pathname + window.location.search);
-    }
-
-    // Gracefull Degredation
-    else {
+    } else {
+      // Gracefull Degredation
       // Prevent scrolling by storing the page's current scroll offset
-      const scrollV = document.body.scrollTop,
-        scrollH = document.body.scrollLeft;
+      const scrollV = document.body.scrollTop;
+      const scrollH = document.body.scrollLeft;
 
       window.location.hash = '';
 
