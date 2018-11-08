@@ -127,9 +127,10 @@
     /**
      * STORAGE: Delete State
      */
-    deleteState: function () {
+    deleteState: function (providerId) {
+
       var self = this;
-      sessionStorage.removeItem(self.config.providerID + '-state');
+      sessionStorage.removeItem(providerId ? providerId : self.config.providerID + '-state');
     },
 
     /**
@@ -166,9 +167,9 @@
     /**
      * STORAGE: Delete Nonce
      */
-    _deleteNonce: function () {
+    _deleteNonce: function (providerId) {
       var self = this;
-      sessionStorage.removeItem(self.config.providerID + "-nonce");
+      sessionStorage.removeItem(providerId ? providerId : self.config.providerID + "-nonce");
     },
 
     /**
@@ -195,11 +196,9 @@
     /**
      * STORAGE: Delete Session ID
      */
-    deleteSessionId: function () {
+    deleteSessionId: function (providerId) {
       var self = this;
-      if (self.config && self.config.providerID) {
-        sessionStorage.removeItem(self.config.providerID + '-session-id');
-      }
+      sessionStorage.removeItem(providerId ? providerId : self.config.providerID + '-session-id');
     },
 
     /**
@@ -243,11 +242,11 @@
       return tokens;
     },
 
-    deleteStoredTokens: function () {
+    deleteStoredTokens: function (providerId) {
       var self = this;
 
-      self._log('Removing stored tokens for with prefix: ', [self.config.providerID + '-token']);
-      sessionStorage.removeItem(self.config.providerID + '-token');
+      self._log('Removing stored tokens for with prefix: ', [providerId ? providerId : self.config.providerID + '-token']);
+      sessionStorage.removeItem(providerId ? providerId : self.config.providerID + '-token');
     },
 
     /**
@@ -288,11 +287,11 @@
       sessionStorage.setItem(this.config.providerID + '-id-token-hint', idTokenHint);
     },
 
-    deleteIdTokenHint: function () {
+    deleteIdTokenHint: function (providerId) {
       var self = this;
 
-      self._log('Removing hint tokens for with prefix: ', [self.config.providerID + '-id-token-hint']);
-      sessionStorage.removeItem(self.config.providerID + '-id-token-hint');
+      self._log('Removing hint tokens for with prefix: ', [providerId ? providerId : self.config.providerID + '-id-token-hint']);
+      sessionStorage.removeItem(providerId ? providerId : self.config.providerID + '-id-token-hint');
     },
 
     /**
@@ -446,6 +445,24 @@
       returnURL += newUrlVars ? '?' + $.param(newUrlVars) : '';
 
       return returnURL;
+    },
+
+    /**
+     * Clean up the current session: Delete the stored local tokens, state, nonce, id token hint and CSRF token.
+     */
+    cleanSessionStorage(providerIds) {
+      var self = this;
+      var providerIdsToClean = providerIds || [self.config.providerID];
+
+      providerIdsToClean.forEach(function (providerId) {
+        self.deleteStoredTokens(providerId);
+        self.deleteState(providerId);
+        self._deleteNonce(providerId);
+        self.deleteSessionId(providerId);
+        self.deleteIdTokenHint(providerId);
+      });
+
+      sessionStorage.removeItem('_csrf');
     },
 
     /**
@@ -715,10 +732,7 @@
 
       // Make sure the state is 'clean' when doing a session upgrade
       if (urlParams.flush_state) {
-        self.deleteState();
-        self.deleteSessionId();
-        self.deleteStoredTokens();
-        self.deleteIdTokenHint();
+        self.cleanSessionStorage();
 
         self._log('Flush state present, so cleaning the storage');
 
