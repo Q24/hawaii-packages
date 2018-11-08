@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.4.0
+
+* Implement scoped cleanSession
+
 ### 1.3.0
 
 * Implemented silentLogoutByUrl method
