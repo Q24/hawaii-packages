@@ -450,7 +450,7 @@
     /**
      * Clean up the current session: Delete the stored local tokens, state, nonce, id token hint and CSRF token.
      */
-    cleanSessionStorage(providerIds) {
+    cleanSessionStorage: function(providerIds) {
       var self = this;
       var providerIdsToClean = providerIds || [self.config.providerID];
 
