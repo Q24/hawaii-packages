@@ -692,7 +692,7 @@
     /**
      * METHOD: Do session upgrade
      */
-    doSessionUpgradeRedirect: function (sessionUpgradeObj) {
+    doSessionUpgradeRedirect: function (sessionUpgradeObj, openNewTab) {
       var self = this,
         urlVars;
 
@@ -707,7 +707,11 @@
       // Clean up session storage temp
 
       // Do the authorize redirect
-      window.location.href = self.config.ssoBaseUri + '/sso/upgrade-session?' + $.param(urlVars);
+      if (openNewTab) {
+        window.open(self.config.ssoBaseUri + '/sso/upgrade-session?' + $.param(urlVars));
+      } else {
+        window.location.href = self.config.ssoBaseUri + '/sso/upgrade-session?' + $.param(urlVars);
+      }
     },
 
     /**
