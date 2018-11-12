@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.3.1
+
+* Add openNewTab parameter to doSessionUpgradeRedirect, by default do not open in new tab (PROJ-613)
+
 ### 1.3.0
 
 * Implemented silentLogoutByUrl method
