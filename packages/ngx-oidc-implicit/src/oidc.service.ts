@@ -24,7 +24,7 @@ export class OidcService {
    */
   constructor(private _http: HttpClient,
               private _log: LogService) {
-    if (!this.config.debug) {
+    if (!this.config || !this.config.debug) {
       this._log.debug = function () {
       };
     }
