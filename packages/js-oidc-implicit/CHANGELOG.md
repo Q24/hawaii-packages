@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.4.1
+
+* Refactored defer return in silentRefreshAccessToken method so it can return a previous instance if neccessary
+
 ### 1.3.1
 
 * Add openNewTab parameter to doSessionUpgradeRedirect, by default do not open in new tab (PROJ-613)
