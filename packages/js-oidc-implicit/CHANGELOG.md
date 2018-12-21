@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.4.2
+* Fixed property check with defer by making it stricter
+
 ### 1.4.1
 
 * Refactored defer return in silentRefreshAccessToken method so it can return a previous instance if neccessary

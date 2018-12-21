@@ -890,7 +890,7 @@
         };
       }
 
-      return silentRefreshAccessTokenIframe.defer ? silentRefreshAccessTokenIframe.defer : defer;
+      return (silentRefreshAccessTokenIframe && silentRefreshAccessTokenIframe.defer) ? silentRefreshAccessTokenIframe.defer : defer;
     },
 
     /**
