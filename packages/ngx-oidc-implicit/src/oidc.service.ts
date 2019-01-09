@@ -25,7 +25,7 @@ export class OidcService {
   constructor(private _http: HttpClient,
               private _log: LogService) {
 
-    if (!this.config) {
+    if (!this.config || !this.config.debug) {
       (<any> window).console.error('%c You have to provide a config in order for the OidcService too work. The config should implement the OidcConfig interface.', 'font-weight: bold; color: red;');
     }
 

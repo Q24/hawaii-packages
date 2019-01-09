@@ -608,8 +608,7 @@
             defer.reject(false);
           }
         });
-      }
-      else {
+      } else {
         self._log('State NOT valid, rejecting checkSession Promise');
         defer.reject(false);
       }
@@ -800,14 +799,16 @@
       // So we need to resolve the promise, and return out of the function immediatly, so no further code will be executed.
       if (self.config.client_id === 'hawaii') {
         console.error('No SSO config provided. So stop.');
-        defer.resolve(false);
+        defer.reject(false);
         return defer;
       }
 
+      var silentRefreshAccessTokenIframe = document.getElementById('silentRefreshAccessTokenIframe');
+
       /**
-       * On
+       * Only continue if there'a no previous call running.
        */
-      if (document.getElementById('silentRefreshAccessTokenIframe') === null) {
+      if (silentRefreshAccessTokenIframe === null) {
 
         self._log('Silent refresh started');
 
@@ -815,6 +816,11 @@
          * Iframe element
          */
         var iframe = document.createElement('iframe');
+
+        /**
+         * Attach defer to iframe to make it retrievable
+         */
+        iframe.defer = defer;
 
         /**
          * Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
@@ -844,9 +850,7 @@
           window.document.body.appendChild(iframe);
           self._log('Do silent refresh redirect to SSO with options:', authorizeParams);
           iframe.src = self.config.authorization + '?' + $.param(authorizeParams);
-        }
-
-        else {
+        } else {
           self._log('Error in silent refresh authorize redirect:', urlParams.error);
           defer.reject(false);
         }
@@ -898,9 +902,9 @@
             iframe.parentElement.removeChild(iframe);
           }, 0);
         };
-
       }
-      return defer;
+
+      return (silentRefreshAccessTokenIframe && silentRefreshAccessTokenIframe.defer) ? silentRefreshAccessTokenIframe.defer : defer;
     },
 
     /**
@@ -915,7 +919,7 @@
       // So we need to resolve the promise, and return out of the function immediatly, so no further code will be executed.
       if (self.config.client_id === 'hawaii') {
         console.error('No SSO config provided. So stop.');
-        defer.resolve(false);
+        defer.reject(false);
         return defer;
       }
 
@@ -981,11 +985,12 @@
           setTimeout(function () {
             clearInterval(interval);
             iframe.parentElement.removeChild(iframe);
-            defer.resolve(false);
+            defer.reject(false);
           }, 3000);
 
         };
-
+      } else {
+        defer.reject(false);
       }
       return defer;
     }
