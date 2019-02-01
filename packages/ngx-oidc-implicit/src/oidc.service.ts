@@ -13,7 +13,7 @@ import { LogService } from './services';
 export class OidcService {
 
   /**
-   * Create config instance
+   * Create CONFIG instance
    */
   public config: OidcConfig;
 
@@ -427,7 +427,7 @@ export class OidcService {
                 const currentIframeURL = iFrame.contentWindow.location.href;
 
                 /**
-                 * Check if we the page ended up on the post_logout_redirect_uri from the config. This mean the logout was successful.
+                 * Check if we the page ended up on the post_logout_redirect_uri from the CONFIG. This mean the logout was successful.
                  */
                 return (currentIframeURL.indexOf(this.config.post_logout_redirect_uri) === 0);
               }),

@@ -1,0 +1,47 @@
+{
+  "name": "@hawaii-framework/oidc-implicit-core",
+  "version": "1.0.0",
+  "description": "Core components for implementing Open ID Connect Implicit Flow",
+  "author": "Ilionx",
+  "email": "kevin.riemens@qnh.nl",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/Q24/hawaii-packages/tree/master/packages/oidc-implicit-core",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Q24/hawaii-packages.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Q24/hawaii-packages/issues"
+  },
+  "keywords": [
+    "oidc",
+    "openid",
+    "oauth2",
+    "implicit",
+    "javascript",
+    "es6",
+    "wrapper",
+    "ng"
+  ],
+  "module": "index.js",
+  "typings": "index.d.ts",
+  "devDependencies": {
+    "rollup": "^0.63.2",
+    "rollup-copy-plugin": "^0.1.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "ts-node": "^7.0.0",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.11.0",
+    "tslint-no-circular-imports": "^0.6.1",
+    "typescript": "^3.0.0",
+    "uglify-js": "^3.3.25"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "lint": "tslint -p ./tsconfig.json",
+    "transpile": "tsc",
+    "package": "rollup -c",
+    "minify": "uglifyjs dist/bundles/oidc-implicit-core.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/oidc-implicit-core.umd.min.js",
+    "build": "npm run transpile && npm run package && npm run minify"
+  }
+}

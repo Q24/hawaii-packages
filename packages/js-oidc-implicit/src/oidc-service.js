@@ -10,7 +10,7 @@
   function SsoService(config) {
 
     /**
-     * Holds a list of config variables
+     * Holds a list of CONFIG variables
      * @type {Object}
      */
     this.config = {
@@ -45,7 +45,7 @@
      * @param config
      */
     init: function (config) {
-      // Load config props
+      // Load CONFIG props
       for (var prop in config) {
         if (config.hasOwnProperty(prop)) {
           this.config[prop] = config[prop];
@@ -455,24 +455,24 @@
       var providerIdsToClean = providerIds || [self.config.providerID];
 
       providerIdsToClean.forEach(function (providerId) {
-        self.deleteStoredTokens(providerId);
-        self.deleteState(providerId);
+        TokenService.deleteStoredTokens(providerId);
+        StateUtil.deleteState(providerId);
         self._deleteNonce(providerId);
-        self.deleteSessionId(providerId);
-        self.deleteIdTokenHint(providerId);
+        SessionService.deleteSessionId(providerId);
+        TokenService.deleteIdTokenHint(providerId);
       });
 
       sessionStorage.removeItem('_csrf');
     },
 
     /**
-     * UTIL: dump the config and the tokens
+     * UTIL: dump the CONFIG and the tokens
      */
     _dump: function () {
       if (this.config.debug) {
         var txt = '',
           self = this,
-          token = self.getStoredToken();
+          token = TokenService.getStoredToken();
         txt += 'Token: ' + "\n" + JSON.stringify(token, undefined, 4) + '\n\n';
         txt += 'Config: ' + "\n" + JSON.stringify(self.config, undefined, 4) + "\n\n";
         return txt;
@@ -508,7 +508,7 @@
     },
 
     /**
-     * UTIL: log function for SSO, which can be turned on/off in config
+     * UTIL: log function for SSO, which can be turned on/off in CONFIG
      */
     _log: function () {
       var log = {};
@@ -652,7 +652,7 @@
     doLogout: function () {
       var self = this,  // Set the service
         stateObj = self._getState() || {state: null}, // Get state object from session store
-        tokenObj = self.getStoredToken(),
+        tokenObj = TokenService.getStoredToken(),
         $form;
 
       self._log('Logout function triggered');
@@ -725,10 +725,10 @@
 
       self._log('Checking session started');
 
-      // Check if the config is not the default, because thisw will mean the implicit flow was triggered, without a proper config, which will fail miserably
+      // Check if the CONFIG is not the default, because thisw will mean the implicit flow was triggered, without a proper CONFIG, which will fail miserably
       // So we need to resolve the promise, and return out of the function immediatly, so no further code will be executed.
       if (self.config.client_id === 'hawaii') {
-        console.error('No SSO config provided. So stop.');
+        console.error('No SSO CONFIG provided. So stop.');
         defer.resolve(false);
         return defer;
       }
@@ -742,7 +742,7 @@
       }
 
       // 1 --- Let's first check if we still have a valid token stored locally, if so use that token
-      if (self.getStoredToken()) {
+      if (TokenService.getStoredToken()) {
         self.setHandlers();
         self._log('You may proceed');
         defer.resolve(true);
@@ -773,14 +773,14 @@
         // 3 --- There's a session upgrade token in the URL
         else if (hashFragmentParams.session_upgrade_token) {
           self._log('Session Upgrade Token found in URL');
-          self.doSessionUpgradeRedirect(hashFragmentParams);
+          SessionService.doSessionUpgradeRedirect(hashFragmentParams);
         }
 
 
         // 4 --- No token in URL or Storage, so we need to get one from SSO
         else {
           self._log('No valid token in Storage or URL');
-          self.authorizeRedirect();
+          SessionService.authorizeRedirect();
         }
       }
 
@@ -795,10 +795,10 @@
       var self = this,
         defer = $.Deferred();
 
-      // Check if the config is not the default, because thisw will mean the implicit flow was triggered, without a proper config, which will fail miserably
+      // Check if the CONFIG is not the default, because thisw will mean the implicit flow was triggered, without a proper CONFIG, which will fail miserably
       // So we need to resolve the promise, and return out of the function immediatly, so no further code will be executed.
       if (self.config.client_id === 'hawaii') {
-        console.error('No SSO config provided. So stop.');
+        console.error('No SSO CONFIG provided. So stop.');
         defer.reject(false);
         return defer;
       }
@@ -915,10 +915,10 @@
       var self = this,
         defer = $.Deferred();
 
-      // Check if the config is not the default, because thisw will mean the implicit flow was triggered, without a proper config, which will fail miserably
+      // Check if the CONFIG is not the default, because thisw will mean the implicit flow was triggered, without a proper CONFIG, which will fail miserably
       // So we need to resolve the promise, and return out of the function immediatly, so no further code will be executed.
       if (self.config.client_id === 'hawaii') {
-        console.error('No SSO config provided. So stop.');
+        console.error('No SSO CONFIG provided. So stop.');
         defer.reject(false);
         return defer;
       }
@@ -971,7 +971,7 @@
             var currentIframeURL = iframe.contentWindow.location.href;
 
             /**
-             * Check if we the page ended up on the post_logout_redirect_uri from the config. This mean the logout was successful.
+             * Check if we the page ended up on the post_logout_redirect_uri from the CONFIG. This mean the logout was successful.
              */
             if (currentIframeURL.indexOf(self.config.post_logout_redirect_uri) !== -1) {
               clearInterval(interval);
