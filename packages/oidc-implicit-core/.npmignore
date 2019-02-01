@@ -1,0 +1,14 @@
+/node_modules/
+.gitignore
+index.ts
+rollup.config.js
+.editorconfig
+package-lock.json
+yarn.lock
+/constants/
+/models/
+/services/
+/utils/
+clean-hash-fragment.js
+tsconfig.json
+tslint.json
