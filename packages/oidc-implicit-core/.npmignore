@@ -10,5 +10,6 @@ yarn.lock
 /services/
 /utils/
 clean-hash-fragment.js
+!*/clean-hash-fragment.js
 tsconfig.json
 tslint.json
