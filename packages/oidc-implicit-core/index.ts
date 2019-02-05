@@ -1,6 +1,5 @@
 // Constants
 export { AUTHORIZE_ERRORS } from './constants/authorize.constants';
-export { CONFIG } from './constants/config.constants';
 
 // Models
 export * from './models/token.models';
@@ -20,3 +19,4 @@ export { UrlUtil } from './utils/urlUtil';
 // Services
 export { TokenService } from './services/token.service';
 export { SessionService } from './services/session.service';
+export * from './services/config.service';
