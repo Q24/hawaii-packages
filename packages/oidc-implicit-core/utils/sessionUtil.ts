@@ -2,13 +2,13 @@ import { CsrfToken, Token } from '../models/token.models';
 import { ValidSession } from '../models/session.models';
 import { NonceUtil } from './nonceUtil';
 import { LogUtil } from './logUtil';
-import { CONFIG } from '../constants/config.constants';
 import { UrlUtil } from './urlUtil';
 import { StateUtil } from './stateUtil';
 import { TokenService } from '../services/token.service';
 import { StorageUtil } from './storageUtil';
 import { AuthorizeParams } from '../models/url-param.models';
 import { GeneratorUtil } from './generatorUtil';
+import ConfigService from '../services/config.service';
 
 export class SessionUtil {
 
@@ -18,7 +18,7 @@ export class SessionUtil {
    * @private
    */
   static getSessionId(): string | null {
-    return StorageUtil.read(`${CONFIG.provider_id}-session-id`);
+    return StorageUtil.read(`${ConfigService.config.provider_id}-session-id`);
   }
 
   /**
@@ -27,14 +27,14 @@ export class SessionUtil {
    * @private
    */
   static saveSessionId(sessionId: string): void {
-    StorageUtil.store(`${CONFIG.provider_id}-session-id`, sessionId);
+    StorageUtil.store(`${ConfigService.config.provider_id}-session-id`, sessionId);
   }
 
   /**
    * Deletes the session ID from sessionStorage
    * @private
    */
-  static deleteSessionId(providerId = `${CONFIG.provider_id}`): void {
+  static deleteSessionId(providerId = `${ConfigService.config.provider_id}`): void {
     StorageUtil.remove(`${providerId}-session-id`);
   }
 
@@ -65,7 +65,7 @@ export class SessionUtil {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
-      xhr.open('POST', CONFIG.validate_token_endpoint, true);
+      xhr.open('POST', ConfigService.config.validate_token_endpoint, true);
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
@@ -196,7 +196,7 @@ export class SessionUtil {
       if (!urlParams['error']) {
         window.document.body.appendChild(iFrame);
         LogUtil.debug('Do silent refresh redirect to SSO with options:', authorizeParams);
-        iFrame.src = `${CONFIG.authorize_endpoint}?${UrlUtil.createURLParameters(authorizeParams)}`;
+        iFrame.src = `${ConfigService.config.authorize_endpoint}?${UrlUtil.createURLParameters(authorizeParams)}`;
       } else {
         LogUtil.debug(`Error in silent refresh authorize redirect: ${urlParams['error']}`);
         resolve(false);
@@ -259,7 +259,7 @@ export class SessionUtil {
    * Returns 'true' if logout was successful and ended up on the configured `post_logout_redirect_uri`
    * @returns {Promise<boolean>}
    */
-  static silentLogoutByUrl(url = CONFIG.silent_logout_uri): Promise<boolean> {
+  static silentLogoutByUrl(url = ConfigService.config.silent_logout_uri): Promise<boolean> {
     return new Promise((resolve) => {
       LogUtil.debug('Silent logout by URL started');
 
@@ -307,7 +307,7 @@ export class SessionUtil {
               LogUtil.debug(
                 'Silent logout failed after 5000',
                 iFrame.contentWindow.location.href,
-                CONFIG.post_logout_redirect_uri,
+                ConfigService.config.post_logout_redirect_uri,
               );
 
               clearInterval(intervalTimer);
@@ -316,11 +316,11 @@ export class SessionUtil {
             }
 
             const currentIframeURL = iFrame.contentWindow.location.href;
-            if (currentIframeURL.indexOf(CONFIG.post_logout_redirect_uri) === 0) {
+            if (currentIframeURL.indexOf(ConfigService.config.post_logout_redirect_uri) === 0) {
               LogUtil.debug(
                 'Silent logout successful',
                 iFrame.contentWindow.location.href,
-                CONFIG.post_logout_redirect_uri,
+                ConfigService.config.post_logout_redirect_uri,
               );
 
               clearInterval(intervalTimer);
@@ -382,19 +382,19 @@ export class SessionUtil {
 
     const stateObj = StateUtil.getState() || {
       state: GeneratorUtil.generateState(),
-      providerId: CONFIG.provider_id,
+      providerId: ConfigService.config.provider_id,
     };
 
     const urlVars: AuthorizeParams = {
       nonce: NonceUtil.getNonce() || GeneratorUtil.generateNonce(),
       state: stateObj.state,
-      authorization: CONFIG.authorisation,
-      providerId: CONFIG.provider_id,
-      client_id: CONFIG.client_id,
-      response_type: CONFIG.response_type,
+      authorization: ConfigService.config.authorisation,
+      providerId: ConfigService.config.provider_id,
+      client_id: ConfigService.config.client_id,
+      response_type: ConfigService.config.response_type,
       redirect_uri:
-        promptNone && CONFIG.silent_refresh_uri ? CONFIG.silent_refresh_uri : CONFIG.redirect_uri,
-      scope: CONFIG.scope,
+        promptNone && ConfigService.config.silent_refresh_uri ? ConfigService.config.silent_refresh_uri : ConfigService.config.redirect_uri,
+      scope: ConfigService.config.scope,
       prompt: promptNone ? 'none' : '',
     };
 

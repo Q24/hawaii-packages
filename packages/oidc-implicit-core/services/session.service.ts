@@ -1,5 +1,4 @@
 import { StorageUtil } from '../utils/storageUtil';
-import { CONFIG } from '../constants/config.constants';
 import { TokenService } from './token.service';
 import { StateUtil } from '../utils/stateUtil';
 import { NonceUtil } from '../utils/nonceUtil';
@@ -7,6 +6,7 @@ import { LogUtil } from '../utils/logUtil';
 import { UrlUtil } from '../utils/urlUtil';
 import { CsrfToken, Token } from '../models/token.models';
 import { SessionUtil } from '../utils/sessionUtil';
+import ConfigService from './config.service';
 
 export class SessionService {
 
@@ -15,7 +15,7 @@ export class SessionService {
    * @returns {void}
    * @param providerIDs
    */
-  static cleanSessionStorage(providerIDs: string[] = [`${CONFIG.provider_id}`]): void {
+  static cleanSessionStorage(providerIDs: string[] = [`${ConfigService.config.provider_id}`]): void {
     providerIDs.forEach((providerId: string) => {
       TokenService.deleteStoredTokens(providerId);
       TokenService.deleteIdTokenHint(providerId);
@@ -38,7 +38,7 @@ export class SessionService {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
-      xhr.open('GET', `${CONFIG.is_session_alive_endpoint}/${SessionUtil.getSessionId()}`, true);
+      xhr.open('GET', `${ConfigService.config.is_session_alive_endpoint}/${SessionUtil.getSessionId()}`, true);
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
@@ -70,7 +70,7 @@ export class SessionService {
     // Do the authorize redirect
     if (!urlParams['error']) {
       LogUtil.debug('Do authorisation redirect to SSO with options:', authorizeParams);
-      window.location.href = `${CONFIG.authorize_endpoint}?${UrlUtil.createURLParameters(authorizeParams)}`;
+      window.location.href = `${ConfigService.config.authorize_endpoint}?${UrlUtil.createURLParameters(authorizeParams)}`;
     } else {
       // Error in authorize redirect
       LogUtil.error('Redirecting to Authorisation failed');
@@ -86,14 +86,14 @@ export class SessionService {
   static doSessionUpgradeRedirect(token: Token): void {
     const urlVars = {
       session_upgrade_token: token.session_upgrade_token,
-      redirect_uri: `${CONFIG.redirect_uri}?flush_state=true`,
+      redirect_uri: `${ConfigService.config.redirect_uri}?flush_state=true`,
     };
 
     LogUtil.debug('Session upgrade function triggered with token: ', token.session_upgrade_token);
 
     // Do the authorize redirect
     const urlParams = UrlUtil.createURLParameters(urlVars);
-    window.location.href = `${CONFIG.authorisation}/sso/upgrade-session?${urlParams}`;
+    window.location.href = `${ConfigService.config.authorisation}/sso/upgrade-session?${urlParams}`;
   }
 
   /**

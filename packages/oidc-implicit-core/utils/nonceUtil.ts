@@ -1,5 +1,5 @@
-import { CONFIG } from '../constants/config.constants';
 import { StorageUtil } from './storageUtil';
+import ConfigService from '../services/config.service';
 
 export class NonceUtil {
 
@@ -9,7 +9,7 @@ export class NonceUtil {
    * @private
    */
   static getNonce(): string | null {
-    return StorageUtil.read(`${CONFIG.provider_id}-nonce`);
+    return StorageUtil.read(`${ConfigService.config.provider_id}-nonce`);
   }
 
   /**
@@ -18,14 +18,14 @@ export class NonceUtil {
    * @param nonce
    */
   static saveNonce(nonce: string): void {
-    StorageUtil.store(`${CONFIG.provider_id}-nonce`, nonce);
+    StorageUtil.store(`${ConfigService.config.provider_id}-nonce`, nonce);
   }
 
   /**
    * Deletes the nonce from sessionStorage
    * @private
    */
-  static deleteNonce(providerId = `${CONFIG.provider_id}`): void {
+  static deleteNonce(providerId = `${ConfigService.config.provider_id}`): void {
     StorageUtil.remove(`${providerId}-nonce`);
   }
 

@@ -1,8 +1,8 @@
 import { StorageUtil } from '../utils/storageUtil';
-import { CONFIG } from '../constants/config.constants';
 import { LogUtil } from '../utils/logUtil';
 import { CsrfToken, Token } from '../models/token.models';
 import { GeneratorUtil } from '../utils/generatorUtil';
+import ConfigService from '../services/config.service';
 
 export class TokenService {
 
@@ -11,7 +11,7 @@ export class TokenService {
    * @param {providerId} string
    * @returns { void }
    */
-  static deleteStoredTokens(providerId = `${CONFIG.provider_id}`): void {
+  static deleteStoredTokens(providerId = `${ConfigService.config.provider_id}`): void {
     LogUtil.debug(`Removed Tokens from session storage: ${providerId}`);
     StorageUtil.remove(`${providerId}-token`);
   }
@@ -22,7 +22,7 @@ export class TokenService {
    * @returns {string | null}
    */
   static getIdTokenHint(): string | null {
-    return StorageUtil.read(`${CONFIG.provider_id}-id-token-hint`);
+    return StorageUtil.read(`${ConfigService.config.provider_id}-id-token-hint`);
   }
 
   /**
@@ -31,7 +31,7 @@ export class TokenService {
    * @private
    */
   static getStoredTokens(): Token[] | null {
-    const storedTokens = StorageUtil.read(`${CONFIG.provider_id}-token`);
+    const storedTokens = StorageUtil.read(`${ConfigService.config.provider_id}-token`);
     return JSON.parse(storedTokens);
   }
 
@@ -42,7 +42,7 @@ export class TokenService {
    */
   static storeTokens(tokens: Token[]): void {
     LogUtil.debug('Saved Tokens to session storage');
-    StorageUtil.store(`${CONFIG.provider_id}-token`, JSON.stringify(tokens));
+    StorageUtil.store(`${ConfigService.config.provider_id}-token`, JSON.stringify(tokens));
   }
 
   /**
@@ -122,14 +122,14 @@ export class TokenService {
    * @param idTokenHint
    */
   static saveIdTokenHint(idTokenHint: string): void {
-    StorageUtil.store(`${CONFIG.provider_id}-id-token-hint`, idTokenHint);
+    StorageUtil.store(`${ConfigService.config.provider_id}-id-token-hint`, idTokenHint);
   }
 
   /**
    * Deletes the ID token hint from sessionStorage
    * @private
    */
-  static deleteIdTokenHint(providerId = `${CONFIG.provider_id}`): void {
+  static deleteIdTokenHint(providerId = `${ConfigService.config.provider_id}`): void {
     StorageUtil.remove(`${providerId}-id-token-hint`);
   }
 
@@ -151,7 +151,7 @@ export class TokenService {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
-      xhr.open('POST', CONFIG.csrf_token_endpoint, true);
+      xhr.open('POST', ConfigService.config.csrf_token_endpoint, true);
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
