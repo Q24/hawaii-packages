@@ -19,4 +19,7 @@ export { UrlUtil } from './utils/urlUtil';
 // Services
 export { TokenService } from './services/token.service';
 export { SessionService } from './services/session.service';
-export * from './services/config.service';
+
+// Config
+import ConfigService from './services/config.service';
+export default ConfigService;

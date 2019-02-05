@@ -30,9 +30,9 @@ export class TokenService {
    * @returns {Token[]}
    * @private
    */
-  static getStoredTokens(): Token[] | null {
+  static getStoredTokens(): Token[] {
     const storedTokens = StorageUtil.read(`${ConfigService.config.provider_id}-token`);
-    return JSON.parse(storedTokens);
+    return JSON.parse(storedTokens) || [];
   }
 
   /**
@@ -58,16 +58,18 @@ export class TokenService {
     let cleanTokens: Token[];
     const time = GeneratorUtil.epoch();
 
-    cleanTokens = storedTokens.filter((element: Token) => {
-      return element.expires && element.expires > time + 5;
-    });
+    if (storedTokens.length > 0) {
+      cleanTokens = storedTokens.filter((element: Token) => {
+        return element.expires && element.expires > time + 5;
+      });
 
-    if (storedTokens.length > cleanTokens.length) {
-      LogUtil.debug('Updated token storage after clean.');
-      TokenService.storeTokens(cleanTokens);
+      if (storedTokens.length > cleanTokens.length) {
+        LogUtil.debug('Updated token storage after clean.');
+        TokenService.storeTokens(cleanTokens);
+      }
     }
 
-    return cleanTokens;
+    return cleanTokens || [];
   }
 
   /**

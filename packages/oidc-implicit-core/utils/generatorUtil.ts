@@ -17,12 +17,12 @@ export class GeneratorUtil {
     const possible = '0123456789';
 
     for (let i = 0; i < 5;) {
-      for (let j = 0; i < 3;) {
+      for (let j = 0; j < 3;) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
         j += 1;
       }
       text += '-';
-      for (let k = 0; i < 3;) {
+      for (let k = 0; k < 3;) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
         k += 1;
       }
