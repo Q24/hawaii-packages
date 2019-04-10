@@ -88,9 +88,9 @@ export class SessionUtil {
    * @returns {Promise<boolean>}
    */
   static checkIfTokenExpiresAndRefreshWhenNeeded(almostExpiredTreshhold = 300, token: Token): Promise<boolean> {
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>(resolve => {
       if (token.expires && token.expires - Math.round(new Date().getTime() / 1000.0) < almostExpiredTreshhold) {
-        this.silentRefreshAccessToken().then(() => {
+        SessionUtil.silentRefreshAccessToken().then(() => {
           resolve(true);
         });
       } else {
@@ -151,7 +151,7 @@ export class SessionUtil {
    * @returns {Promise<boolean>}
    */
   static silentRefreshAccessToken(): Promise<boolean> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       LogUtil.debug('Silent refresh started');
 
       if (document.getElementById('silentRefreshAccessTokenIframe') !== null) {
