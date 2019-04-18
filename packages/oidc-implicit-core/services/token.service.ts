@@ -154,7 +154,10 @@ export class TokenService {
       const xhr = new XMLHttpRequest();
 
       xhr.open('POST', ConfigService.config.csrf_token_endpoint, true);
+
       xhr.withCredentials = true;
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
           if (xhr.status === 200) {
