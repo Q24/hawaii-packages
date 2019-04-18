@@ -66,8 +66,7 @@ export class SessionUtil {
       const xhr = new XMLHttpRequest();
 
       xhr.open('POST', ConfigService.config.validate_token_endpoint, true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-
+      xhr.withCredentials = true;
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
           if (xhr.status === 200) {
@@ -77,7 +76,6 @@ export class SessionUtil {
           }
         }
       };
-
       xhr.send(JSON.stringify(data));
     }) as Promise<ValidSession>;
   }

@@ -39,7 +39,7 @@ export class SessionService {
       const xhr = new XMLHttpRequest();
 
       xhr.open('GET', `${ConfigService.config.is_session_alive_endpoint}/${SessionUtil.getSessionId()}`, true);
-
+      xhr.withCredentials = true;
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
           if (xhr.status === 204) {
@@ -49,7 +49,6 @@ export class SessionService {
           }
         }
       };
-
       xhr.send(null);
     }) as Promise<{ status: number }>;
   }
