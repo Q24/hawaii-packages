@@ -41,10 +41,6 @@ export class SessionService {
       xhr.open('GET', `${ConfigService.config.is_session_alive_endpoint}/${SessionUtil.getSessionId()}`, true);
 
       xhr.withCredentials = true;
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.setRequestHeader('Accept', 'application/json');
-      xhr.setRequestHeader('Accept', 'text/plain');
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
