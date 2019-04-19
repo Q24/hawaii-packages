@@ -158,6 +158,8 @@ export class TokenService {
       xhr.withCredentials = true;
       xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
       xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Accept', 'text/plain');
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
@@ -168,7 +170,7 @@ export class TokenService {
           }
         }
       };
-      xhr.send(null);
+      xhr.send();
     }) as Promise<CsrfToken>;
   }
 }
