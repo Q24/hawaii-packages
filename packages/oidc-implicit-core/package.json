@@ -1,6 +1,6 @@
 {
   "name": "@hawaii-framework/oidc-implicit-core",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Core components for implementing Open ID Connect Implicit Flow",
   "author": "Ilionx",
   "email": "kriemens@ilionx.com",
