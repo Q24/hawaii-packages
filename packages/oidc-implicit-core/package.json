@@ -46,5 +46,8 @@
     "package": "rollup -c",
     "minify": "uglifyjs dist/bundles/oidc-implicit-core.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/oidc-implicit-core.umd.min.js",
     "build": "npm run clean && npm run transpile && npm run package && npm run minify"
-  }
+  },
+  "files": [
+    "/dist"
+  ]
 }
