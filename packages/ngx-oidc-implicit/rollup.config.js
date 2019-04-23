@@ -17,12 +17,10 @@ export default {
     '@angular/core',
     '@angular/common/http',
     'rxjs',
-    'rxjs/operators'
+    'rxjs/operators',
+    '@hawaii-framework/oidc-implicit-core/dist'
   ],
   plugins: [
-    resolve({
-      // use "module" field for ES6 module if possible
-      module: true // Default: true
-    })
+    resolve()
   ]
 }
