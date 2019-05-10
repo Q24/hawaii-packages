@@ -7,7 +7,6 @@
 
 * Refactored defer return in silentRefreshAccessToken method so it can return a previous instance if neccessary
 
-
 ### 1.4.0
 
 * Implement scoped cleanSession
