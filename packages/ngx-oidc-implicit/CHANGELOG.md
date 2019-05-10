@@ -1,5 +1,11 @@
 # Changelog
 
+### 2.0.0
+
+* Complete refactor. This is now just a 'wrapper' only. Under the hood this now use @hawaii-framework/oidc-implicit-core. The core uses mainly static methods woth native promises. To keep the Observable workflow intact, all Promise based method are wrapper with a new Observable with observer.
+
+*BREAKING CHANGE*: A peer depedency on `@hawaii-framework/oidc-implicit-core` was added.
+
 ### 1.3.0
 
 * Refactored models into seperate files
