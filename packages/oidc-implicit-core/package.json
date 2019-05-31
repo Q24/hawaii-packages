@@ -32,9 +32,9 @@
     "rollup-copy-plugin": "^0.1.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "ts-node": "^7.0.0",
-    "tslint": "^5.11.0",
-    "tslint-config-airbnb": "^5.11.0",
-    "tslint-no-circular-imports": "^0.6.1",
+    "tslint": "^5.17.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-no-circular-imports": "^0.6.2",
     "typescript": "^3.4.3",
     "uglify-js": "^3.3.25"
   },
