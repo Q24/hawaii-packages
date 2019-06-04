@@ -42,22 +42,7 @@ So, when you're ready to commit your work, run:
 `npx git-cz`  
 
 ### Publishing
-We use [Lerna](https://github.com/lerna/lerna#commands) 
-
-* All package versions are kept in sync by [Lerna](https://github.com/lerna/lerna#commands) automatically.
-* Describe changes to a package in the _CHANGELOG.md_ of **_that_** package
-* Update changelogs, and commit your work.
-* `cd /opt/hawaii/workspace/hawaii-packages`
-* `lerrna publish`
-* Choose the update type (patch, minor, major, etc)<br>_`patch` is for bugfixes, `minor` is for feature. Use a `major` update **only** in case of breaking changes._
-
-`lerna publish` will:
- 1. determine which packages need to be published
- 1. increment the version keys in `lerna.json` and each of the `package.json` files
- 1. update depedencies with a `^`
- 1. create a new git commit
- 1. tag the new version on the remote
- 1. publish all non-private packages to npm.  
+// TODO
  
  ### Publish Alpha/Beta/Nightly/Whatever
  You'll want to use the `--npm-tag`. This way, you can publically install your dev version, but it won't 'release' it to people using the plugin.
@@ -66,17 +51,4 @@ We use [Lerna](https://github.com/lerna/lerna#commands)
  Please use their conventions.
  
  So, do this:
- * `lerrna publish --npm-tag=next`
-
-### Other Commands
-* `lerna updated` - See which packages have been updated since the latest release
-* `lerna add ${package}` - Add dependency to all packages
-* `lerna clean` - Remove all _node_modules_ from the packages
-* `lerna ls` - List all packages
-* `lerna run -- [..args]` - Runs `npm run my-script` in all packages that have it, i.e. `build`
-* `lerna exec -- [..args]` -- Runs  a command in each of the packages, i.e. `'npm i'`
-
-### FAQ
-1. **`lerna publish` will build, but not publish the packages?** 
-<br>You probably don't have yourself added as a npm user to one or more packages. The steps to add yourself as a user are described in the _Create your package_ section.<br><br>
-1. More soon...
+ * `npm publish --npm-tag=beta`
