@@ -296,7 +296,7 @@ The form should (for security purposes) be a classic form HTTP POST.
 
 Here is the bare basics:
 
-#### `login.compontent.html`
+#### `login.component.html`
 
 ```angular2html
 <form ngNoForm
