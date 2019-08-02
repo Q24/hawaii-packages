@@ -2,7 +2,7 @@ import { StorageUtil } from '../utils/storageUtil';
 import { LogUtil } from '../utils/logUtil';
 import { CsrfToken, Token } from '../models/token.models';
 import { GeneratorUtil } from '../utils/generatorUtil';
-import ConfigService from '../services/config.service';
+import configService from '../services/config.service';
 
 export class TokenService {
 
@@ -11,18 +11,27 @@ export class TokenService {
    * @param {providerId} string
    * @returns { void }
    */
-  static deleteStoredTokens(providerId = `${ConfigService.config.provider_id}`): void {
-    LogUtil.debug(`Removed Tokens from session storage: ${providerId}`);
-    StorageUtil.remove(`${providerId}-token`);
+  static deleteStoredTokens(): void {
+    LogUtil.debug(`Removed Tokens from session storage`);
+    StorageUtil.remove('-token');
   }
 
   /**
-   * Get the saved session ID string from storage
+   * Get the saved id_token_hint string for the current instance from storage
+   * For logout, we use a regex, while we don;t know if the instance of client_id is the same. Pass the `{regex: true}` option, to search for any ID Token Hint by regex
    * Used when you need to check the if your logged in or not without using access-tokens as a referance
    * @returns {string | null}
    */
-  static getIdTokenHint(): string | null {
-    return StorageUtil.read(`${ConfigService.config.provider_id}-id-token-hint`);
+  static getIdTokenHint(options = { regex: false }): string | null {
+
+    if (options.regex) {
+      const regex = new RegExp(/-id-token-hint/);
+      const storageArray = Object.keys(StorageUtil.storage)
+        .filter(key => regex.test(key));
+      return storageArray.length > 0 ? StorageUtil.read(storageArray[0]) : null;
+    }
+
+    return StorageUtil.read(`${configService.config.client_id}-id-token-hint`);
   }
 
   /**
@@ -31,18 +40,18 @@ export class TokenService {
    * @private
    */
   static getStoredTokens(): Token[] {
-    const storedTokens = StorageUtil.read(`${ConfigService.config.provider_id}-token`);
+    const storedTokens = StorageUtil.read(`${configService.config.client_id}-token`);
     return JSON.parse(storedTokens) || [];
   }
 
   /**
    * Stores an array of Tokens to the session Storage
-   * @param {Token[]} tokens
+   * @param {Token[]} tokens`
    * @private
    */
   static storeTokens(tokens: Token[]): void {
     LogUtil.debug('Saved Tokens to session storage');
-    StorageUtil.store(`${ConfigService.config.provider_id}-token`, JSON.stringify(tokens));
+    StorageUtil.store(`${configService.config.client_id}-token`, JSON.stringify(tokens));
   }
 
   /**
@@ -124,15 +133,15 @@ export class TokenService {
    * @param idTokenHint
    */
   static saveIdTokenHint(idTokenHint: string): void {
-    StorageUtil.store(`${ConfigService.config.provider_id}-id-token-hint`, idTokenHint);
+    StorageUtil.store(`${configService.config.client_id}-id-token-hint`, idTokenHint);
   }
 
   /**
    * Deletes the ID token hint from sessionStorage
    * @private
    */
-  static deleteIdTokenHint(providerId = `${ConfigService.config.provider_id}`): void {
-    StorageUtil.remove(`${providerId}-id-token-hint`);
+  static deleteIdTokenHint(): void {
+    StorageUtil.remove('-id-token-hint');
   }
 
   /**
@@ -141,7 +150,7 @@ export class TokenService {
    */
   static deleteStoredCsrfToken(): void {
     LogUtil.debug(`Removed CSRF Token from session storage`);
-    StorageUtil.remove(`_csrf`);
+    StorageUtil.remove('_csrf');
   }
 
   /**
@@ -153,7 +162,7 @@ export class TokenService {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
-      xhr.open('POST', ConfigService.config.csrf_token_endpoint, true);
+      xhr.open('POST', configService.config.csrf_token_endpoint, true);
       xhr.withCredentials = true;
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {

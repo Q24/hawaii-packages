@@ -6,24 +6,20 @@ import { LogUtil } from '../utils/logUtil';
 import { UrlUtil } from '../utils/urlUtil';
 import { CsrfToken, Token } from '../models/token.models';
 import { SessionUtil } from '../utils/sessionUtil';
-import ConfigService from './config.service';
+import configService from './config.service';
 
 export class SessionService {
 
   /**
    * Clean up the current session: Delete the stored local tokens, state, nonce, id token hint and CSRF token.
    * @returns {void}
-   * @param providerIDs
    */
-  static cleanSessionStorage(providerIDs: string[] = [`${ConfigService.config.provider_id}`]): void {
-    providerIDs.forEach((providerId: string) => {
-      TokenService.deleteStoredTokens(providerId);
-      TokenService.deleteIdTokenHint(providerId);
-      StateUtil.deleteState(providerId);
-      NonceUtil.deleteNonce(providerId);
-      SessionUtil.deleteSessionId(providerId);
-    });
-
+  static cleanSessionStorage(): void {
+    TokenService.deleteStoredTokens();
+    TokenService.deleteIdTokenHint();
+    StateUtil.deleteState();
+    NonceUtil.deleteNonce();
+    SessionUtil.deleteSessionId();
     TokenService.deleteStoredCsrfToken();
   }
 
@@ -38,14 +34,14 @@ export class SessionService {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
-      xhr.open('GET', `${ConfigService.config.is_session_alive_endpoint}/${SessionUtil.getSessionId()}`, true);
+      xhr.open('GET', `${configService.config.is_session_alive_endpoint}/${SessionUtil.getSessionId()}`, true);
 
       xhr.withCredentials = true;
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
           if (xhr.status === 204) {
-            resolve({status: xhr.status});
+            resolve({ status: xhr.status });
           } else {
             reject(xhr.statusText);
           }
@@ -71,7 +67,7 @@ export class SessionService {
     // Do the authorize redirect
     if (!urlParams['error']) {
       LogUtil.debug('Do authorisation redirect to SSO with options:', authorizeParams);
-      window.location.href = `${ConfigService.config.authorize_endpoint}?${UrlUtil.createURLParameters(authorizeParams)}`;
+      window.location.href = `${configService.config.authorize_endpoint}?${UrlUtil.createURLParameters(authorizeParams)}`;
     } else {
       // Error in authorize redirect
       LogUtil.error('Redirecting to Authorisation failed');
@@ -87,14 +83,14 @@ export class SessionService {
   static doSessionUpgradeRedirect(token: Token): void {
     const urlVars = {
       session_upgrade_token: token.session_upgrade_token,
-      redirect_uri: `${ConfigService.config.redirect_uri}?flush_state=true`,
+      redirect_uri: `${configService.config.redirect_uri}?flush_state=true`,
     };
 
     LogUtil.debug('Session upgrade function triggered with token: ', token.session_upgrade_token);
 
     // Do the authorize redirect
     const urlParams = UrlUtil.createURLParameters(urlVars);
-    window.location.href = `${ConfigService.config.authorisation}/sso/upgrade-session?${urlParams}`;
+    window.location.href = `${configService.config.authorisation}/sso/upgrade-session?${urlParams}`;
   }
 
   /**
@@ -150,7 +146,6 @@ export class SessionService {
 
     LogUtil.debug('Check session with params:', urlParams);
     return new Promise((resolve, reject) => {
-      LogUtil.debug('Flush state ?', urlParams.flush_state);
 
       // 1 Make sure the state is 'clean' when doing a session upgrade
       if (urlParams.flush_state) {
@@ -173,19 +168,15 @@ export class SessionService {
           // Store the CSRF Token for future calls that need it. I.e. Logout
           StorageUtil.store('_csrf', csrfToken.csrf_token);
 
-          // 3 --- There's an access_token in the URL
           if (hashFragmentParams.access_token && hashFragmentParams.state) {
+            // 3 --- There's an access_token in the URL
             SessionUtil.parseToken(hashFragmentParams).then((tokenIsValid: boolean) => resolve(tokenIsValid));
-          }
-
-          // 4 --- There's a session upgrade token in the URL
-          else if (hashFragmentParams.session_upgrade_token) {
+          } else if (hashFragmentParams.session_upgrade_token) {
+            // 4 --- There's a session upgrade token in the URL
             LogUtil.debug('Session Upgrade Token found in URL');
             SessionService.doSessionUpgradeRedirect(hashFragmentParams);
-          }
-
-          // 5 --- No token in URL or Storage, so we need to get one from SSO
-          else {
+          } else {
+            // 5 --- No token in URL or Storage, so we need to get one from SSO
             LogUtil.debug('No valid token in Storage or URL, Authorize Redirect!');
             SessionService.authorizeRedirect();
             resolve(false);

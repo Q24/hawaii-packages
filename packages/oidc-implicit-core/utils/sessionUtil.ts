@@ -8,7 +8,7 @@ import { TokenService } from '../services/token.service';
 import { StorageUtil } from './storageUtil';
 import { AuthorizeParams } from '../models/url-param.models';
 import { GeneratorUtil } from './generatorUtil';
-import ConfigService from '../services/config.service';
+import configService from '../services/config.service';
 
 export class SessionUtil {
 
@@ -18,7 +18,7 @@ export class SessionUtil {
    * @private
    */
   static getSessionId(): string | null {
-    return StorageUtil.read(`${ConfigService.config.provider_id}-session-id`);
+    return StorageUtil.read(`${configService.config.client_id}-session-id`);
   }
 
   /**
@@ -27,15 +27,15 @@ export class SessionUtil {
    * @private
    */
   static saveSessionId(sessionId: string): void {
-    StorageUtil.store(`${ConfigService.config.provider_id}-session-id`, sessionId);
+    StorageUtil.store(`${configService.config.client_id}-session-id`, sessionId);
   }
 
   /**
    * Deletes the session ID from sessionStorage
    * @private
    */
-  static deleteSessionId(providerId = `${ConfigService.config.provider_id}`): void {
-    StorageUtil.remove(`${providerId}-session-id`);
+  static deleteSessionId(): void {
+    StorageUtil.remove('-session-id');
   }
 
   /**
@@ -65,7 +65,7 @@ export class SessionUtil {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
-      xhr.open('POST', ConfigService.config.validate_token_endpoint, true);
+      xhr.open('POST', configService.config.validate_token_endpoint, true);
 
       xhr.withCredentials = true;
       xhr.setRequestHeader('Content-Type', 'application/json');
@@ -89,11 +89,12 @@ export class SessionUtil {
    * @returns {Promise<boolean>}
    */
   static checkIfTokenExpiresAndRefreshWhenNeeded(almostExpiredTreshhold = 300, token: Token): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
+    return new Promise<boolean>((resolve) => {
       if (token.expires && token.expires - Math.round(new Date().getTime() / 1000.0) < almostExpiredTreshhold) {
-        SessionUtil.silentRefreshAccessToken().then(() => {
-          resolve(true);
-        });
+        SessionUtil.silentRefreshAccessToken()
+          .then(() => {
+            resolve(true);
+          });
       } else {
         resolve(false);
       }
@@ -117,28 +118,29 @@ export class SessionUtil {
         LogUtil.debug('State from URL validated against state in session storage state object', stateObj);
 
         // State validated, so now let's validate the token with Hawaii Backend
-        SessionUtil.validateToken(hashFragmentParams).then(
-          (response: ValidSession) => {
-            const validSession: ValidSession = response;
-            LogUtil.debug('Token validated by backend', validSession);
+        SessionUtil.validateToken(hashFragmentParams)
+          .then(
+            (response: ValidSession) => {
+              const validSession: ValidSession = response;
+              LogUtil.debug('Token validated by backend', validSession);
 
-            // Store the token in the storage
-            TokenService.storeToken(hashFragmentParams);
+              // Store the token in the storage
+              TokenService.storeToken(hashFragmentParams);
 
-            // Store the session ID
-            SessionUtil.saveSessionId(validSession.user_session_id);
+              // Store the session ID
+              SessionUtil.saveSessionId(validSession.user_session_id);
 
-            // We're logged in with token in URL
-            LogUtil.debug('Token from URL validated, you may proceed.');
-            resolve(true);
-          },
-          // Something's wrong with the token according to the backend
-          (error) => {
-            LogUtil.error('Authorisation Token not valid');
-            LogUtil.debug('Token NOT validated by backend', error);
-            resolve(false);
-          },
-        );
+              // We're logged in with token in URL
+              LogUtil.debug('Token from URL validated, you may proceed.');
+              resolve(true);
+            },
+            // Something's wrong with the token according to the backend
+            (error) => {
+              LogUtil.error('Authorisation Token not valid');
+              LogUtil.debug('Token NOT validated by backend', error);
+              resolve(false);
+            },
+          );
       } else {
         LogUtil.error('Authorisation Token not valid');
         LogUtil.debug('State NOT valid');
@@ -152,7 +154,7 @@ export class SessionUtil {
    * @returns {Promise<boolean>}
    */
   static silentRefreshAccessToken(): Promise<boolean> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       LogUtil.debug('Silent refresh started');
 
       if (document.getElementById('silentRefreshAccessTokenIframe') !== null) {
@@ -198,7 +200,7 @@ export class SessionUtil {
       if (!urlParams['error']) {
         window.document.body.appendChild(iFrame);
         LogUtil.debug('Do silent refresh redirect to SSO with options:', authorizeParams);
-        iFrame.src = `${ConfigService.config.authorize_endpoint}?${UrlUtil.createURLParameters(authorizeParams)}`;
+        iFrame.src = `${configService.config.authorize_endpoint}?${UrlUtil.createURLParameters(authorizeParams)}`;
       } else {
         LogUtil.debug(`Error in silent refresh authorize redirect: ${urlParams['error']}`);
         resolve(false);
@@ -261,7 +263,7 @@ export class SessionUtil {
    * Returns 'true' if logout was successful and ended up on the configured `post_logout_redirect_uri`
    * @returns {Promise<boolean>}
    */
-  static silentLogoutByUrl(url = ConfigService.config.silent_logout_uri): Promise<boolean> {
+  static silentLogoutByUrl(url = configService.config.silent_logout_uri): Promise<boolean> {
     return new Promise((resolve) => {
       LogUtil.debug('Silent logout by URL started');
 
@@ -309,7 +311,7 @@ export class SessionUtil {
               LogUtil.debug(
                 'Silent logout failed after 5000',
                 iFrame.contentWindow.location.href,
-                ConfigService.config.post_logout_redirect_uri,
+                configService.config.post_logout_redirect_uri,
               );
 
               clearInterval(intervalTimer);
@@ -318,11 +320,11 @@ export class SessionUtil {
             }
 
             const currentIframeURL = iFrame.contentWindow.location.href;
-            if (currentIframeURL.indexOf(ConfigService.config.post_logout_redirect_uri) === 0) {
+            if (currentIframeURL.indexOf(configService.config.post_logout_redirect_uri) === 0) {
               LogUtil.debug(
                 'Silent logout successful',
                 iFrame.contentWindow.location.href,
-                ConfigService.config.post_logout_redirect_uri,
+                configService.config.post_logout_redirect_uri,
               );
 
               clearInterval(intervalTimer);
@@ -384,19 +386,19 @@ export class SessionUtil {
 
     const stateObj = StateUtil.getState() || {
       state: GeneratorUtil.generateState(),
-      providerId: ConfigService.config.provider_id,
+      providerId: configService.config.provider_id,
     };
 
     const urlVars: AuthorizeParams = {
       nonce: NonceUtil.getNonce() || GeneratorUtil.generateNonce(),
       state: stateObj.state,
-      authorization: ConfigService.config.authorisation,
-      providerId: ConfigService.config.provider_id,
-      client_id: ConfigService.config.client_id,
-      response_type: ConfigService.config.response_type,
+      authorization: configService.config.authorisation,
+      providerId: configService.config.provider_id,
+      client_id: configService.config.client_id,
+      response_type: configService.config.response_type,
       redirect_uri:
-        promptNone && ConfigService.config.silent_refresh_uri ? ConfigService.config.silent_refresh_uri : ConfigService.config.redirect_uri,
-      scope: ConfigService.config.scope,
+        promptNone && configService.config.silent_refresh_uri ? configService.config.silent_refresh_uri : configService.config.redirect_uri,
+      scope: configService.config.scope,
       prompt: promptNone ? 'none' : '',
     };
 

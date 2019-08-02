@@ -92,10 +92,6 @@ export interface OidcConfig {
    */
   logout_endpoint: string;
   /**
-   * List of provider ids to be cleaned from storage
-   */
-  post_logout_provider_ids_to_be_cleaned?: string[];
-  /**
    * Config object for QR login with websocket
    */
   qr?: QrCodeLoginConfig;

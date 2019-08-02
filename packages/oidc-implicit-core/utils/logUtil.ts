@@ -1,4 +1,4 @@
-import ConfigService from '../services/config.service';
+import configService from '../services/config.service';
 
 export class LogUtil {
 
@@ -20,12 +20,13 @@ export class LogUtil {
 
   private static emitLog(logType: 'log' | 'info' | 'warn' | 'error', msg: string, supportingDetails: any[]) {
 
-    if (ConfigService.config.debug) {
-      if (supportingDetails.length > 0) {
-        console[logType](msg, supportingDetails);
-      } else {
-        console[logType](msg);
+    if (logType === 'log') {
+      if (configService.config.debug) {
+        (supportingDetails.length > 0) ? console[logType](msg, supportingDetails) : console[logType](msg);
       }
+    } else {
+      (supportingDetails.length > 0) ? console[logType](msg, supportingDetails) : console[logType](msg);
     }
+
   }
 }

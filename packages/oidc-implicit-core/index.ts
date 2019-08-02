@@ -21,5 +21,5 @@ export * from './services/token.service';
 export * from './services/session.service';
 
 // Config
-import ConfigService from './services/config.service';
-export default ConfigService;
+import configService from './services/config.service';
+export default configService;
