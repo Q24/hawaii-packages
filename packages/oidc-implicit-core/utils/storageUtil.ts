@@ -21,10 +21,15 @@ export class StorageUtil {
   }
 
   /**
-   * Storage function to remove key from the sessionStorage
-   * @param {string} key
+   * Storage function to remove key(s) from the sessionStorage
+   * @param regexString
    */
-  static remove(key: string) {
-    StorageUtil.storage.removeItem(key);
+  static remove(regexString: string) {
+
+    const regex = new RegExp(regexString);
+
+    Object.keys(StorageUtil.storage)
+      .filter(key => regex.test(key))
+      .forEach(key => StorageUtil.storage.removeItem(key));
   }
 }
