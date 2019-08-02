@@ -41,12 +41,12 @@ export class OidcService {
     return SessionUtil.getAuthHeader(TokenService.getStoredToken());
   }
 
-  getIdTokenHint(): string | null {
-    return TokenService.getIdTokenHint();
+  getIdTokenHint(options = { regex: false }): string | null {
+    return TokenService.getIdTokenHint(options);
   }
 
-  cleanSessionStorage(providerIDs: string[] = this.config.post_logout_provider_ids_to_be_cleaned): void {
-    SessionService.cleanSessionStorage(providerIDs);
+  cleanSessionStorage(): void {
+    SessionService.cleanSessionStorage();
   }
 
   deleteStoredTokens(): void {

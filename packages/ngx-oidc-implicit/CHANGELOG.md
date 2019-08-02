@@ -1,8 +1,12 @@
 # Changelog
 
+### 2.1.1
+
+* Update OIDC Implicit Core to 1.1.1 and made adjustments for the toking scopig per client ID, and regex method introduced in OIDC Implicit Core 1.1.1
+
 ### 2.0.0
 
-* Complete refactor. This is now just a 'wrapper' only. Under the hood this now use @hawaii-framework/oidc-implicit-core. The core uses mainly static methods woth native promises. To keep the Observable workflow intact, all Promise based method are wrapper with a new Observable with observer.
+* Complete refactor. This is now just a 'wrapper' only. Under the hood this now use @hawaii-framework/oidc-implicit-core. The core uses mainly static methods with native promises. To keep the Observable workflow intact, all Promise based method are wrapped with a new Observable with observer.
 
 *BREAKING CHANGE*: A peer depedency on `@hawaii-framework/oidc-implicit-core` was added.
 
