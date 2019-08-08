@@ -1,5 +1,5 @@
 import { Token } from '../models/token.models';
-import { URLParams } from '../models/url-param.models';
+import { URLParams, AuthorizeParams } from '../models/url-param.models';
 
 export class UrlUtil {
   /**
@@ -42,25 +42,19 @@ export class UrlUtil {
    * @param {Object} urlVars
    * @returns {string}
    */
-  static createURLParameters(urlVars: Object): string {
-    const params = new URLSearchParams();
-
-    // Set the new Query string params.
-    for (const key in urlVars) {
-      if (urlVars.hasOwnProperty(key)) {
-
-        if (key === 'redirect_uri') {
-          urlVars[key] = UrlUtil.cleanHashFragment(urlVars[key]);
-        }
-
-        params.set(key, urlVars[key]);
-      }
+  static createURLParameters(urlVars: { redirect_uri?: string}): string {
+    if (urlVars.redirect_uri) {
+      urlVars.redirect_uri = UrlUtil.cleanHashFragment(urlVars.redirect_uri);
     }
-
-    return params.toString();
+    const params = [];
+    for (const urlVar of Object.keys(urlVars)) {
+      params.push(`${urlVar}=${urlVars[urlVar]}`);
+    }
+    return params.join('&');
   }
 
   /**
+   *
    * Get Hash Fragment parameters from sessionStorage
    * @param {string} hash_fragment
    * @returns {Token}
