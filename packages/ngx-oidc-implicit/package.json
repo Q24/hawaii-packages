@@ -26,7 +26,7 @@
   "module": "index.js",
   "typings": "index.d.ts",
   "peerDependencies": {
-    "@hawaii-framework/oidc-implicit-core": "^1.1.1"
+    "@hawaii-framework/oidc-implicit-core": "^1.1.2"
   },
   "devDependencies": {
     "@angular/animations": "^8.0.0",
@@ -38,7 +38,7 @@
     "@angular/platform-browser": "^8.0.0",
     "@angular/platform-browser-dynamic": "^8.0.0",
     "@angular/platform-server": "^8.0.0",
-    "@hawaii-framework/oidc-implicit-core": "^1.1.1",
+    "@hawaii-framework/oidc-implicit-core": "^1.1.2",
     "codelyzer": "~5.0.1",
     "rollup": "^0.63.2",
     "rollup-plugin-node-resolve": "^4.2.3",
