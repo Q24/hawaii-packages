@@ -151,6 +151,9 @@ export class SessionService {
       if (urlParams.flush_state) {
         SessionService.cleanSessionStorage();
         LogUtil.debug('Flush state present, so cleaning the storage');
+
+        // Remove flush_state param from query params, so we only do it once
+        configService.config.redirect_uri = configService.config.redirect_uri.split('?')[0];
       }
 
       // 2 --- Let's first check if we still have a valid token stored local, if so use that token
