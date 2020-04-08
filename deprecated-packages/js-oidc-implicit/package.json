@@ -32,7 +32,8 @@
     "gulp-uglifyjs": "^0.6.2",
     "jshint": "^2.11.0",
     "jshint-stylish": "^2.2.1",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.5",
+    "lodash.template": ">=4.5.0"
   },
   "jshintConfig": {
     "curly": true,
