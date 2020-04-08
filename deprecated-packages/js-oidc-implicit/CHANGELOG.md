@@ -2,10 +2,6 @@
 
 ## *DEPRECATED SINCE June 4th 2019. Use @hawaii-framework/oidc-implicit-core instead.*
 
-### 1.X.X (Active Working Release)
-
-* Updated Gulp to 4.0.2, and updated tasks accordingly
-
 ### 1.4.2
 * Fixed property check with defer by making it stricter
 
