@@ -36,6 +36,6 @@ gulp.task('watch', function () {
   gulp.watch(buildFiles, ['build']);
 });
 
-gulp.task('build', ['buildService', 'buildCleanHashFragment']);
-gulp.task('default', ['build', 'watch']);
+gulp.task('build', gulp.series('buildService'), gulp.series('buildCleanHashFragment'));
+gulp.task('default', gulp.series('build'), gulp.series('watch'));
 
