@@ -11,7 +11,7 @@ export class OidcModule {
    * @returns {ModuleWithProviders}
    */
 
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<OidcModule> {
     return {
       ngModule: OidcModule,
       providers: [
