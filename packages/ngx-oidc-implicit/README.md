@@ -1,6 +1,6 @@
 # OIDC Module
 
-A wrapper for use with Angular on the OIDC Implicit Core package. This package uses the statisc methods from that library and wraps them with Observables where neccessary.
+A wrapper for use with Angular on the OIDC Implicit Core package. This package uses the static methods from that library and wraps them with Observables where neccessary.
 
 
 ## Features
@@ -298,7 +298,7 @@ Here is the bare basics:
 
 #### `login.component.html`
 
-```angular2html
+```html
 <form ngNoForm
       action="{{ oidcService.config.login_endpoint }}"
       method="post">

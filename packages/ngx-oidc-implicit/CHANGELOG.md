@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.1.3
+
+* Add type definition to OidcModule.forRoot for Angular 9 compatibility.
+
 ### 2.1.1
 
 * Update OIDC Implicit Core to 1.1.1 and made adjustments for the toking scopig per client ID, and regex method introduced in OIDC Implicit Core 1.1.1
