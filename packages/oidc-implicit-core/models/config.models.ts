@@ -96,6 +96,11 @@ export interface OidcConfig {
    */
   qr?: QrCodeLoginConfig;
   /**
+   * Config object for code based login
+   * Also known as magic code or email code
+   */
+  code_login?: CodeBasedLoginConfig;
+  /**
    * Debug On/Off (Logs to console)
    */
   debug?: boolean;
@@ -105,7 +110,6 @@ export interface OidcConfig {
  * Config object for QR Login via websocket
  */
 export interface QrCodeLoginConfig {
-
   /**
    * Websocket BASE URL. Connect to this URL to have access to the subscription channels
    */
@@ -124,4 +128,19 @@ export interface QrCodeLoginConfig {
    * So this will keep listening if your session started with the QR channel was succesfully scanned somewhere.
    */
   channel_redirect: string;
+}
+
+/**
+ * Config object for code based login
+ * Also known as magic code or email code
+ */
+export interface CodeBasedLoginConfig {
+  /**
+   * endpoint for requesting the code to be send to the user's associated email address.
+   */
+  request: string;
+  /**
+   * endpoint used for logging in to the service using the code provided in the user's email.
+   */
+  confirm: string;
 }
