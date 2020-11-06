@@ -1,5 +1,8 @@
 # CHANGELOG
 
+### 1.2.0
+
+* Add `CodeBasedLoginConfig` to `OidcConfig` for email based logins.
 
 ### 1.1.2
 * IE11 Fix for URLSearchParams (refactor, so no polyfill is needed)
