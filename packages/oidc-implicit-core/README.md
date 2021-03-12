@@ -133,6 +133,28 @@ if (storedToken) {
 }
 ```
 
+## Login
+
+The login consists of two steps. Step 1 is to send authentication data to the server (username and password and csrf token). Step 2 is processing the response from the server.
+#TODO: ADD LOGIN
+
+### Processing the response from the server
+An auth token will be present in a response from the server after a successful login. This token must be stored on the user's local computer. The auth token is present in the hash fragment of the redirect url from the server to the client. So, you need to make sure you will not clear the URL before saving it locally.
+```ts
+// The check session method is used for both checking if the user is logged in
+// as well as saving the access token present in the URL hash.
+// After the URL has been saved, it will be cleared.
+await SessionService.checkSession();
+```
+
+The current implementation of the redirect from the server only goes to a single URL. This means that restoring the user session (the url where the user was before logging in) is a responsibility of the front-end. Take into account that routes which do not require authentication should not call the check session function (as it will trigger a login).
+
+Because the check session function is used both for the login check and to store the token, it is recommended to do a front-end redirect where the URL hash is kept intact before the check session is used to store the token. This way the user is sent to the correct route after login, which calls the check session anyway (to check if the user is logged in) and consequently also stores the token.
+
+![Login flow](images/login-flow.png)
+
+
+
 ## Logout
 
 The logout form needs a **logout endpoint**, a Cross Site Request Forgery Token (**\_csrf**), a URL to redirect to after the logout has succeeded (**post_logout_redirect_uri**) and an ID Token (**id_token_hint**). The form can be submitted in an automated fashion after all inputs have been set. If the _\_csrf_ or _id_token_hint_ cannot be resolved, an error page should be shown.

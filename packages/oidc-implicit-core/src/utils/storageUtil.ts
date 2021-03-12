@@ -16,7 +16,7 @@ export class StorageUtil {
    * @param {string} key
    * @param {string} value
    */
-  static store(key: string, value: string) {
+  static store(key: string, value: string): void {
     StorageUtil.storage.setItem(key, value);
   }
 
@@ -24,7 +24,7 @@ export class StorageUtil {
    * Storage function to remove key(s) from the sessionStorage
    * @param regexString
    */
-  static remove(regexString: string) {
+  static remove(regexString: string): void {
 
     const regex = new RegExp(regexString);
 
