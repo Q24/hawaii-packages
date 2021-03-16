@@ -17,7 +17,7 @@ configService.config = {
 To access resources, a request may need to include authentication information. This is done via te authorization header. In the following example, we use axios' request interceptors to add this authorization header. Take caution that you only include this header in requests for protected resources; simply including the header in every request is a security risk. With axios, you may create various axios instances with different interceptors to deal with this. With other implementations, you may need to include headers at a request level.
 
 ```ts
-import configService, {
+import {
   TokenService,
   SessionUtil,
   SessionService,
