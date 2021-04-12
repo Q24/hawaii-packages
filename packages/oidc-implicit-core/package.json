@@ -36,7 +36,8 @@
   "scripts": {
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
-    "build": "npm run clean && microbundle",
+    "copyCleanHashFragment": "cp ./clean-hash-fragment.js dist/clean-hash-fragment.js",
+    "build": "npm run clean && microbundle && npm run copyCleanHashFragment",
     "dev": "microbundle watch",
     "test": "jest",
     "test:watch": "jest --watch --collect-coverage"

@@ -4,12 +4,28 @@ import { CsrfToken, Token } from "../models/token.models";
 import { ValidSession } from "src/models/session.models";
 import { AuthorizeParams } from "src/models/url-param.models";
 import { GeneratorUtil } from "src/utils/generatorUtil";
-import { deleteIdTokenHint, deleteStoredCsrfToken, deleteStoredTokens, getCsrfToken, getIdTokenHint, getStoredToken, storeToken } from './token.service';
-import { deleteState, getState, saveState } from 'src/utils/stateUtil';
-import { deleteNonce, getNonce, saveNonce } from 'src/utils/nonceUtil';
-import { deleteSessionId, getSessionId, saveSessionId } from 'src/utils/sessionUtil';
-import { oidcConfig } from './config.service';
-import { createURLParameters, getHashFragmentParameters, getURLParameters } from 'src/utils/urlUtil';
+import {
+  deleteIdTokenHint,
+  deleteStoredCsrfToken,
+  deleteStoredTokens,
+  getCsrfToken,
+  getIdTokenHint,
+  getStoredToken,
+  storeToken,
+} from "./token.service";
+import { deleteState, getState, saveState } from "src/utils/stateUtil";
+import { deleteNonce, getNonce, saveNonce } from "src/utils/nonceUtil";
+import {
+  deleteSessionId,
+  getSessionId,
+  saveSessionId,
+} from "src/utils/sessionUtil";
+import { oidcConfig } from "./config.service";
+import {
+  createURLParameters,
+  getHashFragmentParameters,
+  getURLParameters,
+} from "src/utils/urlUtil";
 
 /**
  * Cleans up the current session: Delete the stored local tokens, state, nonce, id token hint and CSRF token.
@@ -34,9 +50,7 @@ export function isSessionAlive(): Promise<{ status: number }> {
 
     xhr.open(
       "GET",
-      `${
-        oidcConfig.is_session_alive_endpoint
-      }/${getSessionId()}`,
+      `${oidcConfig.is_session_alive_endpoint}/${getSessionId()}`,
       true
     );
 
@@ -157,9 +171,9 @@ export function silentRefreshAccessToken(): Promise<boolean> {
         "Do silent refresh redirect to SSO with options:",
         authorizeParams
       );
-      iFrame.src = `${
-        oidcConfig.authorize_endpoint
-      }?${createURLParameters(authorizeParams)}`;
+      iFrame.src = `${oidcConfig.authorize_endpoint}?${createURLParameters(
+        authorizeParams
+      )}`;
     } else {
       LogUtil.debug(
         `Error in silent refresh authorize redirect: ${urlParams["error"]}`
@@ -203,9 +217,9 @@ export function silentRefreshAccessToken(): Promise<boolean> {
         /**
          * Parse and validate the token
          */
-        parseToken(
-          hashFragmentParams
-        ).then((tokenIsValid: boolean) => resolve(tokenIsValid));
+        parseToken(hashFragmentParams).then((tokenIsValid: boolean) =>
+          resolve(tokenIsValid)
+        );
       } else {
         /**
          * Return False if there was no token in the URL
@@ -295,9 +309,7 @@ export function silentLogoutByUrl(
 
         const currentIframeURL = iFrame.contentWindow.location.href;
         if (
-          currentIframeURL.indexOf(
-            oidcConfig.post_logout_redirect_uri
-          ) === 0
+          currentIframeURL.indexOf(oidcConfig.post_logout_redirect_uri) === 0
         ) {
           LogUtil.debug(
             "Silent logout successful",
@@ -555,9 +567,7 @@ export function checkSession(): Promise<boolean> {
       LogUtil.debug("Flush state present, so cleaning the storage");
 
       // Remove flush_state param from query params, so we only do it once
-      oidcConfig.redirect_uri = oidcConfig.redirect_uri.split(
-        "?"
-      )[0];
+      oidcConfig.redirect_uri = oidcConfig.redirect_uri.split("?")[0];
     }
 
     // 2 --- Let's first check if we still have a valid token stored local, if so use that token
@@ -576,9 +586,9 @@ export function checkSession(): Promise<boolean> {
 
         if (hashFragmentParams.access_token && hashFragmentParams.state) {
           // 3 --- There's an access_token in the URL
-          parseToken(
-            hashFragmentParams
-          ).then((tokenIsValid: boolean) => resolve(tokenIsValid));
+          parseToken(hashFragmentParams).then((tokenIsValid: boolean) =>
+            resolve(tokenIsValid)
+          );
         } else if (hashFragmentParams.session_upgrade_token) {
           // 4 --- There's a session upgrade token in the URL
           LogUtil.debug("Session Upgrade Token found in URL");
@@ -601,23 +611,9 @@ export function checkSession(): Promise<boolean> {
  * clears the hash fragment of a url.
  */
 function clearHashFragmentFromUrl() {
-  // Modern browsers do this:
-  if ("pushState" in history) {
-    history.pushState(
-      "",
-      document.title,
-      window.location.pathname + window.location.search
-    );
-  } else {
-    // Graceful Degradation
-    // Prevent scrolling by storing the page's current scroll offset
-    const scrollV = document.body.scrollTop;
-    const scrollH = document.body.scrollLeft;
-
-    window.location.hash = "";
-
-    // Restore the scroll offset, should be flicker free
-    document.body.scrollTop = scrollV;
-    document.body.scrollLeft = scrollH;
-  }
+  history.pushState(
+    "",
+    document.title,
+    window.location.pathname + window.location.search
+  );
 }
