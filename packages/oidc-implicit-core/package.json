@@ -38,7 +38,7 @@
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
     "copyCleanHashFragment": "cp ./clean-hash-fragment.js dist/clean-hash-fragment.js",
-    "build": "npm run clean && microbundle --cwd ./src && npm run copyCleanHashFragment",
+    "build": "npm run clean && microbundle && npm run copyCleanHashFragment",
     "dev": "microbundle watch",
     "test": "jest",
     "test:watch": "jest --watch --collect-coverage",
@@ -48,5 +48,6 @@
   "main": "dist/index.js",
   "exports": "./dist/index.modern.js",
   "module": "dist/index.module.js",
-  "unpkg": "dist/index.umd.js"
+  "unpkg": "dist/index.umd.js",
+  "typings": "./dist/index.d.ts"
 }

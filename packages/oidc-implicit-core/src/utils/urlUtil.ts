@@ -9,7 +9,7 @@ import { URLParams } from "../models/url-param.models";
 export function getURLParameters(
   url: string = window.location.href
 ): URLParams {
-  const result = {};
+  const result: URLParams = {};
   const searchIndex = url.indexOf("?");
   const hashIndex = url.indexOf("#");
   let urlStringToParse;

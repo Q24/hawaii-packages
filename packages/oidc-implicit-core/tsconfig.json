@@ -1,24 +1,14 @@
 {
-  "compileOnSave": false,
+  "include": ["./src/**/*"],
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
-    "stripInternal": true,
     "outDir": "./dist",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "rootDir": ".",
-    "sourceMap": true,
-    "moduleResolution": "node",
     "module": "ESNext",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "target": "ESNext",
-    "lib": [
-      "es2015",
-      "dom"
-    ]
+    "target": "ESNext"
   },
 }

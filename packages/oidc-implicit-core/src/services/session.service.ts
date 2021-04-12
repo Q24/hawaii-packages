@@ -2,7 +2,7 @@ import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
 import { CsrfToken, Token } from "../models/token.models";
 import { ValidSession } from "src/models/session.models";
-import { AuthorizeParams } from "src/models/url-param.models";
+import { AuthorizeParams, URLParams } from "src/models/url-param.models";
 import { GeneratorUtil } from "src/utils/generatorUtil";
 import {
   deleteIdTokenHint,
@@ -146,7 +146,7 @@ export function silentRefreshAccessToken(): Promise<boolean> {
      * Get the URL params to check for errors
      * @type {URLParams}
      */
-    const urlParams = getURLParameters();
+    const urlParams: URLParams = getURLParameters();
 
     /**
      * Set the iFrame Id
