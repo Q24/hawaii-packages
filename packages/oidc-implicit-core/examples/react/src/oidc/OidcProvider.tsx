@@ -47,7 +47,7 @@ export const OidcProvider = ({
    */
   useEffect(() => {
     setIsInitialized(false);
-    configService.config = oidcConfig;
+    oidcConfig = oidcConfig;
     setIsInitialized(true);
   }, [oidcConfig]);
 
@@ -110,7 +110,7 @@ const useAutomaticLogout = ({
     if (autoLogout && isAuthenticated) {
       const autoLogoutInterval = setInterval(() => {
         // Get stored token either returns a non-expired token or null
-        const storedToken = TokenService.getStoredToken();
+        const storedToken = getStoredToken();
 
         if (!storedToken) {
           SessionService.isSessionAlive().catch(() => {

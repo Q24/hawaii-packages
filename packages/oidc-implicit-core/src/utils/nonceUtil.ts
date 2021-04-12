@@ -1,27 +1,25 @@
+import { oidcConfig } from 'src/services/config.service';
 import { StorageUtil } from "./storageUtil";
-import configService from "../services/config.service";
 
-export class NonceUtil {
-  /**
-   * Get the saved nonce string from storage
-   * @returns {string}
-   */
-  static getNonce(): string | null {
-    return StorageUtil.read(`${configService.config.client_id}-nonce`);
-  }
+/**
+ * Get the saved nonce string from storage
+ * @returns {string}
+ */
+export function getNonce(): string | null {
+  return StorageUtil.read(`${oidcConfig.client_id}-nonce`);
+}
 
-  /**
-   * Saves the state string to sessionStorage
-   * @param nonce
-   */
-  static saveNonce(nonce: string): void {
-    StorageUtil.store(`${configService.config.client_id}-nonce`, nonce);
-  }
+/**
+ * Saves the state string to sessionStorage
+ * @param nonce
+ */
+export function saveNonce(nonce: string): void {
+  StorageUtil.store(`${oidcConfig.client_id}-nonce`, nonce);
+}
 
-  /**
-   * Deletes the nonce from sessionStorage
-   */
-  static deleteNonce(): void {
-    StorageUtil.remove("-nonce");
-  }
+/**
+ * Deletes the nonce from sessionStorage
+ */
+export function deleteNonce(): void {
+  StorageUtil.remove("-nonce");
 }

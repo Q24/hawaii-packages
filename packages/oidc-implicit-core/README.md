@@ -5,7 +5,7 @@
 ```ts
 import configService from "@hawaii-framework/oidc-implicit-core/dist";
 
-configService.config = {
+oidcConfig = {
   authorisation: "",
   client_id: "",
   ...etc,
@@ -26,7 +26,7 @@ import {
 const setAuthHeader = async (
   config: AxiosRequestConfig
 ): Promise<AxiosRequestConfig> => {
-  const storedToken = TokenService.getStoredToken();
+  const storedToken = getStoredToken();
 
   if (storedToken) {
     config.headers["Authorization"] = SessionUtil.getAuthHeader(storedToken);
@@ -78,7 +78,7 @@ On a component level, you need to make sure at least a token is stored
 import { TokenService } from "@hawaii-framework/oidc-implicit-core/dist";
 
 // If a token is stored, we can assume the user is logged in. This call is synchronous and will as such not influence rendering the page.
-TokenService.getStoredToken();
+getStoredToken();
 ```
 
 ## Token expiration
@@ -112,7 +112,7 @@ const refreshTokenAboutToExpire = (token?: Token) => {
 // ==================================================
 SessionService.checkSession().then((isAuthenticated) => {
   if (isAuthenticated) {
-    const storedToken = TokenService.getStoredToken();
+    const storedToken = getStoredToken();
     // If the authentication was successful, we request
     // a new token (if it is about to expire).
     refreshTokenAboutToExpire(storedToken);
@@ -124,7 +124,7 @@ SessionService.checkSession().then((isAuthenticated) => {
 // =================================
 // == SOMEWHERE IN AN API REQUEST ==
 // =================================
-const storedToken = TokenService.getStoredToken();
+const storedToken = getStoredToken();
 if (storedToken) {
   config.headers["Authorization"] = SessionUtil.getAuthHeader(storedToken);
   // After adding the headers, we request
@@ -137,6 +137,7 @@ if (storedToken) {
 
 The login consists of two steps. Step 1 is to send authentication data to the server (username and password and csrf token). Step 2 is processing the response from the server.
 #TODO: ADD LOGIN
+#TODO: add description; it is not needed to create a custom login page; as it is provided with CIAM already. You can use the default. It can be configured per client.
 
 ### Processing the response from the server
 An auth token will be present in a response from the server after a successful login. This token must be stored on the user's local computer. The auth token is present in the hash fragment of the redirect url from the server to the client. So, you need to make sure you will not clear the URL before saving it locally.
@@ -163,19 +164,19 @@ The logout form needs a **logout endpoint**, a Cross Site Request Forgery Token 
 import configService from "@hawaii-framework/oidc-implicit-core/dist";
 
 // The LOGOUT_ENDPOINT can be requested from
-configService.config.logout_endpoint;
+oidcConfig.logout_endpoint;
 
 // The POST_LOGOUT_REDIRECT_URI can be requested from
-configService.config.post_logout_redirect_uri;
+oidcConfig.post_logout_redirect_uri;
 
 // The CSRF_TOKEN can be requested from
 //  Synchronously (try this first)
 StorageUtil.read("_csrf");
 //  Asynchronously
-TokenService.getCsrfToken();
+getCsrfToken();
 
 // The ID_TOKEN_HINT can be requested from
-TokenService.getIdTokenHint({ regex: true });
+getIdTokenHint({ regex: true });
 ```
 
 ```html
@@ -196,6 +197,9 @@ TokenService.getIdTokenHint({ regex: true });
 
 If the session is closed due to inactivity, the user must be logged out to protect the data still on the local computer from access by unauthorised parties. After redirecting to the logged out page, the authentication information will be removed.
 
+
+#TODO: is session alive does not lengthen session. This will only work with a specific implementation of CIAM.
+
 ```ts
 import {
   TokenService,
@@ -204,7 +208,7 @@ import {
 
 const autoLogoutInterval = setInterval(() => {
   // Get stored token either returns a non-expired token or null
-  const storedToken = TokenService.getStoredToken();
+  const storedToken = getStoredToken();
 
   if (!storedToken) {
     SessionService.isSessionAlive().catch(() => {
@@ -226,6 +230,8 @@ const autoLogoutInterval = setInterval(() => {
 ```
 
 ## Logged out page
+
+#TODO: add this is an opinionated way of centralising the logout event
 
 See the FAQ for the difference between a logout page and a logged out page.
 
@@ -288,6 +294,16 @@ SessionUtil.silentLogoutByUrl().then((loggedOut) => {
   }
 });
 ```
+
+### What is a silent refresh?
+
+With a silent refresh, the lifetime of a token is renewed in the background, without user interaction.
+#TODO
+prompt
+OPTIONAL. Space-delimited, case-sensitive list of ASCII string values that specifies whether the Authorization Server prompts the End-User for reauthentication and consent. The defined values are:
+none
+The Authorization Server MUST NOT display any authentication or consent user interface pages. An error is returned if an End-User is not already authenticated or the Client does not have pre-configured consent for the requested Claims or does not fulfill other conditions for processing the request. The error code will typically be login_required, interaction_required. This can be used as a method to check for existing authentication and/or consent.
+
 
 ### What is the difference between a logout page and a logged out page?
 

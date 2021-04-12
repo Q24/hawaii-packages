@@ -57,7 +57,7 @@ export interface URLParams {
 /**
  * A set of strings to match when the Authorize redirect is erroring. This is the complete list of possible error to handle.
  */
-export type authorizeErrors = 'invalid_client' |
+export type AuthorizeErrors = 'invalid_client' |
   'unauthorized_client' |
   'invalid_grant' |
   'unsupported_grant_type' |

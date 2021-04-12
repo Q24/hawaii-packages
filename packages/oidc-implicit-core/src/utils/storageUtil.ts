@@ -3,6 +3,13 @@ export class StorageUtil {
   static storage = sessionStorage;
 
   /**
+   *
+   */
+  static setStorage(storage: Storage): void {
+    StorageUtil.storage = storage;
+  }
+
+  /**
    * Storage function to read a key from the sessionStorage
    * @param {string} key
    * @returns {string}

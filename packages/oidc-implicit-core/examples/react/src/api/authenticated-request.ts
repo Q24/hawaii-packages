@@ -13,7 +13,7 @@ export const authenticatedRequest = axios.create({
 const setAuthHeader = async (
   config: AxiosRequestConfig,
 ): Promise<AxiosRequestConfig> => {
-  const storedToken = TokenService.getStoredToken();
+  const storedToken = getStoredToken();
 
   if (storedToken) {
     config.headers['Authorization'] = SessionUtil.getAuthHeader(storedToken);

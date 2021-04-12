@@ -5,9 +5,9 @@ import configService, {
 import { useEffect, useRef, useState } from 'react';
 
 export const Logout = () => {
-  const logoutAction = configService.config.logout_endpoint;
+  const logoutAction = oidcConfig.logout_endpoint;
   const [csrf, setCsrf] = useState('');
-  const postLogoutUri = configService.config.post_logout_redirect_uri;
+  const postLogoutUri = oidcConfig.post_logout_redirect_uri;
   const [idTokenHint, setIdTokenHint] = useState('');
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -16,7 +16,7 @@ export const Logout = () => {
     const getCsrf = async () => {
       let _csrf = StorageUtil.read('_csrf');
       if (!_csrf) {
-        _csrf = (await TokenService.getCsrfToken()).csrf_token;
+        _csrf = (await getCsrfToken()).csrf_token;
       }
       setCsrf(_csrf);
     };
@@ -25,7 +25,7 @@ export const Logout = () => {
 
   useEffect(() => {
     const getIdTokenHint = async () => {
-      let idTokenHint = TokenService.getIdTokenHint({ regex: true })!;
+      let idTokenHint = getIdTokenHint({ regex: true })!;
 
       setIdTokenHint(idTokenHint);
     };
