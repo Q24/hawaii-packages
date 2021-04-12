@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, Observer } from 'rxjs';
-import {  } from '@hawaii-framework/oidc-implicit-core';
-import configService from '@hawaii-framework/oidc-implicit-core/dist/services/config.service';
+import { OidcService as _OidcService, OidcConfig, CsrfToken, Token } from '@hawaii-framework/oidc-implicit-core';
 
 /**
  * Open ID Connect Implicit Flow Service for Angular
@@ -11,16 +10,16 @@ import configService from '@hawaii-framework/oidc-implicit-core/dist/services/co
 export class OidcService {
 
   get config(): OidcConfig {
-    return configService.config;
+    return _OidcService.oidcConfig;
   }
 
   set config(value: OidcConfig) {
-    configService.config = value;
+    _OidcService.oidcConfig = value;
   }
 
   getCsrfToken(): Observable<CsrfToken> {
     return new Observable<CsrfToken>((observer: Observer<CsrfToken>) => {
-      TokenService.getCsrfToken()
+      _OidcService.getCsrfToken()
         .then(
           (csrfToken: CsrfToken) => {
             observer.next(csrfToken);
@@ -30,32 +29,32 @@ export class OidcService {
   }
 
   getStoredCsrfToken(): string {
-    return StorageUtil.read('_csrf');
+    return _OidcService.getStoredCsrfToken();
   }
 
   getStoredToken(): Token | null {
-    return TokenService.getStoredToken();
+    return _OidcService.getStoredToken();
   }
 
   getAuthHeader(): string {
-    return SessionUtil.getAuthHeader(TokenService.getStoredToken());
+    return _OidcService.getAuthHeader(_OidcService.getStoredToken());
   }
 
   getIdTokenHint(options = { regex: false }): string | null {
-    return TokenService.getIdTokenHint(options);
+    return _OidcService.getIdTokenHint(options);
   }
 
   cleanSessionStorage(): void {
-    SessionService.cleanSessionStorage();
+    _OidcService.cleanSessionStorage();
   }
 
   deleteStoredTokens(): void {
-    TokenService.deleteStoredTokens();
+    _OidcService.deleteStoredTokens();
   }
 
   isSessionAlive(): Observable<{ status: number }> {
     return new Observable<{ status: number }>((observer: Observer<{ status: number }>) => {
-      SessionService.isSessionAlive()
+      _OidcService.isSessionAlive()
         .then(
           (status: { status: number }) => {
             observer.next(status);
@@ -67,7 +66,7 @@ export class OidcService {
 
   checkSession(): Observable<boolean> {
     return new Observable<boolean>((observer: Observer<boolean>) => {
-      SessionService.checkSession()
+      _OidcService.checkSession()
         .then(
           (hasSession: boolean) => {
             observer.next(hasSession);
@@ -82,7 +81,7 @@ export class OidcService {
 
   silentRefreshAccessToken(): Observable<boolean> {
     return new Observable<boolean>((observer: Observer<boolean>) => {
-      SessionUtil.silentRefreshAccessToken()
+      _OidcService.silentRefreshAccessToken()
         .then(
           (refreshed: boolean) => {
             observer.next(refreshed);
@@ -97,7 +96,7 @@ export class OidcService {
 
   silentLogoutByUrl(): Observable<boolean> {
     return new Observable<boolean>((observer: Observer<boolean>) => {
-      SessionUtil.silentLogoutByUrl()
+      _OidcService.silentLogoutByUrl()
         .then(
           (loggedOut: boolean) => {
             observer.next(loggedOut);

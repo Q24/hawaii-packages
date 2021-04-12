@@ -147,9 +147,9 @@ export function deleteStoredCsrfToken(): void {
 /**
  * Gets the stored CSRF Token from storage
  */
-export function getStoredCsrfToken(): void {
+export function getStoredCsrfToken(): string {
   LogUtil.debug(`Get CSRF Token from session storage`);
-  StorageUtil.read("_csrf");
+  return StorageUtil.read("_csrf");
 }
 
 /**
