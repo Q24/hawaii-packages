@@ -32,6 +32,9 @@
     "@angular/common": "~11.0.0",
     "@angular/core": "~11.0.0",
     "@hawaii-framework/oidc-implicit-core": "2.0.0-dev.3",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.24.0",
     "ng-packagr": "^11.0.0",
     "rxjs": "~6.6.0",
     "typescript": "~4.0.2"
