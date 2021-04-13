@@ -1,6 +1,6 @@
 {
   "name": "@hawaii-framework/oidc-implicit-core",
-  "version": "2.0.0-dev.1",
+  "version": "2.0.0-dev.3",
   "description": "Core components for implementing Open ID Connect Implicit Flow",
   "author": "Ilionx",
   "email": "kriemens@ilionx.com",
@@ -28,7 +28,6 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
-    "esbuild": "^0.11.9",
     "eslint": "^7.21.0",
     "microbundle": "^0.12.0",
     "typedoc": "^0.20.30",
@@ -38,11 +37,11 @@
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
     "copyCleanHashFragment": "cp ./clean-hash-fragment.js dist/clean-hash-fragment.js",
-    "build": "npm run clean && microbundle && npm run copyCleanHashFragment",
+    "build": "npm run clean && npm run bundle && npm run copyCleanHashFragment",
+    "bundle": "microbundle --name OidcImplicitCore",
     "dev": "microbundle watch",
     "test": "jest",
-    "test:watch": "jest --watch --collect-coverage",
-    "esbuild": "esbuild ./src/index.ts --bundle --outfile=./out/out.js"
+    "test:watch": "jest --watch --collect-coverage"
   },
   "source": "./src/index.ts",
   "main": "dist/index.js",

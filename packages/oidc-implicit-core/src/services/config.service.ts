@@ -1,3 +1,11 @@
-import { OidcConfig } from '../models/config.models';
+import { OidcConfig } from "../models/config.models";
 
-export let oidcConfig: OidcConfig;
+let _oidcConfig: OidcConfig;
+
+export function getOidcConfig(): OidcConfig {
+  return _oidcConfig;
+}
+
+export function setOidcConfig(config: OidcConfig): void {
+  _oidcConfig = config;
+}

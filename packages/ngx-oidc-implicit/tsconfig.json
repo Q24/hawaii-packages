@@ -1,41 +1,28 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": ".",
-    "declaration": true,
-    "stripInternal": true,
+    "baseUrl": "./",
     "outDir": "./dist",
-    "skipLibCheck": true,
-    "rootDir": ".",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
-    "moduleResolution": "node",
-    "module": "es2015",
-    "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "emitDecoratorMetadata": true,
+    "declaration": false,
+    "downlevelIteration": true,
     "experimentalDecorators": true,
-    "target": "es5",
-    "paths": {
-      "@angular/core": [
-        "node_modules/@angular/core"
-      ],
-      "rxjs/*": [
-        "node_modules/rxjs/*"
-      ]
-    },
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "es2020",
     "lib": [
-      "es2015",
+      "es2018",
       "dom"
-    ]
+    ],
   },
-  "include": ["./src/**/*"],
-  "files": [
-    "index.ts"
-  ],
   "angularCompilerOptions": {
-    "strictMetadataEmit": false
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
   }
 }

@@ -1,4 +1,5 @@
 {
+  "$schema": "./node_modules/ng-packagr/package.schema.json",
   "name": "@hawaii-framework/ngx-oidc-implicit",
   "version": "2.1.3",
   "description": "Open ID Connect - Implicit Flow Service for Angular",
@@ -23,41 +24,24 @@
     "ng2",
     "ng"
   ],
-  "module": "index.js",
-  "typings": "index.d.ts",
-  "devDependencies": {
-    "@angular/animations": "^8.2.14",
-    "@angular/common": "^8.2.14",
-    "@angular/compiler": "^8.2.14",
-    "@angular/compiler-cli": "^8.2.14",
-    "@angular/core": "^8.2.14",
-    "@angular/platform-browser": "^8.2.14",
-    "@angular/platform-browser-dynamic": "^8.2.14",
-    "@angular/platform-server": "^8.2.14",
-    "@hawaii-framework/oidc-implicit-core": "^1.2.0",
-    "codelyzer": "~5.0.1",
-    "rollup": "^0.68.2",
-    "rollup-plugin-node-resolve": "^4.2.4",
-    "rxjs": "6.5.5",
-    "ts-node": "^7.0.0",
-    "tslint": "^5.17.0",
-    "tslint-config-airbnb": "^5.11.1",
-    "typescript": "3.4.5",
-    "uglify-js": "^3.3.25",
-    "zone.js": "^0.9.1"
-  },
   "scripts": {
-    "prepublishOnly": "npm run build",
-    "clean": "rm -rf dist",
-    "transpile": "ngc",
-    "package": "rollup -c",
-    "minify": "uglifyjs dist/bundles/oidc.umd.js --screw-ie8 --compress --mangle --comments --output dist/bundles/oidc.umd.min.js",
-    "build": "npm run clean && npm run transpile && npm run package && npm run minify"
+    "build": "ng-packagr -p package.json",
+    "publish": "npm publish dist"
   },
-  "files": [
-    "/dist",
-    "index.ngsummary.json"
-  ],
-  "dependencies": {},
-
+  "devDependencies": {
+    "@angular/common": "~11.0.0",
+    "@angular/core": "~11.0.0",
+    "@hawaii-framework/oidc-implicit-core": "2.0.0-dev.3",
+    "ng-packagr": "^11.0.0",
+    "rxjs": "~6.6.0",
+    "typescript": "~4.0.2"
+  },
+  "ngPackage": {
+    "lib": {
+      "entryFile": "src/public-api.ts"
+    }
+  },
+  "peerDependencies": {
+    "@hawaii-framework/oidc-implicit-core": "^2.0.0-dev.3"
+  }
 }

@@ -2,7 +2,7 @@ import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
 import { CsrfToken, Token } from "../models/token.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
-import { oidcConfig } from './config.service';
+import { getOidcConfig } from './config.service';
 
 /**
  * Delete all tokens in sessionStorage for this session.
@@ -29,7 +29,7 @@ export function getIdTokenHint(options = { regex: false }): string | null {
     return storageArray.length > 0 ? StorageUtil.read(storageArray[0]) : null;
   }
 
-  return StorageUtil.read(`${oidcConfig.client_id}-id-token-hint`);
+  return StorageUtil.read(`${getOidcConfig().client_id}-id-token-hint`);
 }
 
 /**
@@ -37,7 +37,7 @@ export function getIdTokenHint(options = { regex: false }): string | null {
  */
 function getStoredTokens(): Token[] {
   const storedTokens = StorageUtil.read(
-    `${oidcConfig.client_id}-token`
+    `${getOidcConfig().client_id}-token`
   );
   return JSON.parse(storedTokens) || [];
 }
@@ -48,7 +48,7 @@ function getStoredTokens(): Token[] {
 function storeTokens(tokens: Token[]): void {
   LogUtil.debug("Saved Tokens to session storage");
   StorageUtil.store(
-    `${oidcConfig.client_id}-token`,
+    `${getOidcConfig().client_id}-token`,
     JSON.stringify(tokens)
   );
 }
@@ -124,7 +124,7 @@ export function storeToken(token: Token): void {
  */
 export function saveIdTokenHint(idTokenHint: string): void {
   StorageUtil.store(
-    `${oidcConfig.client_id}-id-token-hint`,
+    `${getOidcConfig().client_id}-id-token-hint`,
     idTokenHint
   );
 }
@@ -161,7 +161,7 @@ export function getCsrfToken(): Promise<CsrfToken> {
   return new Promise<CsrfToken>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", oidcConfig.csrf_token_endpoint, true);
+    xhr.open("POST", getOidcConfig().csrf_token_endpoint, true);
     xhr.withCredentials = true;
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {

@@ -160,7 +160,7 @@ Example of adding Bearer header to rest calls. I use a service wrapper for this:
 ```typescript
 @Injectable()
 export class RestService {
-    
+
     private _headers = new HttpHeaders();
 
     constructor(private _http: HttpClient,
@@ -174,7 +174,7 @@ export class RestService {
         // Append the JSON content type header
         this._headers = this._headers.set('Content-Type', 'application/json');
     }
-    
+
     public get(url: string, requiresAuthHeaders: boolean, queryParams?: object | undefined): Observable<any> {
         const options: any = {};
 
@@ -202,7 +202,7 @@ export class RestService {
                 return observableThrowError(err.error);
             }));
     }
-    
+
     public post(url: string, data: any, requiresAuthHeaders: boolean): Observable<any> {
 
         if (requiresAuthHeaders) {
@@ -217,7 +217,7 @@ export class RestService {
                 return observableThrowError(err.error);
             }));
     }
-    
+
     public put(url: string, data: any, requiresAuthHeaders: boolean): Observable<any> {
 
         if (requiresAuthHeaders) {
@@ -232,7 +232,7 @@ export class RestService {
                 return observableThrowError(err.error);
             }));
     }
-    
+
     public patch(url: string, data: any, requiresAuthHeaders: boolean): Observable<any> {
 
         if (requiresAuthHeaders) {
@@ -257,7 +257,7 @@ export class RestService {
                 return observableThrowError(err.error);
             }));
     }
-    
+
     private _setAuthHeader() {
         // Get local token from the OIDC Service
         const localToken = this._oidcService.getStoredToken();
@@ -290,7 +290,7 @@ export class RestService {
 
 ### custom login page
 
-You can configure a custom login page, that's part of the angular stack, therefor there is a login endpoint in the config. 
+You can configure a custom login page, that's part of the angular stack, therefor there is a login endpoint in the config.
 Make sure you point the OIDC config to the proper URL within the angular stack. After that a login page is pretty straight forward.
 The form should (for security purposes) be a classic form HTTP POST.
 
@@ -320,7 +320,7 @@ Here is the bare basics:
                [formControl]="j_password"
                name="j_password"
                autocomplete="off">
-               
+
         <!-- Submit -->
         <button>Log In</button>
     </fieldset>
