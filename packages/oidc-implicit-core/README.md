@@ -135,12 +135,18 @@ if (storedToken) {
 
 ## Login
 
-The login consists of two steps. Step 1 is to send authentication data to the server (username and password and csrf token). Step 2 is processing the response from the server.
-#TODO: ADD LOGIN
-#TODO: add description; it is not needed to create a custom login page; as it is provided with CIAM already. You can use the default. It can be configured per client.
+The login consists of two steps. Step 1 is to send authentication data to the server (_username_ and _password_ and _csrf token_). Step 2 is processing the response from the server.
+
+# Sending authentication data to the server
+
+Most of the time, it is not needed to create a custom login page. The default page of the CIAM server can be used. The client id can be used by CIAM to determine which login page should be served.
+
+If you are going to create a custom CIAM login page, you need to make sure that besides the username and password, you also send a Cross Site Request Forgery token (csrf) to the SSO server. This can be obtained with the `getCsrfToken()` method.
 
 ### Processing the response from the server
+
 An auth token will be present in a response from the server after a successful login. This token must be stored on the user's local computer. The auth token is present in the hash fragment of the redirect url from the server to the client. So, you need to make sure you will not clear the URL before saving it locally.
+
 ```ts
 // The check session method is used for both checking if the user is logged in
 // as well as saving the access token present in the URL hash.
@@ -153,8 +159,6 @@ The current implementation of the redirect from the server only goes to a single
 Because the check session function is used both for the login check and to store the token, it is recommended to do a front-end redirect where the URL hash is kept intact before the check session is used to store the token. This way the user is sent to the correct route after login, which calls the check session anyway (to check if the user is logged in) and consequently also stores the token.
 
 ![Login flow](images/login-flow.png)
-
-
 
 ## Logout
 
@@ -197,8 +201,9 @@ getIdTokenHint({ regex: true });
 
 If the session is closed due to inactivity, the user must be logged out to protect the data still on the local computer from access by unauthorised parties. After redirecting to the logged out page, the authentication information will be removed.
 
+In the case a user may still be logged in on another client, they should not be logged out. This is what the isSessionAlive call is for. It checks the server to see if the user is still logged in somewhere. Logging out would also destroy the session for other clients. This would cause these users to eventually be rejected when requesting a renewal of the session, even though they might still be actively using the session.
 
-#TODO: is session alive does not lengthen session. This will only work with a specific implementation of CIAM.
+The `isSessionAlive` call does not count as user activity, and will as such not lengthen the session.
 
 ```ts
 import {
@@ -231,13 +236,13 @@ const autoLogoutInterval = setInterval(() => {
 
 ## Logged out page
 
-#TODO: add this is an opinionated way of centralising the logout event
-
 See the FAQ for the difference between a logout page and a logged out page.
 
 The logged out page is used to show the user that he has been logged out. Next to this, it should remove local authentication information. This includes local storage on the current domain as well as cookies on other domains via a logout pixel.
 
 ### Clean up
+
+Remove possible left-overs of the previous session.
 
 ```ts
 import { SessionService } from "@hawaii-framework/oidc-implicit-core/dist";
@@ -247,6 +252,8 @@ SessionService.cleanSessionStorage();
 ```
 
 ### Logout pixel
+
+> ! This is an opinionated way of handling logout.
 
 In case there multiple domains that need to be logged out at once, you may choose to include logout pixels. With a logout pixel, you include an invisible iframe or image on the site which is hosted on another domain. The embedded element contains some logic to logout on the hosting domain. In this way the same domain policy for cookies and other local ways authentication data storage can be circumvented.
 ![Logout pixel flow](images/logout-pixel.png)
@@ -297,13 +304,7 @@ SessionUtil.silentLogoutByUrl().then((loggedOut) => {
 
 ### What is a silent refresh?
 
-With a silent refresh, the lifetime of a token is renewed in the background, without user interaction.
-#TODO
-prompt
-OPTIONAL. Space-delimited, case-sensitive list of ASCII string values that specifies whether the Authorization Server prompts the End-User for reauthentication and consent. The defined values are:
-none
-The Authorization Server MUST NOT display any authentication or consent user interface pages. An error is returned if an End-User is not already authenticated or the Client does not have pre-configured consent for the requested Claims or does not fulfill other conditions for processing the request. The error code will typically be login_required, interaction_required. This can be used as a method to check for existing authentication and/or consent.
-
+With a silent refresh, the lifetime of a token is renewed in the background, without user interaction. The Authorization Server will not display any authentication or consent user interface pages. An error is returned if an End-User is not already authenticated. For more info, see the [OpenID Connect Core spec](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
 
 ### What is the difference between a logout page and a logged out page?
 

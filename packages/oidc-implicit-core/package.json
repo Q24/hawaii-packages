@@ -40,8 +40,7 @@
     "build": "npm run clean && npm run bundle && npm run copyCleanHashFragment",
     "bundle": "microbundle --name OidcImplicitCore",
     "dev": "microbundle watch",
-    "test": "jest",
-    "test:watch": "jest --watch --collect-coverage"
+    "typedoc": "npx typedoc ./src/index.ts"
   },
   "source": "./src/index.ts",
   "main": "dist/index.js",
