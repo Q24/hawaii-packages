@@ -28,7 +28,7 @@ import {
 import { getOidcConfig } from './config.service';
 
 /**
- * Cleans up the current session: Delete the stored local tokens, state, nonce, id token hint and CSRF token.
+ * Cleans up the current session: deletes the stored local tokens, state, nonce, id token hint and CSRF token.
  */
 export function cleanSessionStorage(): void {
   deleteStoredTokens();
@@ -40,7 +40,11 @@ export function cleanSessionStorage(): void {
 }
 
 /**
- * Check to see if a session is still actively used somewhere else (i.e. other platform).
+ * Checks if a session is alive. This may be on another platform.
+ * This is normally used in conjunction with a silent logout. It
+ * doesn't extend the lifetime of the current session. If a
+ * session is found, a logout should NOT be triggered.
+ * @returns The status code of the HTTP response
  */
 export function isSessionAlive(): Promise<{ status: number }> {
   LogUtil.debug("Get Session Alive info from SSO");
@@ -237,12 +241,22 @@ export function silentRefreshAccessToken(): Promise<boolean> {
 }
 
 /**
- * Silently logout via iFrame. The URL should do the POST to SSO.
- * This is merely a service tool to create the iFrame for you, and handle it's result.
- * This _DOES NOT_ logout in itself.
+ * Allows you to initiate a logout of the session in the background via an
+ * iframe.
  *
- * Returns 'true' if logout was successful and ended up on the configured `post_logout_redirect_uri`
- * @returns {Promise<boolean>}
+ * This logout will not redirect the top-level window to the logged-out page.
+ * It is important that the result of the returning Promise is used to take
+ * an action (e.g. do a redirect).
+ *
+ * The logout was successful if the iframe ended up on the configured
+ * `post_logout_redirect_uri`.
+ *
+ * @param url A URL pointing to a *page*.
+ * This *page* should make a POST request to the logout endpoint of the SSO server
+ * in an automated fashion, which will cause the user to be logged out.
+ * The `id_token_hint` and `csrf_token` will be supplied to the *page* via this
+ * function. Defaults to `getOidcConfig().silent_logout_uri`
+ * @returns *true*, if the logout was successful, *false* if the logout failed.
  */
 export function silentLogoutByUrl(
   url = getOidcConfig().silent_logout_uri
@@ -309,7 +323,8 @@ export function silentLogoutByUrl(
 
         const currentIframeURL = iFrame.contentWindow.location.href;
         if (
-          currentIframeURL.indexOf(getOidcConfig().post_logout_redirect_uri) === 0
+          currentIframeURL.indexOf(getOidcConfig().post_logout_redirect_uri) ===
+          0
         ) {
           LogUtil.debug(
             "Silent logout successful",
@@ -439,9 +454,13 @@ export function getAuthHeader(token: Token): string {
 }
 
 /**
- * Check if the token expires in the next (x) seconds,
- * if so, set trigger a silent refresh of the Access Token in the OIDC Service.
- * @returns {Promise<boolean>}
+ * Check if the token expires in the next *x* seconds.
+ *
+ * If this is the case,
+ * a silent refresh will be triggered and the Promise will resolve to `true`.
+ *
+ * If the token does not expire within *x* seconds, the Promise will resolve
+ * to `false` instead.
  */
 export function checkIfTokenExpiresAndRefreshWhenNeeded(
   almostExpiredThreshold = 300,
@@ -513,27 +532,31 @@ function doSessionUpgradeRedirect(token: Token): void {
 
   // Do the authorize redirect
   const urlParams = createURLParameters(urlVars);
-  window.location.href = `${getOidcConfig().authorisation}/sso/upgrade-session?${urlParams}`;
+  window.location.href = `${
+    getOidcConfig().authorisation
+  }/sso/upgrade-session?${urlParams}`;
 }
 
 /**
+ * Checks if the session is authenticated.
+ * If this is the case, the Promise will resolve to `true`.
+ * If the session is not authenticated, the browser will
+ * be redirected to the login page.
+ *
  * CORE METHOD:
  *
- * 1 - Check if State needs to be flushed (in case of session upgrade i.e.)
+ * Before starting with checks, we flush state if needed (in case of session upgrade i.e.)
  *
- * 2 - Check if there's a valid token in the storage
+ * 1. If there is a valid session storage token, we are done.
+ * 2. Otherwise, if there is an *access_token* in the URL
+ *   - a. Validate that the state from the response is equal to the state previously generated on the client.
+ *   - b. Validate token from URL with Backend
+ *   - c. Store the token
+ *   - d. Get a new CSRF token from Authorisation with the newly created session, and save it for i.e. logout usage
+ * 3. Check if there's a session_upgrade_token in the URL, if so, call the session upgrade function
+ * 4. Nothing found anywhere, so redirect to authorisation
  *
- * 3 - Check if there's an access_token in the URl
- *    * a. Validate state
- *    * b. Validate token from URL with Backend
- *    * c. Store the token
- *    * d. Get a new CSRF token from Authorisation with the newly created session, and save it for i.e. logout usage
- *
- * 4 - Check if there's a session_upgrade_token in the URL, if so, call the session upgrade function
- *
- * 5 - Nothing found anywhere, so redirect to authorisation
- *
- * 1,2,3:
+ * 1,2:
  * @returns {Promise<boolean>}
  *
  * 4,5:
@@ -561,7 +584,7 @@ export function checkSession(): Promise<boolean> {
 
   LogUtil.debug("Check session with params:", urlParams);
   return new Promise<boolean>((resolve, reject) => {
-    // 1 Make sure the state is 'clean' when doing a session upgrade
+    // Make sure the state is 'clean' when doing a session upgrade
     if (urlParams.flush_state) {
       cleanSessionStorage();
       LogUtil.debug("Flush state present, so cleaning the storage");
@@ -570,7 +593,7 @@ export function checkSession(): Promise<boolean> {
       getOidcConfig().redirect_uri = getOidcConfig().redirect_uri.split("?")[0];
     }
 
-    // 2 --- Let's first check if we still have a valid token stored local, if so use that token
+    // 1 --- Let's first check if we still have a valid token stored local, if so use that token
     if (getStoredToken()) {
       LogUtil.debug("Local token found, you may proceed");
       resolve(true);
@@ -585,16 +608,16 @@ export function checkSession(): Promise<boolean> {
         StorageUtil.store("_csrf", csrfToken.csrf_token);
 
         if (hashFragmentParams.access_token && hashFragmentParams.state) {
-          // 3 --- There's an access_token in the URL
+          // 2 --- There's an access_token in the URL
           parseToken(hashFragmentParams).then((tokenIsValid: boolean) =>
             resolve(tokenIsValid)
           );
         } else if (hashFragmentParams.session_upgrade_token) {
-          // 4 --- There's a session upgrade token in the URL
+          // 3 --- There's a session upgrade token in the URL
           LogUtil.debug("Session Upgrade Token found in URL");
           doSessionUpgradeRedirect(hashFragmentParams);
         } else {
-          // 5 --- No token in URL or Storage, so we need to get one from SSO
+          // 4 --- No token in URL or Storage, so we need to get one from SSO
           LogUtil.debug(
             "No valid token in Storage or URL, Authorize Redirect!"
           );

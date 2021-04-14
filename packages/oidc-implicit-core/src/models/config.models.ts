@@ -94,53 +94,43 @@ export interface OidcConfig {
   /**
    * Config object for QR login with websocket
    */
-  qr?: QrCodeLoginConfig;
+  qr?: {
+    /**
+     * Websocket BASE URL. Connect to this URL to have access to the subscription channels
+     */
+    web_socket: string;
+
+    /**
+     * Websocket channel for QR code rendering.
+     * When subscribing to this channel you will receive a code to parse to QR and render on screen.
+     * So this sets up your session to login with QR.
+     */
+    channel_qr: string;
+
+    /**
+     * Websocket channel for the Redirect.
+     * When subscribing to this channel you will receive a 302 redirect once the QR was scanned in the Vodafone App.
+     * So this will keep listening if your session started with the QR channel was succesfully scanned somewhere.
+     */
+    channel_redirect: string;
+  };
   /**
-   * Config object for code based login
+   * Config object for code based login.
+   *
    * Also known as magic code or email code
    */
-  code_login?: CodeBasedLoginConfig;
+  code_login?: {
+    /**
+     * endpoint for requesting the code to be send to the user's associated email address.
+     */
+    request: string;
+    /**
+     * endpoint used for logging in to the service using the code provided in the user's mailbox.
+     */
+    confirm: string;
+  };
   /**
    * Debug On/Off (Logs to console)
    */
   debug?: boolean;
-}
-
-/**
- * Config object for QR Login via websocket
- */
-export interface QrCodeLoginConfig {
-  /**
-   * Websocket BASE URL. Connect to this URL to have access to the subscription channels
-   */
-  web_socket: string;
-
-  /**
-   * Websocket channel for QR code rendering.
-   * When subscribing to this channel you will receive a code to parse to QR and render on screen.
-   * So this sets up your session to login with QR.
-   */
-  channel_qr: string;
-
-  /**
-   * Websocket channel for the Redirect.
-   * When subscribing to this channel you will receive a 302 redirect once the QR was scanned in the Vodafone App.
-   * So this will keep listening if your session started with the QR channel was succesfully scanned somewhere.
-   */
-  channel_redirect: string;
-}
-
-/**
- * Config object for code based login
- * Also known as magic code or email code
- */
-export interface CodeBasedLoginConfig {
-  /**
-   * endpoint for requesting the code to be send to the user's associated email address.
-   */
-  request: string;
-  /**
-   * endpoint used for logging in to the service using the code provided in the user's email.
-   */
-  confirm: string;
 }

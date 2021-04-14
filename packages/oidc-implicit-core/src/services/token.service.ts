@@ -6,8 +6,6 @@ import { getOidcConfig } from './config.service';
 
 /**
  * Delete all tokens in sessionStorage for this session.
- * @param {providerId} string
- * @returns { void }
  */
 export function deleteStoredTokens(): void {
   LogUtil.debug(`Removed Tokens from session storage`);
@@ -16,9 +14,10 @@ export function deleteStoredTokens(): void {
 
 /**
  * Get the saved id_token_hint string for the current instance from storage
- * For logout, we use a regex, while we don't know if the instance of client_id is the same. Pass the `{regex: true}` option, to search for any ID Token Hint by regex
  * Used when you need to check the if your logged in or not without using access-tokens as a reference
- * @returns {string | null}
+ *
+ * Pass the `{regex: true}` option, to search for any ID Token Hint by regex
+ * During logout, the regex option should be enabled if we are not sure that the *client_id* will remain stable.
  */
 export function getIdTokenHint(options = { regex: false }): string | null {
   if (options.regex) {
@@ -153,7 +152,7 @@ export function getStoredCsrfToken(): string {
 }
 
 /**
- * Get a CSRF Token from the Authorisation
+ * Get a CSRF Token from the authorisation server
  */
 export function getCsrfToken(): Promise<CsrfToken> {
   LogUtil.debug("Get CSRF token from Authorisation");

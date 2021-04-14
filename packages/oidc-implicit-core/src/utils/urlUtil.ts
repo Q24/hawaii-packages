@@ -77,7 +77,10 @@ export function getHashFragmentParameters(hash_fragment: string): Token {
 }
 
 /**
- * Strip the hash fragment if it contains an access token (could happen when people use the BACK button in the browser)
+ * Strip the hash fragment from the URL.
+ * The URL could contain an *access_token* when a user uses the *BACK* button in the browser.
+ *
+ * @returns The cleaned URL
  */
 export function cleanHashFragment(url: string): string {
   return url.split("#")[0];
