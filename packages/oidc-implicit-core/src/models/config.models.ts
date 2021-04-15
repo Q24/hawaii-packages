@@ -25,6 +25,16 @@ export interface OidcConfig {
   silent_refresh_uri?: string;
 
   /**
+   * Save tokens relative to a specific scope and user context
+   */
+  ccamEnabled?: boolean;
+
+  /**
+   * The active user context
+   */
+  context: string;
+
+  /**
    * The URL you want to use for a silent Logout, if your stack supports it.
    */
   silent_logout_uri?: string;

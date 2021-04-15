@@ -2,7 +2,7 @@ import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
 import { CsrfToken, Token } from "../models/token.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
-import { getOidcConfig } from './config.service';
+import { getOidcConfig } from "./config.service";
 
 /**
  * Delete all tokens in sessionStorage for this session.
@@ -12,32 +12,20 @@ export function deleteStoredTokens(): void {
   StorageUtil.remove("-token");
 }
 
-/**
- * Get the saved id_token_hint string for the current instance from storage
- * Used when you need to check the if your logged in or not without using access-tokens as a reference
- *
- * Pass the `{regex: true}` option, to search for any ID Token Hint by regex
- * During logout, the regex option should be enabled if we are not sure that the *client_id* will remain stable.
- */
-export function getIdTokenHint(options = { regex: false }): string | null {
-  if (options.regex) {
-    const regex = new RegExp(/-id-token-hint/);
-    const storageArray = Object.keys(StorageUtil.storage).filter((key) =>
-      regex.test(key)
-    );
-    return storageArray.length > 0 ? StorageUtil.read(storageArray[0]) : null;
+function createTokenKey() {
+  if (getOidcConfig().ccamEnabled) {
+    return `${getOidcConfig().client_id}-${getOidcConfig().scope}-${
+      getOidcConfig().context
+    }-token`;
   }
-
-  return StorageUtil.read(`${getOidcConfig().client_id}-id-token-hint`);
+  return `${getOidcConfig().client_id}-token`;
 }
 
 /**
  * Get all token stored in session Storage in an Array
  */
 function getStoredTokens(): Token[] {
-  const storedTokens = StorageUtil.read(
-    `${getOidcConfig().client_id}-token`
-  );
+  const storedTokens = StorageUtil.read(createTokenKey());
   return JSON.parse(storedTokens) || [];
 }
 
@@ -46,10 +34,7 @@ function getStoredTokens(): Token[] {
  */
 function storeTokens(tokens: Token[]): void {
   LogUtil.debug("Saved Tokens to session storage");
-  StorageUtil.store(
-    `${getOidcConfig().client_id}-token`,
-    JSON.stringify(tokens)
-  );
+  StorageUtil.store(createTokenKey(), JSON.stringify(tokens));
 }
 
 /**
@@ -118,14 +103,38 @@ export function storeToken(token: Token): void {
   storeTokens(tokensCleaned);
 }
 
+function createIdTokenHintKey(): string {
+  if (getOidcConfig().ccamEnabled) {
+    return `${getOidcConfig().client_id}-${getOidcConfig().scope}-${
+      getOidcConfig().context
+    }-id-token-hint`;
+  }
+  return `${getOidcConfig().client_id}-id-token-hint`;
+}
+
+/**
+ * Get the saved id_token_hint string for the current instance from storage
+ * Used when you need to check the if your logged in or not without using access-tokens as a reference
+ *
+ * Pass the `{regex: true}` option, to search for any ID Token Hint by regex
+ * During logout, the regex option should be enabled if we are not sure that the *client_id* will remain stable.
+ */
+export function getIdTokenHint(options = { regex: false }): string | null {
+  if (options.regex) {
+    const regex = new RegExp(/-id-token-hint/);
+    const storageArray = Object.keys(StorageUtil.storage).filter((key) =>
+      regex.test(key)
+    );
+    return storageArray.length > 0 ? StorageUtil.read(storageArray[0]) : null;
+  }
+  return StorageUtil.read(createIdTokenHintKey());
+}
+
 /**
  * Saves the ID token hint to sessionStorage
  */
 export function saveIdTokenHint(idTokenHint: string): void {
-  StorageUtil.store(
-    `${getOidcConfig().client_id}-id-token-hint`,
-    idTokenHint
-  );
+  StorageUtil.store(createIdTokenHintKey(), idTokenHint);
 }
 
 /**
