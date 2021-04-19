@@ -25,7 +25,7 @@ import {
   getHashFragmentParameters,
   getURLParameters,
 } from "src/utils/urlUtil";
-import { getOidcConfig } from './config.service';
+import { OidcConfigService } from './config.service';
 
 /**
  * Cleans up the current session: deletes the stored local tokens, state, nonce, id token hint and CSRF token.
@@ -54,7 +54,7 @@ export function isSessionAlive(): Promise<{ status: number }> {
 
     xhr.open(
       "GET",
-      `${getOidcConfig().is_session_alive_endpoint}/${getSessionId()}`,
+      `${OidcConfigService.config.is_session_alive_endpoint}/${getSessionId()}`,
       true
     );
 
@@ -175,7 +175,7 @@ export function silentRefreshAccessToken(): Promise<boolean> {
         "Do silent refresh redirect to SSO with options:",
         authorizeParams
       );
-      iFrame.src = `${getOidcConfig().authorize_endpoint}?${createURLParameters(
+      iFrame.src = `${OidcConfigService.config.authorize_endpoint}?${createURLParameters(
         authorizeParams
       )}`;
     } else {
@@ -255,11 +255,11 @@ export function silentRefreshAccessToken(): Promise<boolean> {
  * This *page* should make a POST request to the logout endpoint of the SSO server
  * in an automated fashion, which will cause the user to be logged out.
  * The `id_token_hint` and `csrf_token` will be supplied to the *page* via this
- * function. Defaults to `getOidcConfig().silent_logout_uri`
+ * function. Defaults to `OidcConfigService.config.silent_logout_uri`
  * @returns *true*, if the logout was successful, *false* if the logout failed.
  */
 export function silentLogoutByUrl(
-  url = getOidcConfig().silent_logout_uri
+  url = OidcConfigService.config.silent_logout_uri
 ): Promise<boolean> {
   return new Promise<boolean>((resolve) => {
     LogUtil.debug("Silent logout by URL started");
@@ -313,7 +313,7 @@ export function silentLogoutByUrl(
           LogUtil.debug(
             "Silent logout failed after 5000",
             iFrame.contentWindow.location.href,
-            getOidcConfig().post_logout_redirect_uri
+            OidcConfigService.config.post_logout_redirect_uri
           );
 
           clearInterval(intervalTimer);
@@ -323,13 +323,13 @@ export function silentLogoutByUrl(
 
         const currentIframeURL = iFrame.contentWindow.location.href;
         if (
-          currentIframeURL.indexOf(getOidcConfig().post_logout_redirect_uri) ===
+          currentIframeURL.indexOf(OidcConfigService.config.post_logout_redirect_uri) ===
           0
         ) {
           LogUtil.debug(
             "Silent logout successful",
             iFrame.contentWindow.location.href,
-            getOidcConfig().post_logout_redirect_uri
+            OidcConfigService.config.post_logout_redirect_uri
           );
 
           clearInterval(intervalTimer);
@@ -387,21 +387,21 @@ function destroyLogoutIFrame(iFrame: HTMLIFrameElement): void {
 function getAuthorizeParams(promptNone = false): AuthorizeParams {
   const stateObj = getState() || {
     state: GeneratorUtil.generateState(),
-    providerId: getOidcConfig().provider_id,
+    providerId: OidcConfigService.config.provider_id,
   };
 
   const urlVars: AuthorizeParams = {
     nonce: getNonce() || GeneratorUtil.generateNonce(),
     state: stateObj.state,
-    authorization: getOidcConfig().authorisation,
-    providerId: getOidcConfig().provider_id,
-    client_id: getOidcConfig().client_id,
-    response_type: getOidcConfig().response_type,
+    authorization: OidcConfigService.config.authorisation,
+    providerId: OidcConfigService.config.provider_id,
+    client_id: OidcConfigService.config.client_id,
+    response_type: OidcConfigService.config.response_type,
     redirect_uri:
-      promptNone && getOidcConfig().silent_refresh_uri
-        ? getOidcConfig().silent_refresh_uri
-        : getOidcConfig().redirect_uri,
-    scope: getOidcConfig().scope,
+      promptNone && OidcConfigService.config.silent_refresh_uri
+        ? OidcConfigService.config.silent_refresh_uri
+        : OidcConfigService.config.redirect_uri,
+    scope: OidcConfigService.config.scope,
     prompt: promptNone ? "none" : "",
   };
 
@@ -428,7 +428,7 @@ function validateToken(hashParams: Token): Promise<ValidSession> {
   return new Promise<ValidSession>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", getOidcConfig().validate_token_endpoint, true);
+    xhr.open("POST", OidcConfigService.config.validate_token_endpoint, true);
 
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
@@ -503,7 +503,7 @@ function authorizeRedirect(): void {
       authorizeParams
     );
     window.location.href = `${
-      getOidcConfig().authorize_endpoint
+      OidcConfigService.config.authorize_endpoint
     }?${createURLParameters(authorizeParams)}`;
   } else {
     // Error in authorize redirect
@@ -522,7 +522,7 @@ function authorizeRedirect(): void {
 function doSessionUpgradeRedirect(token: Token): void {
   const urlVars = {
     session_upgrade_token: token.session_upgrade_token,
-    redirect_uri: `${getOidcConfig().redirect_uri}?flush_state=true`,
+    redirect_uri: `${OidcConfigService.config.redirect_uri}?flush_state=true`,
   };
 
   LogUtil.debug(
@@ -533,7 +533,7 @@ function doSessionUpgradeRedirect(token: Token): void {
   // Do the authorize redirect
   const urlParams = createURLParameters(urlVars);
   window.location.href = `${
-    getOidcConfig().authorisation
+    OidcConfigService.config.authorisation
   }/sso/upgrade-session?${urlParams}`;
 }
 
@@ -590,7 +590,7 @@ export function checkSession(): Promise<boolean> {
       LogUtil.debug("Flush state present, so cleaning the storage");
 
       // Remove flush_state param from query params, so we only do it once
-      getOidcConfig().redirect_uri = getOidcConfig().redirect_uri.split("?")[0];
+      OidcConfigService.config.redirect_uri = OidcConfigService.config.redirect_uri.split("?")[0];
     }
 
     // 1 --- Let's first check if we still have a valid token stored local, if so use that token

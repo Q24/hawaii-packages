@@ -5,9 +5,9 @@ import configService, {
 import { useEffect, useRef, useState } from 'react';
 
 export const Logout = () => {
-  const logoutAction = getOidcConfig().logout_endpoint;
+  const logoutAction = OidcConfigService.config.logout_endpoint;
   const [csrf, setCsrf] = useState('');
-  const postLogoutUri = getOidcConfig().post_logout_redirect_uri;
+  const postLogoutUri = OidcConfigService.config.post_logout_redirect_uri;
   const [idTokenHint, setIdTokenHint] = useState('');
 
   const formRef = useRef<HTMLFormElement>(null);

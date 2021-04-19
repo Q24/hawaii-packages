@@ -2,7 +2,7 @@ import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
 import { CsrfToken, Token } from "../models/token.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
-import { getOidcConfig } from "./config.service";
+import { OidcConfigService } from './config.service';
 
 /**
  * Delete all tokens in sessionStorage for this session.
@@ -13,12 +13,12 @@ export function deleteStoredTokens(): void {
 }
 
 function createTokenKey() {
-  if (getOidcConfig().ccamEnabled) {
-    return `${getOidcConfig().client_id}-${getOidcConfig().scope}-${
-      getOidcConfig().context
+  if (OidcConfigService.config.ccamEnabled) {
+    return `${OidcConfigService.config.client_id}-${OidcConfigService.config.scope}-${
+      OidcConfigService.config.context
     }-token`;
   }
-  return `${getOidcConfig().client_id}-token`;
+  return `${OidcConfigService.config.client_id}-token`;
 }
 
 /**
@@ -104,12 +104,12 @@ export function storeToken(token: Token): void {
 }
 
 function createIdTokenHintKey(): string {
-  if (getOidcConfig().ccamEnabled) {
-    return `${getOidcConfig().client_id}-${getOidcConfig().scope}-${
-      getOidcConfig().context
+  if (OidcConfigService.config.ccamEnabled) {
+    return `${OidcConfigService.config.client_id}-${OidcConfigService.config.scope}-${
+      OidcConfigService.config.context
     }-id-token-hint`;
   }
-  return `${getOidcConfig().client_id}-id-token-hint`;
+  return `${OidcConfigService.config.client_id}-id-token-hint`;
 }
 
 /**
@@ -169,7 +169,7 @@ export function getCsrfToken(): Promise<CsrfToken> {
   return new Promise<CsrfToken>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", getOidcConfig().csrf_token_endpoint, true);
+    xhr.open("POST", OidcConfigService.config.csrf_token_endpoint, true);
     xhr.withCredentials = true;
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {

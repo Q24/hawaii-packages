@@ -168,10 +168,10 @@ The logout form needs a **logout endpoint**, a Cross Site Request Forgery Token 
 import configService from "@hawaii-framework/oidc-implicit-core/dist";
 
 // The LOGOUT_ENDPOINT can be requested from
-getOidcConfig().logout_endpoint;
+OidcConfigService.config.logout_endpoint;
 
 // The POST_LOGOUT_REDIRECT_URI can be requested from
-getOidcConfig().post_logout_redirect_uri;
+OidcConfigService.config.post_logout_redirect_uri;
 
 // The CSRF_TOKEN can be requested from
 //  Synchronously (try this first)

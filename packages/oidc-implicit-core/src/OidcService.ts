@@ -1,4 +1,4 @@
-export { getOidcConfig, setOidcConfig } from "./services/config.service";
+export { OidcConfigService } from "./services/config.service";
 export {
   checkSession,
   cleanSessionStorage,

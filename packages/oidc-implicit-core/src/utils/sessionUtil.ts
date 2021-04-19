@@ -1,4 +1,4 @@
-import { getOidcConfig } from 'src/services/config.service';
+import { OidcConfigService } from 'src/services/config.service';
 import { StorageUtil } from "./storageUtil";
 
 /**
@@ -6,7 +6,7 @@ import { StorageUtil } from "./storageUtil";
  * @returns {string}
  */
 export function getSessionId(): string | null {
-  return StorageUtil.read(`${getOidcConfig().client_id}-session-id`);
+  return StorageUtil.read(`${OidcConfigService.config.client_id}-session-id`);
 }
 
 /**
@@ -14,7 +14,7 @@ export function getSessionId(): string | null {
  * @param {string} sessionId
  */
 export function saveSessionId(sessionId: string): void {
-  StorageUtil.store(`${getOidcConfig().client_id}-session-id`, sessionId);
+  StorageUtil.store(`${OidcConfigService.config.client_id}-session-id`, sessionId);
 }
 
 /**
