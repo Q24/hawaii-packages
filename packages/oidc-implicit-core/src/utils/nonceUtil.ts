@@ -1,4 +1,4 @@
-import { getOidcConfig } from 'src/services/config.service';
+import { OidcConfigService } from 'src/services/config.service';
 import { StorageUtil } from "./storageUtil";
 
 /**
@@ -6,7 +6,7 @@ import { StorageUtil } from "./storageUtil";
  * @returns {string}
  */
 export function getNonce(): string | null {
-  return StorageUtil.read(`${getOidcConfig().client_id}-nonce`);
+  return StorageUtil.read(`${OidcConfigService.config.client_id}-nonce`);
 }
 
 /**
@@ -14,7 +14,7 @@ export function getNonce(): string | null {
  * @param nonce
  */
 export function saveNonce(nonce: string): void {
-  StorageUtil.store(`${getOidcConfig().client_id}-nonce`, nonce);
+  StorageUtil.store(`${OidcConfigService.config.client_id}-nonce`, nonce);
 }
 
 /**

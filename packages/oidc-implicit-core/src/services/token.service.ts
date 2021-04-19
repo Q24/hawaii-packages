@@ -2,7 +2,7 @@ import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
 import { CsrfToken, Token } from "../models/token.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
-import { getOidcConfig } from './config.service';
+import { OidcConfigService } from './config.service';
 
 /**
  * Delete all tokens in sessionStorage for this session.
@@ -28,7 +28,7 @@ export function getIdTokenHint(options = { regex: false }): string | null {
     return storageArray.length > 0 ? StorageUtil.read(storageArray[0]) : null;
   }
 
-  return StorageUtil.read(`${getOidcConfig().client_id}-id-token-hint`);
+  return StorageUtil.read(`${OidcConfigService.config.client_id}-id-token-hint`);
 }
 
 /**
@@ -36,7 +36,7 @@ export function getIdTokenHint(options = { regex: false }): string | null {
  */
 function getStoredTokens(): Token[] {
   const storedTokens = StorageUtil.read(
-    `${getOidcConfig().client_id}-token`
+    `${OidcConfigService.config.client_id}-token`
   );
   return JSON.parse(storedTokens) || [];
 }
@@ -47,7 +47,7 @@ function getStoredTokens(): Token[] {
 function storeTokens(tokens: Token[]): void {
   LogUtil.debug("Saved Tokens to session storage");
   StorageUtil.store(
-    `${getOidcConfig().client_id}-token`,
+    `${OidcConfigService.config.client_id}-token`,
     JSON.stringify(tokens)
   );
 }
@@ -123,7 +123,7 @@ export function storeToken(token: Token): void {
  */
 export function saveIdTokenHint(idTokenHint: string): void {
   StorageUtil.store(
-    `${getOidcConfig().client_id}-id-token-hint`,
+    `${OidcConfigService.config.client_id}-id-token-hint`,
     idTokenHint
   );
 }
@@ -160,7 +160,7 @@ export function getCsrfToken(): Promise<CsrfToken> {
   return new Promise<CsrfToken>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", getOidcConfig().csrf_token_endpoint, true);
+    xhr.open("POST", OidcConfigService.config.csrf_token_endpoint, true);
     xhr.withCredentials = true;
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {

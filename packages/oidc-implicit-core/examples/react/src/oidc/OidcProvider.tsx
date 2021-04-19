@@ -117,7 +117,7 @@ const useAutomaticLogout = ({
             clearInterval(autoLogoutInterval);
 
             // Navigate to the logged out page via the router.
-            window.location.href = getOidcConfig().post_logout_redirect_uri;
+            window.location.href = OidcConfigService.config.post_logout_redirect_uri;
           });
         }
       }, autoLogout);
@@ -128,5 +128,5 @@ const useAutomaticLogout = ({
         }
       };
     }
-  }, [autoLogout, isAuthenticated, getOidcConfig().post_logout_redirect_uri]);
+  }, [autoLogout, isAuthenticated, OidcConfigService.config.post_logout_redirect_uri]);
 };
