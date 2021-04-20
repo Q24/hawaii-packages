@@ -211,10 +211,10 @@
 				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">configService</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@hawaii-framework/oidc-implicit-core/dist&quot;</span><span style="color: #000000">;</span>
 
 <span style="color: #008000">// The LOGOUT_ENDPOINT can be requested from</span>
-<span style="color: #795E26">getOidcConfig</span><span style="color: #000000">().</span><span style="color: #001080">logout_endpoint</span><span style="color: #000000">;</span>
+<span style="color: #001080">OidcConfigService</span><span style="color: #000000">.</span><span style="color: #001080">config</span><span style="color: #000000">.</span><span style="color: #001080">logout_endpoint</span><span style="color: #000000">;</span>
 
 <span style="color: #008000">// The POST_LOGOUT_REDIRECT_URI can be requested from</span>
-<span style="color: #795E26">getOidcConfig</span><span style="color: #000000">().</span><span style="color: #001080">post_logout_redirect_uri</span><span style="color: #000000">;</span>
+<span style="color: #001080">OidcConfigService</span><span style="color: #000000">.</span><span style="color: #001080">config</span><span style="color: #000000">.</span><span style="color: #001080">post_logout_redirect_uri</span><span style="color: #000000">;</span>
 
 <span style="color: #008000">// The CSRF_TOKEN can be requested from</span>
 <span style="color: #008000">//  Synchronously (try this first)</span>

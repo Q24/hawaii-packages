@@ -2,7 +2,8 @@ import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
 import { CsrfToken, Token } from "../models/token.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
-import { OidcConfigService } from './config.service';
+import { OidcConfigService } from "./config.service";
+import { parseJwt } from "src/utils/jwtUtil";
 
 /**
  * Delete all tokens in sessionStorage for this session.
@@ -13,11 +14,6 @@ export function deleteStoredTokens(): void {
 }
 
 function createTokenKey() {
-  if (OidcConfigService.config.ccamEnabled) {
-    return `${OidcConfigService.config.client_id}-${OidcConfigService.config.scope}-${
-      OidcConfigService.config.context
-    }-token`;
-  }
   return `${OidcConfigService.config.client_id}-token`;
 }
 
@@ -41,29 +37,62 @@ function storeTokens(tokens: Token[]): void {
  * Compare the expiry time of a stored token with the current time.
  * If the token has expired, remove it from the array.
  * If something was removed from the Array, cleanup the session storage by re-saving the cleaned token array.
- * Return the cleaned Array.
+ *
+ * @returns the cleaned array.
  */
 function cleanExpiredTokens(storedTokens: Token[]): Token[] {
-  let cleanTokens: Token[];
   const time = GeneratorUtil.epoch();
+  const cleanTokens = storedTokens.filter((element: Token) => {
+    return element.expires && element.expires > time + 5;
+  });
 
-  if (storedTokens.length > 0) {
-    cleanTokens = storedTokens.filter((element: Token) => {
-      return element.expires && element.expires > time + 5;
-    });
-
-    if (storedTokens.length > cleanTokens.length) {
-      LogUtil.debug("Updated token storage after clean.");
-      storeTokens(cleanTokens);
-    }
+  if (storedTokens.length > cleanTokens.length) {
+    LogUtil.debug("Updated token storage after clean.");
+    storeTokens(cleanTokens);
   }
 
-  return cleanTokens || [];
+  return cleanTokens;
+}
+
+/**
+ * @param requiredScopes the scopes which must be present in the token.
+ * @returns A function to check if a token has the specified scopes.
+ */
+export function tokenHasRequiredScopes(
+  requiredScopes: string[]
+): (token: Token) => boolean {
+  return function checkScopes(token: Token): boolean {
+    if (!token.access_token) {
+      return false;
+    }
+    const accessToken = parseJwt(token.access_token);
+    // All scopes must specified in the scopes and context must be represented in the token
+    if (
+      !requiredScopes.every((requiredScope) =>
+        accessToken.scope.some(
+          (accessTokenScope) => accessTokenScope === requiredScope
+        )
+      )
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+}
+
+/**
+ * check if all separate scopes exist in a token
+ */
+function filterTokens(tokens: Token[], requiredScopes: string[]) {
+  const checkScopes = tokenHasRequiredScopes(requiredScopes);
+  const relevantTokens = tokens.filter(checkScopes);
+  return relevantTokens;
 }
 
 /**
  * Get a validated, not expired token from sessionStorage
- * @returns {Token}
+ * @returns A valid token
  */
 export function getStoredToken(): Token | null {
   // Get the tokens from storage, and make sure they're still valid
@@ -77,6 +106,27 @@ export function getStoredToken(): Token | null {
   }
   // Return the first valid token
   return tokensCleaned[0];
+}
+
+/**
+ * Gets a valid, non-expired token from session storage for a specific set of scopes.
+ *
+ * @param scopes the required scopes
+ * @returns A valid Token or `null` if no token has been found.
+ */
+export function getStoredTokenWithScopes(scopes: string[]): Token | null {
+  // Get the tokens from storage, and make sure they're still valid
+  const tokens = getStoredTokens();
+  const tokensCleaned = cleanExpiredTokens(tokens);
+  const tokensCheckedForContextAndScope = filterTokens(tokensCleaned, scopes);
+
+  // If there's no valid token return null
+  if (tokensCheckedForContextAndScope.length < 1) {
+    LogUtil.debug("No valid token found in storage");
+    return null;
+  }
+  // Return the first valid token
+  return tokensCheckedForContextAndScope[0];
 }
 
 /**
@@ -104,11 +154,6 @@ export function storeToken(token: Token): void {
 }
 
 function createIdTokenHintKey(): string {
-  if (OidcConfigService.config.ccamEnabled) {
-    return `${OidcConfigService.config.client_id}-${OidcConfigService.config.scope}-${
-      OidcConfigService.config.context
-    }-id-token-hint`;
-  }
   return `${OidcConfigService.config.client_id}-id-token-hint`;
 }
 

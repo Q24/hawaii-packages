@@ -51,3 +51,8 @@ export interface Token {
    */
   session_upgrade_token?: string;
 }
+
+export interface JWT {
+  scope: string[];
+  exp: number;
+}
