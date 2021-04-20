@@ -1,6 +1,7 @@
 export { OidcConfigService } from "./services/config.service";
 export {
   checkSession,
+  checkSessionWithScopes,
   cleanSessionStorage,
   isSessionAlive,
   silentLogoutByUrl,
