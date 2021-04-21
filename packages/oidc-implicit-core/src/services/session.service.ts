@@ -210,7 +210,8 @@ const silentRefreshStore: {
  * Silently refresh an access token via iFrame
  */
 export function silentRefreshAccessTokenForScopes(
-  scopes: string[]
+  scopes: string[],
+  extraTokenValidator?: (token: Token) => boolean
 ): Promise<Token> {
   LogUtil.debug("Silent refresh started");
 
@@ -270,7 +271,9 @@ export function silentRefreshAccessTokenForScopes(
         );
 
         parseToken(hashToken).then((token) => {
-          if (tokenHasRequiredScopes(scopes)(token)) {
+          const hasRequiredScopes = tokenHasRequiredScopes(scopes)(token);
+          const isValidByExtraMeans = extraTokenValidator?.(token) ?? true;
+          if (hasRequiredScopes && isValidByExtraMeans) {
             resolve(hashToken);
           } else {
             reject("invalid_token");
@@ -692,7 +695,7 @@ export function checkSession(): Promise<boolean> {
  * @returns The promise resolves if the check was successful.
  * It will reject (as well as redirect) in case the check did not pass.
  */
-export async function checkSessionWithScopes(scopes: string[]): Promise<void> {
+export async function checkSessionWithScopes(scopes: string[], extraTokenValidator?: (token: Token) => boolean): Promise<void> {
   const urlParams = getURLParameters(window.location.href);
 
   // With Clean Hash fragment implemented in Head
@@ -725,7 +728,7 @@ export async function checkSessionWithScopes(scopes: string[]): Promise<void> {
   }
 
   // 1 --- Let's first check if we still have a valid token stored local, if so use that token
-  const storedToken = getStoredTokenWithScopes(scopes);
+  const storedToken = getStoredTokenWithScopes(scopes, extraTokenValidator);
   if (storedToken) {
     LogUtil.debug("Local token found, you may proceed");
     return;

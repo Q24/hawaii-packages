@@ -84,9 +84,16 @@ export function tokenHasRequiredScopes(
 /**
  * check if all separate scopes exist in a token
  */
-function filterTokens(tokens: Token[], requiredScopes: string[]) {
+function filterTokens(
+  tokens: Token[],
+  requiredScopes: string[],
+  extraTokenValidator?: (token: Token) => boolean
+) {
   const checkScopes = tokenHasRequiredScopes(requiredScopes);
   const relevantTokens = tokens.filter(checkScopes);
+  if(extraTokenValidator) {
+    return relevantTokens.filter(extraTokenValidator);
+  }
   return relevantTokens;
 }
 
@@ -114,11 +121,18 @@ export function getStoredToken(): Token | null {
  * @param scopes the required scopes
  * @returns A valid Token or `null` if no token has been found.
  */
-export function getStoredTokenWithScopes(scopes: string[]): Token | null {
+export function getStoredTokenWithScopes(
+  scopes: string[],
+  extraTokenValidator?: (token: Token) => boolean
+): Token | null {
   // Get the tokens from storage, and make sure they're still valid
   const tokens = getStoredTokens();
   const tokensCleaned = cleanExpiredTokens(tokens);
-  const tokensCheckedForContextAndScope = filterTokens(tokensCleaned, scopes);
+  const tokensCheckedForContextAndScope = filterTokens(
+    tokensCleaned,
+    scopes,
+    extraTokenValidator
+  );
 
   // If there's no valid token return null
   if (tokensCheckedForContextAndScope.length < 1) {

@@ -89,6 +89,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#getidtokenhint" class="tsd-kind-icon">get<wbr>IdToken<wbr>Hint</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#getstoredcsrftoken" class="tsd-kind-icon">get<wbr>Stored<wbr>Csrf<wbr>Token</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#getstoredtoken" class="tsd-kind-icon">get<wbr>Stored<wbr>Token</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#getstoredtokenwithscopes" class="tsd-kind-icon">get<wbr>Stored<wbr>Token<wbr>With<wbr>Scopes</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#issessionalive" class="tsd-kind-icon">is<wbr>Session<wbr>Alive</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#silentlogoutbyurl" class="tsd-kind-icon">silent<wbr>Logout<wbr>ByUrl</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#silentrefreshaccesstoken" class="tsd-kind-icon">silent<wbr>Refresh<wbr>Access<wbr>Token</a></li>
@@ -105,7 +106,7 @@
 					<div class="tsd-signature tsd-kind-icon">Oidc<wbr>Config<wbr>Service<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/oidcconfig.html" class="tsd-signature-type" data-tsd-kind="Interface">OidcConfig</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/config.service.ts#L5">services/config.service.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/config.service.ts#L5">services/config.service.ts:5</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -133,7 +134,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/session.service.ts#L522">services/session.service.ts:522</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/session.service.ts#L525">services/session.service.ts:525</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -168,7 +169,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/session.service.ts#L620">services/session.service.ts:620</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/session.service.ts#L623">services/session.service.ts:623</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -206,13 +207,13 @@
 					<a name="checksessionwithscopes" class="tsd-anchor"></a>
 					<h3>check<wbr>Session<wbr>With<wbr>Scopes</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>Session<wbr>With<wbr>Scopes<span class="tsd-signature-symbol">(</span>scopes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Session<wbr>With<wbr>Scopes<span class="tsd-signature-symbol">(</span>scopes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, extraTokenValidator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/session.service.ts#L695">services/session.service.ts:695</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/session.service.ts#L698">services/session.service.ts:698</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -225,6 +226,27 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>scopes: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> extraTokenValidator: <span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>token: <a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -243,7 +265,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/utils/urlUtil.ts#L85">utils/urlUtil.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/utils/urlUtil.ts#L85">utils/urlUtil.ts:85</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -273,7 +295,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/session.service.ts#L35">services/session.service.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/session.service.ts#L35">services/session.service.ts:35</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -295,7 +317,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/token.service.ts#L11">services/token.service.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/token.service.ts#L11">services/token.service.ts:11</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -317,7 +339,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/session.service.ts#L509">services/session.service.ts:509</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/session.service.ts#L512">services/session.service.ts:512</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -345,7 +367,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/token.service.ts#L211">services/token.service.ts:211</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/token.service.ts#L225">services/token.service.ts:225</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -367,7 +389,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/token.service.ts#L167">services/token.service.ts:167</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/token.service.ts#L181">services/token.service.ts:181</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -403,7 +425,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/token.service.ts#L203">services/token.service.ts:203</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/token.service.ts#L217">services/token.service.ts:217</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -425,7 +447,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/token.service.ts#L97">services/token.service.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/token.service.ts#L104">services/token.service.ts:104</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -439,6 +461,59 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="getstoredtokenwithscopes" class="tsd-anchor"></a>
+					<h3>get<wbr>Stored<wbr>Token<wbr>With<wbr>Scopes</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Stored<wbr>Token<wbr>With<wbr>Scopes<span class="tsd-signature-symbol">(</span>scopes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, extraTokenValidator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/token.service.ts#L124">services/token.service.ts:124</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets a valid, non-expired token from session storage for a specific set of scopes.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>scopes: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the required scopes</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> extraTokenValidator: <span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>token: <a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>A valid Token or <code>null</code> if no token has been found.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="issessionalive" class="tsd-anchor"></a>
 					<h3>is<wbr>Session<wbr>Alive</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
@@ -448,7 +523,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/session.service.ts#L51">services/session.service.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/session.service.ts#L51">services/session.service.ts:51</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -474,7 +549,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/session.service.ts#L314">services/session.service.ts:314</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/session.service.ts#L317">services/session.service.ts:317</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -516,7 +591,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/9b5ccd9/packages/oidc-implicit-core/src/services/session.service.ts#L123">services/session.service.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/aa5f386/packages/oidc-implicit-core/src/services/session.service.ts#L123">services/session.service.ts:123</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -578,6 +653,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="oidcservice.html#getstoredtoken" class="tsd-kind-icon">get<wbr>Stored<wbr>Token</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="oidcservice.html#getstoredtokenwithscopes" class="tsd-kind-icon">get<wbr>Stored<wbr>Token<wbr>With<wbr>Scopes</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="oidcservice.html#issessionalive" class="tsd-kind-icon">is<wbr>Session<wbr>Alive</a>

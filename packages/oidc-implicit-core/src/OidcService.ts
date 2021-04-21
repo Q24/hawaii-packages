@@ -14,6 +14,7 @@ export {
   getCsrfToken,
   getIdTokenHint,
   getStoredToken,
+  getStoredTokenWithScopes,
   getStoredCsrfToken
 } from "./services/token.service";
 export { cleanHashFragment } from "./utils/urlUtil";
