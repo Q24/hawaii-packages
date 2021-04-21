@@ -59,7 +59,7 @@ function cleanExpiredTokens(storedTokens: Token[]): Token[] {
  * @returns A function to check if a token has the specified scopes.
  */
 export function tokenHasRequiredScopes(
-  requiredScopes: string[]
+  requiredScopes: string[],
 ): (token: Token) => boolean {
   return function checkScopes(token: Token): boolean {
     if (!token.access_token) {
@@ -70,8 +70,8 @@ export function tokenHasRequiredScopes(
     if (
       !requiredScopes.every((requiredScope) =>
         accessToken.scope.some(
-          (accessTokenScope) => accessTokenScope === requiredScope
-        )
+          (accessTokenScope) => accessTokenScope === requiredScope,
+        ),
       )
     ) {
       return false;
@@ -87,11 +87,11 @@ export function tokenHasRequiredScopes(
 function filterTokens(
   tokens: Token[],
   requiredScopes: string[],
-  extraTokenValidator?: (token: Token) => boolean
+  extraTokenValidator?: (token: Token) => boolean,
 ) {
   const checkScopes = tokenHasRequiredScopes(requiredScopes);
   const relevantTokens = tokens.filter(checkScopes);
-  if(extraTokenValidator) {
+  if (extraTokenValidator) {
     return relevantTokens.filter(extraTokenValidator);
   }
   return relevantTokens;
@@ -123,7 +123,7 @@ export function getStoredToken(): Token | null {
  */
 export function getStoredTokenWithScopes(
   scopes: string[],
-  extraTokenValidator?: (token: Token) => boolean
+  extraTokenValidator?: (token: Token) => boolean,
 ): Token | null {
   // Get the tokens from storage, and make sure they're still valid
   const tokens = getStoredTokens();
@@ -131,7 +131,7 @@ export function getStoredTokenWithScopes(
   const tokensCheckedForContextAndScope = filterTokens(
     tokensCleaned,
     scopes,
-    extraTokenValidator
+    extraTokenValidator,
   );
 
   // If there's no valid token return null
@@ -182,7 +182,7 @@ export function getIdTokenHint(options = { regex: false }): string | null {
   if (options.regex) {
     const regex = new RegExp(/-id-token-hint/);
     const storageArray = Object.keys(StorageUtil.storage).filter((key) =>
-      regex.test(key)
+      regex.test(key),
     );
     return storageArray.length > 0 ? StorageUtil.read(storageArray[0]) : null;
   }

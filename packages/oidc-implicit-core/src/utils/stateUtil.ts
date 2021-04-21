@@ -1,7 +1,7 @@
 import { StorageUtil } from "./storageUtil";
 import { LogUtil } from "./logUtil";
 import { State } from "../models/session.models";
-import { OidcConfigService } from 'src/services/config.service';
+import { OidcConfigService } from "src/services/config.service";
 
 /**
  * Get the saved state string from sessionStorage
@@ -9,7 +9,7 @@ import { OidcConfigService } from 'src/services/config.service';
  */
 export function getState(): State | null {
   const storedState = JSON.parse(
-    StorageUtil.read(`${OidcConfigService.config.client_id}-state`)
+    StorageUtil.read(`${OidcConfigService.config.client_id}-state`),
   );
   LogUtil.debug("Got state from storage", storedState);
   return storedState;
@@ -23,7 +23,7 @@ export function saveState(state: State): void {
   LogUtil.debug("State saved");
   StorageUtil.store(
     `${OidcConfigService.config.client_id}-state`,
-    JSON.stringify(state)
+    JSON.stringify(state),
   );
 }
 

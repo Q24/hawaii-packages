@@ -30,6 +30,7 @@
     "@typescript-eslint/parser": "^4.17.0",
     "eslint": "^7.21.0",
     "microbundle": "^0.12.0",
+    "prettier": "^2.2.1",
     "typedoc": "^0.20.30",
     "typescript": "^4.2.3"
   },
@@ -39,7 +40,8 @@
     "build": "npm run bundle && npm run copyCleanHashFragment && npm run typedoc",
     "bundle": "rm -rf dist && microbundle --name OidcImplicitCore",
     "dev": "microbundle watch",
-    "typedoc": "rm -rf docs && typedoc ./src/index.ts"
+    "typedoc": "rm -rf docs && typedoc ./src/index.ts",
+    "lint": "prettier ./src/**/*.ts --write"
   },
   "source": "./src/index.ts",
   "main": "dist/index.js",

@@ -1,5 +1,4 @@
 export class StorageUtil {
-
   static storage = sessionStorage;
 
   /**
@@ -32,11 +31,10 @@ export class StorageUtil {
    * @param regexString
    */
   static remove(regexString: string): void {
-
     const regex = new RegExp(regexString);
 
     Object.keys(StorageUtil.storage)
-      .filter(key => regex.test(key))
-      .forEach(key => StorageUtil.storage.removeItem(key));
+      .filter((key) => regex.test(key))
+      .forEach((key) => StorageUtil.storage.removeItem(key));
   }
 }

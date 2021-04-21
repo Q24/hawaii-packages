@@ -7,7 +7,7 @@ import { URLParams } from "../models/url-param.models";
  * @returns {URLParams}
  */
 export function getURLParameters(
-  url: string = window.location.href
+  url: string = window.location.href,
 ): URLParams {
   const result: URLParams = {};
   const searchIndex = url.indexOf("?");

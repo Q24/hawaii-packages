@@ -12,17 +12,16 @@ export class GeneratorUtil {
    * @returns {string}
    */
   static generateState(): string {
+    let text = "";
+    const possible = "0123456789";
 
-    let text = '';
-    const possible = '0123456789';
-
-    for (let i = 0; i < 5;) {
-      for (let j = 0; j < 3;) {
+    for (let i = 0; i < 5; ) {
+      for (let j = 0; j < 3; ) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
         j += 1;
       }
-      text += '-';
-      for (let k = 0; k < 3;) {
+      text += "-";
+      for (let k = 0; k < 3; ) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
         k += 1;
       }
@@ -36,14 +35,14 @@ export class GeneratorUtil {
    * @returns {string}
    */
   static generateNonce(): string {
-    let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let text = "";
+    const possible =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    for (let i = 0; i < 25;) {
+    for (let i = 0; i < 25; ) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
       i += 1;
     }
     return text;
   }
-
 }

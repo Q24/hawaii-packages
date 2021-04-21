@@ -8,6 +8,7 @@ export {
   silentRefreshAccessToken,
   getAuthHeader,
   checkIfTokenExpiresAndRefreshWhenNeeded,
+  checkIfTokenExpiresAndRefreshWhenNeededWithScopes,
 } from "./services/session.service";
 export {
   deleteStoredTokens,
@@ -15,6 +16,6 @@ export {
   getIdTokenHint,
   getStoredToken,
   getStoredTokenWithScopes,
-  getStoredCsrfToken
+  getStoredCsrfToken,
 } from "./services/token.service";
 export { cleanHashFragment } from "./utils/urlUtil";

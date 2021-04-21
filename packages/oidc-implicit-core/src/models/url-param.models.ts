@@ -33,7 +33,7 @@ export interface AuthorizeParams {
   redirect_uri: string;
   /**
    * Define the scopes you want to add to your session.
-   * Multiple scopes will be added in a single strings, seperated by spaces.
+   * Multiple scopes will be added in a single strings, separated by spaces.
    */
   scope: string;
 
@@ -57,16 +57,17 @@ export interface URLParams {
 /**
  * A set of strings to match when the Authorize redirect is erroring. This is the complete list of possible error to handle.
  */
-export type AuthorizeErrors = 'invalid_client' |
-  'unauthorized_client' |
-  'invalid_grant' |
-  'unsupported_grant_type' |
-  'invalid_scope' |
-  'invalid_request_response_type' |
-  'invalid_request_type' |
-  'invalid_request_openid_type' |
-  'invalid_request_redirect_uri' |
-  'invalid_request_signature' |
-  'invalid_request_realm' |
-  'invalid_request_atype' |
-  'invalid_request_recipient';
+export type AuthorizeErrors =
+  | "invalid_client"
+  | "unauthorized_client"
+  | "invalid_grant"
+  | "unsupported_grant_type"
+  | "invalid_scope"
+  | "invalid_request_response_type"
+  | "invalid_request_type"
+  | "invalid_request_openid_type"
+  | "invalid_request_redirect_uri"
+  | "invalid_request_signature"
+  | "invalid_request_realm"
+  | "invalid_request_atype"
+  | "invalid_request_recipient";
