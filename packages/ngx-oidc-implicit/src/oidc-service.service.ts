@@ -14,11 +14,11 @@ import {
 @Injectable({ providedIn: 'root' })
 export class OidcService {
   get config(): OidcConfig {
-    return _OidcService.getOidcConfig();
+    return _OidcService.OidcConfigService.config;
   }
 
   set config(value: OidcConfig) {
-    _OidcService.setOidcConfig(value)
+    _OidcService.OidcConfigService.config = value;
   }
 
   getCsrfToken(): Observable<CsrfToken> {
