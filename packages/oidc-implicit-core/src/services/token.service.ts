@@ -1,6 +1,10 @@
 import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
-import { CsrfToken, Token } from "../models/token.models";
+import {
+  CsrfToken,
+  Token,
+  TokenValidationOptions,
+} from "../models/token.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
 import { OidcConfigService } from "./config.service";
 import { parseJwt } from "src/utils/jwtUtil";
@@ -86,13 +90,12 @@ export function tokenHasRequiredScopes(
  */
 function filterTokens(
   tokens: Token[],
-  requiredScopes: string[],
-  extraTokenValidator?: (token: Token) => boolean,
+  { customTokenValidator, scopes }: TokenValidationOptions,
 ) {
-  const checkScopes = tokenHasRequiredScopes(requiredScopes);
+  const checkScopes = tokenHasRequiredScopes(scopes);
   const relevantTokens = tokens.filter(checkScopes);
-  if (extraTokenValidator) {
-    return relevantTokens.filter(extraTokenValidator);
+  if (customTokenValidator) {
+    return relevantTokens.filter(customTokenValidator);
   }
   return relevantTokens;
 }
@@ -122,16 +125,14 @@ export function getStoredToken(): Token | null {
  * @returns A valid Token or `null` if no token has been found.
  */
 export function getStoredTokenWithScopes(
-  scopes: string[],
-  extraTokenValidator?: (token: Token) => boolean,
+  tokenValidationOptions: TokenValidationOptions,
 ): Token | null {
   // Get the tokens from storage, and make sure they're still valid
   const tokens = getStoredTokens();
   const tokensCleaned = cleanExpiredTokens(tokens);
   const tokensCheckedForContextAndScope = filterTokens(
     tokensCleaned,
-    scopes,
-    extraTokenValidator,
+    tokenValidationOptions,
   );
 
   // If there's no valid token return null

@@ -56,3 +56,8 @@ export interface JWT {
   scope: string[];
   exp: number;
 }
+
+export interface TokenValidationOptions {
+  scopes?: string[];
+  customTokenValidator?: (token: Token) => boolean;
+}

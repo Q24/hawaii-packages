@@ -1,6 +1,10 @@
 import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
-import { CsrfToken, Token } from "../models/token.models";
+import {
+  CsrfToken,
+  Token,
+  TokenValidationOptions,
+} from "../models/token.models";
 import { ValidSession } from "src/models/session.models";
 import { AuthorizeParams, URLParams } from "src/models/url-param.models";
 import { GeneratorUtil } from "src/utils/generatorUtil";
@@ -209,10 +213,10 @@ const silentRefreshStore: {
 /**
  * Silently refresh an access token via iFrame
  */
-export function silentRefreshAccessTokenForScopes(
-  scopes: string[],
-  extraTokenValidator?: (token: Token) => boolean,
-): Promise<Token> {
+export function silentRefreshAccessTokenForScopes({
+  scopes,
+  customTokenValidator,
+}: TokenValidationOptions): Promise<Token> {
   LogUtil.debug("Silent refresh started");
 
   const iframeId = `silentRefreshAccessTokenIframe-${scopes
@@ -272,7 +276,7 @@ export function silentRefreshAccessTokenForScopes(
 
         parseToken(hashToken).then((token) => {
           const hasRequiredScopes = tokenHasRequiredScopes(scopes)(token);
-          const isValidByExtraMeans = extraTokenValidator?.(token) ?? true;
+          const isValidByExtraMeans = customTokenValidator?.(token) ?? true;
           if (hasRequiredScopes && isValidByExtraMeans) {
             resolve(hashToken);
           } else {
@@ -550,23 +554,29 @@ export function checkIfTokenExpiresAndRefreshWhenNeeded(
  * If the token does not expire within *x* seconds, the Promise will resolve
  * to `false` instead.
  *
+ * @param token the token to check
+ * @param tokenValidationOptions extra validations for the token
  * @returns
  */
 export async function checkIfTokenExpiresAndRefreshWhenNeededWithScopes(
   token: Token,
-  scopes: string[],
-  extraTokenValidator?: (token: Token) => boolean,
-  almostExpiredThreshold = 300,
+  {
+    almostExpiredThreshold = 300,
+    scopes,
+    customTokenValidator,
+  }: TokenValidationOptions & {
+    almostExpiredThreshold?: number;
+  },
 ): Promise<boolean> {
   if (
     token.expires &&
     token.expires - Math.round(new Date().getTime() / 1000.0) <
       almostExpiredThreshold
   ) {
-    const silentRefreshToken = await silentRefreshAccessTokenForScopes(
+    const silentRefreshToken = await silentRefreshAccessTokenForScopes({
       scopes,
-      extraTokenValidator,
-    );
+      customTokenValidator,
+    });
     if (silentRefreshToken) {
       return true;
     }
@@ -730,8 +740,7 @@ export function checkSession(): Promise<boolean> {
  * It will reject (as well as redirect) in case the check did not pass.
  */
 export async function checkSessionWithScopes(
-  scopes: string[],
-  extraTokenValidator?: (token: Token) => boolean,
+  tokenValidationOptions: TokenValidationOptions,
 ): Promise<void> {
   const urlParams = getURLParameters(window.location.href);
 
@@ -765,7 +774,7 @@ export async function checkSessionWithScopes(
   }
 
   // 1 --- Let's first check if we still have a valid token stored local, if so use that token
-  const storedToken = getStoredTokenWithScopes(scopes, extraTokenValidator);
+  const storedToken = getStoredTokenWithScopes(tokenValidationOptions);
   if (storedToken) {
     LogUtil.debug("Local token found, you may proceed");
     return;
@@ -773,7 +782,7 @@ export async function checkSessionWithScopes(
 
   // 2 --- If these is no token, check if we can get a token from silent refresh.
   const tokenFromSilentRefresh = await silentRefreshAccessTokenForScopes(
-    scopes,
+    tokenValidationOptions,
   );
   if (tokenFromSilentRefresh) {
     LogUtil.debug("Token from silent refresh is valid.");
