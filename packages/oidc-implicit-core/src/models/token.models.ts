@@ -59,5 +59,5 @@ export interface JWT {
 
 export interface TokenValidationOptions {
   scopes?: string[];
-  customTokenValidator?: (token: Token) => boolean;
+  customTokenValidator?: (token: Readonly<Token>) => boolean;
 }
