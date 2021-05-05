@@ -8,9 +8,14 @@ import { OidcConfigService } from "src/services/config.service";
  * @returns {State}
  */
 export function getState(): State | null {
-  const storedState = JSON.parse(
-    StorageUtil.read(`${OidcConfigService.config.client_id}-state`),
+  const stateString = StorageUtil.read(
+    `${OidcConfigService.config.client_id}-state`,
   );
+  if (!stateString) {
+    LogUtil.debug("state was not found in storage", stateString);
+    return null;
+  }
+  const storedState = JSON.parse(stateString);
   LogUtil.debug("Got state from storage", storedState);
   return storedState;
 }

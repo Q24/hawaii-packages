@@ -9,6 +9,7 @@
     "module": "ESNext",
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "strict": false
   },
 }

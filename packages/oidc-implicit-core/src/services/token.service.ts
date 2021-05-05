@@ -8,6 +8,7 @@ import {
 import { GeneratorUtil } from "../utils/generatorUtil";
 import { OidcConfigService } from "./config.service";
 import { parseJwt } from "src/utils/jwtUtil";
+import { transformScopesStringToArray } from 'src/utils/scopeUtil';
 
 /**
  * Delete all tokens in sessionStorage for this session.
@@ -26,7 +27,10 @@ function createTokenKey() {
  */
 function getStoredTokens(): Token[] {
   const storedTokens = StorageUtil.read(createTokenKey());
-  return JSON.parse(storedTokens) || [];
+  if(!storedTokens) {
+    return []
+  }
+  return JSON.parse(storedTokens);
 }
 
 /**
@@ -90,32 +94,15 @@ export function tokenHasRequiredScopes(
  */
 function filterTokens(
   tokens: Token[],
-  { customTokenValidator, scopes }: TokenValidationOptions,
-) {
+  tokenValidationOptions?: TokenValidationOptions,
+): Token[] {
+  const scopes = tokenValidationOptions?.scopes ?? transformScopesStringToArray(OidcConfigService.config.scope);
   const checkScopes = tokenHasRequiredScopes(scopes);
   const relevantTokens = tokens.filter(checkScopes);
-  if (customTokenValidator) {
-    return relevantTokens.filter(customTokenValidator);
+  if (tokenValidationOptions?.customTokenValidator) {
+    return relevantTokens.filter(tokenValidationOptions.customTokenValidator);
   }
   return relevantTokens;
-}
-
-/**
- * Get a validated, not expired token from sessionStorage
- * @returns A valid token
- */
-export function getStoredToken(): Token | null {
-  // Get the tokens from storage, and make sure they're still valid
-  const tokens = getStoredTokens();
-  const tokensCleaned = cleanExpiredTokens(tokens);
-
-  // If there's no valid token return null
-  if (tokensCleaned.length < 1) {
-    LogUtil.debug("No valid token found in storage");
-    return null;
-  }
-  // Return the first valid token
-  return tokensCleaned[0];
 }
 
 /**
@@ -124,24 +111,24 @@ export function getStoredToken(): Token | null {
  * @param scopes the required scopes
  * @returns A valid Token or `null` if no token has been found.
  */
-export function getStoredTokenWithScopes(
-  tokenValidationOptions: TokenValidationOptions,
+export function getStoredToken(
+  tokenValidationOptions?: TokenValidationOptions,
 ): Token | null {
   // Get the tokens from storage, and make sure they're still valid
   const tokens = getStoredTokens();
-  const tokensCleaned = cleanExpiredTokens(tokens);
-  const tokensCheckedForContextAndScope = filterTokens(
-    tokensCleaned,
+  const tokensUnexpired = cleanExpiredTokens(tokens);
+  const tokensFiltered = filterTokens(
+    tokensUnexpired,
     tokenValidationOptions,
   );
 
   // If there's no valid token return null
-  if (tokensCheckedForContextAndScope.length < 1) {
+  if (tokensFiltered.length < 1) {
     LogUtil.debug("No valid token found in storage");
     return null;
   }
   // Return the first valid token
-  return tokensCheckedForContextAndScope[0];
+  return tokensFiltered[0];
 }
 
 /**
@@ -215,7 +202,7 @@ export function deleteStoredCsrfToken(): void {
 /**
  * Gets the stored CSRF Token from storage
  */
-export function getStoredCsrfToken(): string {
+export function getStoredCsrfToken(): string | null {
   LogUtil.debug(`Get CSRF Token from session storage`);
   return StorageUtil.read("_csrf");
 }

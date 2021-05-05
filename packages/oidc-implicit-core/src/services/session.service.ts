@@ -6,7 +6,7 @@ import {
   TokenValidationOptions,
 } from "../models/token.models";
 import { ValidSession } from "src/models/session.models";
-import { AuthorizeParams, URLParams } from "src/models/url-param.models";
+import { AuthorizeParams } from "src/models/url-param.models";
 import { GeneratorUtil } from "src/utils/generatorUtil";
 import {
   deleteIdTokenHint,
@@ -15,7 +15,6 @@ import {
   getCsrfToken,
   getIdTokenHint,
   getStoredToken,
-  getStoredTokenWithScopes,
   storeToken,
   tokenHasRequiredScopes,
 } from "./token.service";
@@ -32,6 +31,7 @@ import {
   getURLParameters,
 } from "src/utils/urlUtil";
 import { OidcConfigService } from "./config.service";
+import { transformScopesStringToArray } from "src/utils/scopeUtil";
 
 /**
  * Cleans up the current session: deletes the stored local tokens, state, nonce, id token hint and CSRF token.
@@ -90,7 +90,7 @@ export async function parseToken(hashToken: Token): Promise<Token> {
   if (!stateObj || hashToken.state !== stateObj.state) {
     LogUtil.error("Authorisation Token not valid");
     LogUtil.debug("State NOT valid");
-    throw Error("token_invalid");
+    throw Error("token_state_invalid");
   }
 
   LogUtil.debug(
@@ -120,120 +120,36 @@ export async function parseToken(hashToken: Token): Promise<Token> {
   }
 }
 
-/**
- * Silently refresh an access token via iFrame
- *
- */
-export function silentRefreshAccessToken(): Promise<boolean> {
-  return new Promise<boolean>((resolve) => {
-    LogUtil.debug("Silent refresh started");
-
-    if (document.getElementById("silentRefreshAccessTokenIframe") !== null) {
-      resolve(false);
-      return;
-    }
-
-    // IFrame element
-    const iFrame = document.createElement("iframe");
-
-    // Get the Params to construct the URL, set promptNone = true, to add the prompt=none query parameter
-    const authorizeParams = getAuthorizeParams(true);
-
-    // Get the URL params to check for errors
-    const urlParams: URLParams = getURLParameters();
-
-    // Set the iFrame Id
-    iFrame.id = "silentRefreshAccessTokenIframe";
-
-    // Hide the iFrame
-    iFrame.style.display = "none";
-
-    // Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
-    // For older FireFox and IE versions first append the iFrame and then set its source attribute.
-    if (!urlParams["error"]) {
-      window.document.body.appendChild(iFrame);
-      LogUtil.debug(
-        "Do silent refresh redirect to SSO with options:",
-        authorizeParams,
-      );
-      iFrame.src = `${
-        OidcConfigService.config.authorize_endpoint
-      }?${createURLParameters(authorizeParams)}`;
-    } else {
-      LogUtil.debug(
-        `Error in silent refresh authorize redirect: ${urlParams["error"]}`,
-      );
-      resolve(false);
-    }
-
-    // Handle the result of the Authorize Redirect in the iFrame
-    iFrame.onload = () => {
-      LogUtil.debug("silent refresh iFrame loaded", iFrame);
-
-      // Get the URL from the iFrame
-      const hashFragmentParams = getHashFragmentParameters(
-        iFrame.contentWindow.location.href.split("#")[1],
-      );
-
-      // Clean the hashfragment from storage
-      if (hashFragmentParams) {
-        LogUtil.debug(
-          "Hash Fragment params from sessionStorage",
-          hashFragmentParams,
-        );
-        StorageUtil.remove("hash_fragment");
-      }
-
-      // Check if we have a token
-      if (hashFragmentParams.access_token && hashFragmentParams.state) {
-        LogUtil.debug(
-          "Access Token found in silent refresh return URL, validating it",
-        );
-
-        // Parse and validate the token
-        parseToken(hashFragmentParams).then(() => {
-          resolve(true);
-        });
-      } else {
-        // Return False if there was no token in the URL
-        LogUtil.debug("No token found in silent refresh return URL");
-        resolve(false);
-      }
-
-      // Cleanup the iFrame
-      setTimeout(() => iFrame.parentElement.removeChild(iFrame), 0);
-    };
-  });
-}
-
 const silentRefreshStore: {
-  [iframeId: string]: Promise<Token>;
+  [iFrameId: string]: Promise<Token>;
 } = {};
 
 /**
  * Silently refresh an access token via iFrame
  */
-export function silentRefreshAccessTokenForScopes({
-  scopes,
-  customTokenValidator,
-}: TokenValidationOptions): Promise<Token> {
+export function silentRefreshAccessToken(
+  tokenValidationOptions?: TokenValidationOptions,
+): Promise<Token> {
+  const scopes: string[] =
+    tokenValidationOptions?.scopes ??
+    transformScopesStringToArray(OidcConfigService.config.scope);
   LogUtil.debug("Silent refresh started");
 
-  const iframeId = `silentRefreshAccessTokenIframe-${scopes
+  const iFrameId = `silentRefreshAccessTokenIframe-${scopes
     .slice()
     .sort()
     .join("-")}`;
 
-  if (silentRefreshStore[iframeId]) {
-    return silentRefreshStore[iframeId];
+  if (silentRefreshStore[iFrameId]) {
+    return silentRefreshStore[iFrameId];
   }
   const tokenPromise = new Promise<Token>((resolve, reject) => {
     const iFrame = document.createElement("iframe");
-    iFrame.id = iframeId;
+    iFrame.id = iFrameId;
     iFrame.style.display = "none";
 
     const promptNone = true;
-    const authorizeParams = getAuthorizeParams(promptNone, scopes);
+    const authorizeParams = getAuthorizeParams(scopes, promptNone);
 
     // Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
     // For older FireFox and IE versions first append the iFrame and then set its source attribute.
@@ -260,7 +176,7 @@ export function silentRefreshAccessTokenForScopes({
 
       // Get the URL from the iFrame
       const hashToken = getHashFragmentParameters(
-        iFrame.contentWindow.location.href.split("#")[1],
+        iFrame.contentWindow!.location.href.split("#")[1],
       );
 
       // Clean the hashfragment from storage
@@ -277,7 +193,8 @@ export function silentRefreshAccessTokenForScopes({
         parseToken(hashToken).then((token) => {
           const hasRequiredScopes = tokenHasRequiredScopes(scopes)(token);
           LogUtil.debug("has required scopes:", hasRequiredScopes);
-          const isValidByExtraMeans = customTokenValidator?.(token) ?? true;
+          const isValidByExtraMeans =
+            tokenValidationOptions?.customTokenValidator?.(token) ?? true;
           LogUtil.debug("Extra Validation means:", isValidByExtraMeans, token);
           if (hasRequiredScopes && isValidByExtraMeans) {
             resolve(hashToken);
@@ -291,16 +208,20 @@ export function silentRefreshAccessTokenForScopes({
       }
 
       // Cleanup the iFrame
-      setTimeout(() => iFrame.parentElement.removeChild(iFrame), 0);
+      setTimeout(() => iFrame.parentElement!.removeChild(iFrame), 0);
     };
   }).finally(() => {
-    if (silentRefreshStore[iframeId]) {
-      delete silentRefreshStore[iframeId];
+    if (silentRefreshStore[iFrameId]) {
+      delete silentRefreshStore[iFrameId];
     }
   });
-  silentRefreshStore[iframeId] = tokenPromise;
+  silentRefreshStore[iFrameId] = tokenPromise;
   return tokenPromise;
 }
+
+const silentLogoutStore: {
+  [iFrameId: string]: Promise<boolean>;
+} = {};
 
 /**
  * Allows you to initiate a logout of the session in the background via an
@@ -323,19 +244,14 @@ export function silentRefreshAccessTokenForScopes({
 export function silentLogoutByUrl(
   url = OidcConfigService.config.silent_logout_uri,
 ): Promise<boolean> {
+  LogUtil.debug("Silent logout by URL started");
+  const iframeId = `silentLogoutIframe`;
+
+  if (silentLogoutStore[iframeId]) {
+    return silentLogoutStore[iframeId];
+  }
+
   return new Promise<boolean>((resolve) => {
-    LogUtil.debug("Silent logout by URL started");
-
-    const silentLogoutIframe: HTMLElement | null = document.getElementById(
-      "silentLogoutIframe",
-    );
-
-    if (silentLogoutIframe) {
-      LogUtil.debug("Already a silent logout in progress. Try again later.");
-      resolve(false);
-      return;
-    }
-
     // Create an iFrame
     const iFrame = getLogoutIFrame();
 
@@ -374,7 +290,7 @@ export function silentLogoutByUrl(
         if (timeout <= 0) {
           LogUtil.debug(
             "Silent logout failed after 5000",
-            iFrame.contentWindow.location.href,
+            iFrame.contentWindow!.location.href,
             OidcConfigService.config.post_logout_redirect_uri,
           );
 
@@ -383,7 +299,7 @@ export function silentLogoutByUrl(
           resolve(false);
         }
 
-        const currentIframeURL = iFrame.contentWindow.location.href;
+        const currentIframeURL = iFrame.contentWindow!.location.href;
         if (
           currentIframeURL.indexOf(
             OidcConfigService.config.post_logout_redirect_uri,
@@ -391,7 +307,7 @@ export function silentLogoutByUrl(
         ) {
           LogUtil.debug(
             "Silent logout successful",
-            iFrame.contentWindow.location.href,
+            iFrame.contentWindow!.location.href,
             OidcConfigService.config.post_logout_redirect_uri,
           );
 
@@ -401,6 +317,10 @@ export function silentLogoutByUrl(
         }
       }, interval);
     };
+  }).finally(() => {
+    if (silentLogoutStore[iframeId]) {
+      delete silentLogoutStore[iframeId];
+    }
   });
 }
 
@@ -441,15 +361,16 @@ function getLogoutIFrame(): HTMLIFrameElement {
  * @param iFrame
  */
 function destroyLogoutIFrame(iFrame: HTMLIFrameElement): void {
-  iFrame.parentElement.removeChild(iFrame);
+  // We remove the child from the parent element to support IE11.
+  iFrame.parentElement!.removeChild(iFrame);
 }
 
 /**
  * Gather the URL params for Authorize redirect method
  */
 function getAuthorizeParams(
+  scopes: string[],
   promptNone = false,
-  scopes?: string[],
 ): AuthorizeParams {
   const stateObj = getState() || {
     state: GeneratorUtil.generateState(),
@@ -467,7 +388,7 @@ function getAuthorizeParams(
       promptNone && OidcConfigService.config.silent_refresh_uri
         ? OidcConfigService.config.silent_refresh_uri
         : OidcConfigService.config.redirect_uri,
-    scope: scopes ? scopes.join(" ") : OidcConfigService.config.scope,
+    scope: scopes.join(" "),
     prompt: promptNone ? "none" : "",
   };
 
@@ -527,58 +448,25 @@ export function getAuthHeader(token: Token): string {
  *
  * If the token does not expire within *x* seconds, the Promise will resolve
  * to `false` instead.
- */
-export function checkIfTokenExpiresAndRefreshWhenNeeded(
-  almostExpiredThreshold = 300,
-  token: Token,
-): Promise<boolean> {
-  return new Promise((resolve) => {
-    if (
-      token.expires &&
-      token.expires - Math.round(new Date().getTime() / 1000.0) <
-        almostExpiredThreshold
-    ) {
-      silentRefreshAccessToken().then(() => {
-        resolve(true);
-      });
-    } else {
-      resolve(false);
-    }
-  });
-}
-
-/**
- * Check if the token expires in the next *x* seconds.
- *
- * If this is the case,
- * a silent refresh will be triggered and the Promise will resolve to `true`.
- *
- * If the token does not expire within *x* seconds, the Promise will resolve
- * to `false` instead.
  *
  * @param token the token to check
  * @param tokenValidationOptions extra validations for the token
  * @returns
  */
-export async function checkIfTokenExpiresAndRefreshWhenNeededWithScopes(
+export async function checkIfTokenExpiresAndRefreshWhenNeeded(
   token: Token,
-  {
-    almostExpiredThreshold = 300,
-    scopes,
-    customTokenValidator,
-  }: TokenValidationOptions & {
+  tokenValidationOptions?: TokenValidationOptions & {
     almostExpiredThreshold?: number;
   },
 ): Promise<boolean> {
   if (
     token.expires &&
     token.expires - Math.round(new Date().getTime() / 1000.0) <
-      almostExpiredThreshold
+      (tokenValidationOptions?.almostExpiredThreshold ?? 300)
   ) {
-    const silentRefreshToken = await silentRefreshAccessTokenForScopes({
-      scopes,
-      customTokenValidator,
-    });
+    const silentRefreshToken = await silentRefreshAccessToken(
+      tokenValidationOptions,
+    );
     if (silentRefreshToken) {
       return true;
     }
@@ -598,7 +486,8 @@ function authorizeRedirect(): void {
   // Clean up Storage before we begin
   cleanSessionStorage();
 
-  const authorizeParams = getAuthorizeParams();
+  const scopes = transformScopesStringToArray(OidcConfigService.config.scope);
+  const authorizeParams = getAuthorizeParams(scopes);
   const urlParams = getURLParameters();
 
   // All clear ->
@@ -642,129 +531,33 @@ function doSessionUpgradeRedirect(token: Token): void {
 }
 
 /**
- * Checks if the session is authenticated.
- * If this is the case, the Promise will resolve to `true`.
- * If the session is not authenticated, the browser will
- * be redirected to the login page.
- *
- * CORE METHOD:
+ * Checks if there is a session available.
+ * If this is not available, redirect to the authorisation page.
  *
  * Before starting with checks, we flush state if needed (in case of session upgrade i.e.)
- *
  * 1. If there is a valid session storage token, we are done.
- * 2. Otherwise, if there is an *access_token* in the URL
+ * 2. Else, if we may refresh in the background, try to do that.
+ * 3. Else, if there is an *access_token* in the URL;
  *   - a. Validate that the state from the response is equal to the state previously generated on the client.
  *   - b. Validate token from URL with Backend
  *   - c. Store the token
  *   - d. Get a new CSRF token from Authorisation with the newly created session, and save it for i.e. logout usage
- * 3. Check if there's a session_upgrade_token in the URL, if so, call the session upgrade function
- * 4. Nothing found anywhere, so redirect to authorisation
- *
- * 1,2:
- * @returns {Promise<boolean>}
- *
- * 4,5:
- * `HTTP GET` Redirects to Authorisation
- */
-export function checkSession(): Promise<boolean> {
-  const urlParams = getURLParameters(window.location.href);
-
-  // With Clean Hash fragment implemented in Head
-  let hashFragment = StorageUtil.read("hash_fragment");
-
-  // If we don't have an access token in the browser storage,
-  // but do have one in the url bar hash (https://example.com/#<fragment>)
-  if (!hashFragment && window.location.hash.indexOf("access_token") !== -1) {
-    hashFragment = window.location.hash.substring(1);
-    clearHashFragmentFromUrl();
-  }
-
-  const hashFragmentParams = getHashFragmentParameters(hashFragment);
-
-  // Clean the hash fragment from storage
-  if (hashFragmentParams) {
-    StorageUtil.remove("hash_fragment");
-  }
-
-  LogUtil.debug("Check session with params:", urlParams);
-  return new Promise<boolean>((resolve, reject) => {
-    // Make sure the state is 'clean' when doing a session upgrade
-    if (urlParams.flush_state) {
-      cleanSessionStorage();
-      LogUtil.debug("Flush state present, so cleaning the storage");
-
-      // Remove flush_state param from query params, so we only do it once
-      OidcConfigService.config.redirect_uri = OidcConfigService.config.redirect_uri.split(
-        "?",
-      )[0];
-    }
-
-    // 1 --- Let's first check if we still have a valid token stored local, if so use that token
-    if (getStoredToken()) {
-      LogUtil.debug("Local token found, you may proceed");
-      resolve(true);
-      return;
-    }
-
-    // No valid token found in storage, so we need to get a new one.
-    // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
-    getCsrfToken().then(
-      (csrfToken: CsrfToken) => {
-        // Store the CSRF Token for future calls that need it. I.e. Logout
-        StorageUtil.store("_csrf", csrfToken.csrf_token);
-
-        if (hashFragmentParams.access_token && hashFragmentParams.state) {
-          // 2 --- There's an access_token in the URL
-          parseToken(hashFragmentParams).then(() => resolve(true));
-        } else if (hashFragmentParams.session_upgrade_token) {
-          // 3 --- There's a session upgrade token in the URL
-          LogUtil.debug("Session Upgrade Token found in URL");
-          doSessionUpgradeRedirect(hashFragmentParams);
-        } else {
-          // 4 --- No token in URL or Storage, so we need to get one from SSO
-          LogUtil.debug(
-            "No valid token in Storage or URL, Authorize Redirect!",
-          );
-          authorizeRedirect();
-          resolve(false);
-        }
-      },
-      (error) => reject(error),
-    );
-  });
-}
-
-/**
- * Checks if there is a session available with specified scopes.
- * If this is not available, redirect to the authorisation page.
+ * 4. Check if there's a session_upgrade_token in the URL, if so, call the session upgrade function
+ * 5. Nothing found anywhere, so redirect to authorisation
  *
  * @param tokenValidationOptions If not set, takes the tokens from the config.
- *
  * @returns A valid token
  *
  * It will reject (as well as redirect) in case the check did not pass.
  */
-export async function checkSessionWithScopes(
+export async function checkSession(
   tokenValidationOptions?: TokenValidationOptions,
 ): Promise<Token> {
+  const allowBackgroundRefresh = !!tokenValidationOptions;
   const urlParams = getURLParameters(window.location.href);
 
   // With Clean Hash fragment implemented in Head
-  let hashFragment = StorageUtil.read("hash_fragment");
-
-  // If we don't have an access token in the browser storage,
-  // but do have one in the url bar hash (https://example.com/#<fragment>)
-  if (!hashFragment && window.location.hash.indexOf("access_token") !== -1) {
-    hashFragment = window.location.hash.substring(1);
-    clearHashFragmentFromUrl();
-  }
-
-  const hashToken = getHashFragmentParameters(hashFragment);
-
-  // Clean the hash fragment from storage
-  if (hashToken) {
-    StorageUtil.remove("hash_fragment");
-  }
+  const hashToken = getHashToken();
 
   LogUtil.debug("Check session with params:", urlParams);
   // Make sure the state is 'clean' when doing a session upgrade
@@ -779,19 +572,21 @@ export async function checkSessionWithScopes(
   }
 
   // 1 --- Let's first check if we still have a valid token stored local, if so use that token
-  const storedToken = getStoredTokenWithScopes(tokenValidationOptions);
+  const storedToken = getStoredToken(tokenValidationOptions);
   if (storedToken) {
     LogUtil.debug("Local token found, you may proceed");
     return storedToken;
   }
 
-  // 2 --- If these is no token, check if we can get a token from silent refresh.
-  const tokenFromSilentRefresh = await silentRefreshAccessTokenForScopes(
-    tokenValidationOptions,
-  );
-  if (tokenFromSilentRefresh) {
-    LogUtil.debug("Token from silent refresh is valid.");
-    return tokenFromSilentRefresh;
+  if (allowBackgroundRefresh) {
+    // 2 --- If these is no token, check if we can get a token from silent refresh.
+    const tokenFromSilentRefresh = await silentRefreshAccessToken(
+      tokenValidationOptions,
+    );
+    if (tokenFromSilentRefresh) {
+      LogUtil.debug("Token from silent refresh is valid.");
+      return tokenFromSilentRefresh;
+    }
   }
 
   // No valid token found in storage, so we need to get a new one.
@@ -800,7 +595,7 @@ export async function checkSessionWithScopes(
   // Store the CSRF Token for future calls that need it. I.e. Logout
   StorageUtil.store("_csrf", csrfToken.csrf_token);
 
-  if (hashToken.access_token && hashToken.state) {
+  if (hashToken && hashToken.access_token && hashToken.state) {
     // 3 --- There's an access_token in the URL
     const hashFragmentToken = await parseToken(hashToken);
     if (hashFragmentToken) {
@@ -809,16 +604,38 @@ export async function checkSessionWithScopes(
     throw Error("hash_token_invalid");
   }
 
-  if (hashToken.session_upgrade_token) {
+  if (hashToken?.session_upgrade_token) {
     // 4 --- There's a session upgrade token in the URL
     LogUtil.debug("Session Upgrade Token found in URL");
     doSessionUpgradeRedirect(hashToken);
+    throw Error("will_session_upgrade_redirect");
   } else {
     // 5 --- No token in URL or Storage, so we need to get one from SSO
     LogUtil.debug("No valid token in Storage or URL, Authorize Redirect!");
     authorizeRedirect();
-    throw Error("will_redirect");
+    throw Error("will_authorize_redirect");
   }
+}
+
+function getHashToken(): Token | null {
+  let hashFragment = StorageUtil.read("hash_fragment");
+
+  // If we don't have an access token in the browser storage,
+  // but do have one in the url bar hash (https://example.com/#<fragment>)
+  if (!hashFragment && window.location.hash.indexOf("access_token") !== -1) {
+    hashFragment = window.location.hash.substring(1);
+    clearHashFragmentFromUrl();
+  }
+
+  const hashToken = hashFragment
+    ? getHashFragmentParameters(hashFragment)
+    : null;
+
+  // Clean the hash fragment from storage
+  if (hashToken) {
+    StorageUtil.remove("hash_fragment");
+  }
+  return hashToken;
 }
 
 /**

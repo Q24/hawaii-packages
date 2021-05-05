@@ -13,7 +13,7 @@ export class StorageUtil {
    * @param {string} key
    * @returns {string}
    */
-  static read(key: string): string {
+  static read(key: string): string | null {
     return StorageUtil.storage.getItem(key);
   }
 

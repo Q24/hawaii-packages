@@ -3,8 +3,8 @@ import { URLParams } from "../models/url-param.models";
 
 /**
  * Return an object with URL parameters
- * @param {string} url
- * @returns {URLParams}
+ * @param url
+ * @returns The URL parameters
  */
 export function getURLParameters(
   url: string = window.location.href,
@@ -12,19 +12,12 @@ export function getURLParameters(
   const result: URLParams = {};
   const searchIndex = url.indexOf("?");
   const hashIndex = url.indexOf("#");
-  let urlStringToParse;
 
   if (searchIndex === -1 && hashIndex === -1) {
     return result;
   }
 
-  if (searchIndex !== -1) {
-    urlStringToParse = url.substring(searchIndex + 1);
-  }
-
-  if (hashIndex !== -1) {
-    urlStringToParse = url.substring(hashIndex + 1);
-  }
+  const urlStringToParse = getUrlStringToParse(url, searchIndex, hashIndex);
 
   const urlVariablesToParse = urlStringToParse.split("&");
 
@@ -34,6 +27,17 @@ export function getURLParameters(
   }
 
   return result;
+}
+
+function getUrlStringToParse(
+  url: string,
+  searchIndex: number,
+  hashIndex: number,
+): string {
+  if (hashIndex !== -1) {
+    return url.substring(hashIndex + 1);
+  }
+  return url.substring(searchIndex + 1);
 }
 
 /**
