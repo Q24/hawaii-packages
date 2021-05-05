@@ -276,7 +276,9 @@ export function silentRefreshAccessTokenForScopes({
 
         parseToken(hashToken).then((token) => {
           const hasRequiredScopes = tokenHasRequiredScopes(scopes)(token);
+          LogUtil.debug("has required scopes:", hasRequiredScopes);
           const isValidByExtraMeans = customTokenValidator?.(token) ?? true;
+          LogUtil.debug("Extra Validation means:", isValidByExtraMeans, token);
           if (hasRequiredScopes && isValidByExtraMeans) {
             resolve(hashToken);
           } else {
@@ -736,12 +738,15 @@ export function checkSession(): Promise<boolean> {
  * Checks if there is a session available with specified scopes.
  * If this is not available, redirect to the authorisation page.
  *
- * @returns The promise resolves if the check was successful.
+ * @param tokenValidationOptions If not set, takes the tokens from the config.
+ *
+ * @returns A valid token
+ *
  * It will reject (as well as redirect) in case the check did not pass.
  */
 export async function checkSessionWithScopes(
-  tokenValidationOptions: TokenValidationOptions,
-): Promise<void> {
+  tokenValidationOptions?: TokenValidationOptions,
+): Promise<Token> {
   const urlParams = getURLParameters(window.location.href);
 
   // With Clean Hash fragment implemented in Head
@@ -777,7 +782,7 @@ export async function checkSessionWithScopes(
   const storedToken = getStoredTokenWithScopes(tokenValidationOptions);
   if (storedToken) {
     LogUtil.debug("Local token found, you may proceed");
-    return;
+    return storedToken;
   }
 
   // 2 --- If these is no token, check if we can get a token from silent refresh.
@@ -786,7 +791,7 @@ export async function checkSessionWithScopes(
   );
   if (tokenFromSilentRefresh) {
     LogUtil.debug("Token from silent refresh is valid.");
-    return;
+    return tokenFromSilentRefresh;
   }
 
   // No valid token found in storage, so we need to get a new one.
@@ -799,7 +804,7 @@ export async function checkSessionWithScopes(
     // 3 --- There's an access_token in the URL
     const hashFragmentToken = await parseToken(hashToken);
     if (hashFragmentToken) {
-      return;
+      return hashFragmentToken;
     }
     throw Error("hash_token_invalid");
   }

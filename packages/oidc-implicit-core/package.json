@@ -1,10 +1,10 @@
 {
   "name": "@hawaii-framework/oidc-implicit-core",
-  "version": "2.0.0-dev.4",
+  "version": "2.0.0-dev.6",
   "description": "Core components for implementing Open ID Connect Implicit Flow",
   "author": "Ilionx",
   "email": "kriemens@ilionx.com",
-  "license": "Apache-2.0",
+  "license": "GPL",
   "homepage": "https://github.com/Q24/hawaii-packages/tree/master/packages/oidc-implicit-core",
   "repository": {
     "type": "git",

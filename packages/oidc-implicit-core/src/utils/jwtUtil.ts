@@ -1,4 +1,4 @@
-import { JWT } from "src/models/token.models";
+import { JWT } from "../models/token.models";
 
 export function parseJwt(token: string): JWT {
   const base64Url = token.split(".")[1];

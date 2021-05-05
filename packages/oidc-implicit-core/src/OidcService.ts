@@ -19,3 +19,4 @@ export {
   getStoredCsrfToken,
 } from "./services/token.service";
 export { cleanHashFragment } from "./utils/urlUtil";
+export { parseJwt } from "./utils/jwtUtil";

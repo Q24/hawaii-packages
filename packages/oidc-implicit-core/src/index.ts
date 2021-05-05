@@ -3,3 +3,4 @@ export { OidcConfig } from "./models/config.models";
 export { CsrfToken, Token } from "./models/token.models";
 export { AuthorizeErrors } from "./models/url-param.models";
 export * as OidcService from "./OidcService";
+export * from './utils/logUtil';
