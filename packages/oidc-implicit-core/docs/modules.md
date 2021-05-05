@@ -15,8 +15,10 @@
 ### Interfaces
 
 - [CsrfToken](interfaces/csrftoken.md)
+- [JWT](interfaces/jwt.md)
 - [OidcConfig](interfaces/oidcconfig.md)
 - [Token](interfaces/token.md)
+- [TokenValidationOptions](interfaces/tokenvalidationoptions.md)
 
 ### Type aliases
 
@@ -34,7 +36,7 @@
 
 A set of strings to match when the Authorize redirect is erroring. This is the complete list of possible error to handle.
 
-Defined in: [models/url-param.models.ts:60](https://github.com/Q24/hawaii-packages/blob/90fe1a3/packages/oidc-implicit-core/src/models/url-param.models.ts#L60)
+Defined in: [models/url-param.models.ts:60](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/url-param.models.ts#L60)
 
 ## Variables
 
@@ -42,4 +44,4 @@ Defined in: [models/url-param.models.ts:60](https://github.com/Q24/hawaii-packag
 
 • `Const` **AUTHORIZE\_ERRORS**: [*AuthorizeErrors*](modules.md#authorizeerrors)[]
 
-Defined in: [constants/authorize.constants.ts:3](https://github.com/Q24/hawaii-packages/blob/90fe1a3/packages/oidc-implicit-core/src/constants/authorize.constants.ts#L3)
+Defined in: [constants/authorize.constants.ts:3](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/constants/authorize.constants.ts#L3)

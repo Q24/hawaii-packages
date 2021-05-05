@@ -1,6 +1,6 @@
 /**
  * Interface: CsrfToken
- * Session bound token. This token remain the same during your HTTP session (exception: changes once after succesful login).
+ * Session bound token. This token remain the same during your HTTP session (exception: changes once after successful login).
  */
 export interface CsrfToken {
   /**
