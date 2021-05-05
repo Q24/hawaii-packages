@@ -2,6 +2,9 @@
 
 # Interface: JWT
 
+A JSON Web Token, unpacked. Is used for describing the contents
+of an access token.
+
 ## Table of contents
 
 ### Properties
@@ -15,7 +18,9 @@
 
 • **exp**: *number*
 
-Defined in: [models/token.models.ts:57](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/token.models.ts#L57)
+The expiration date of the token.
+
+Defined in: [models/token.models.ts:65](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L65)
 
 ___
 
@@ -23,4 +28,6 @@ ___
 
 • **scope**: *string*[]
 
-Defined in: [models/token.models.ts:56](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/token.models.ts#L56)
+The scopes the token has.
+
+Defined in: [models/token.models.ts:61](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L61)

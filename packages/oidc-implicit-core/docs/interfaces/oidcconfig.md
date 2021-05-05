@@ -41,7 +41,7 @@ Config Object for OIDC Service
 
 The base URL of the Authorisation
 
-Defined in: [models/config.models.ts:39](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L39)
+Defined in: [models/config.models.ts:39](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L39)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 Authorisation endpoint
 
-Defined in: [models/config.models.ts:57](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L57)
+Defined in: [models/config.models.ts:57](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L57)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 Set the ID of your client
 
-Defined in: [models/config.models.ts:12](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L12)
+Defined in: [models/config.models.ts:12](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L12)
 
 ___
 
@@ -80,7 +80,7 @@ Also known as magic code or email code
 | `confirm` | *string* | endpoint used for logging in to the service using the code provided in the user's mailbox. |
 | `request` | *string* | endpoint for requesting the code to be send to the user's associated email address. |
 
-Defined in: [models/config.models.ts:122](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L122)
+Defined in: [models/config.models.ts:122](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L122)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 CSRF token endpoint
 
-Defined in: [models/config.models.ts:61](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L61)
+Defined in: [models/config.models.ts:61](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L61)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 Debug On/Off (Logs to console)
 
-Defined in: [models/config.models.ts:135](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L135)
+Defined in: [models/config.models.ts:135](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L135)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 Endpoint for checking if a session is still used somewhere
 
-Defined in: [models/config.models.ts:69](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L69)
+Defined in: [models/config.models.ts:69](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L69)
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 `POST` to this endpoint in the login form
 
-Defined in: [models/config.models.ts:77](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L77)
+Defined in: [models/config.models.ts:77](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L77)
 
 ___
 
@@ -130,7 +130,7 @@ ___
 
 `POST` to this endpoint in the logout form
 
-Defined in: [models/config.models.ts:93](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L93)
+Defined in: [models/config.models.ts:93](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L93)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 The URL you want to be redirected to after logging out
 
-Defined in: [models/config.models.ts:43](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L43)
+Defined in: [models/config.models.ts:43](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L43)
 
 ___
 
@@ -150,7 +150,7 @@ ___
 
 Set the ID of the Authorisation
 
-Defined in: [models/config.models.ts:8](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L8)
+Defined in: [models/config.models.ts:8](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L8)
 
 ___
 
@@ -168,7 +168,7 @@ Config object for QR login with websocket
 | `channel_redirect` | *string* | Websocket channel for the Redirect. When subscribing to this channel you will receive a 302 redirect once the QR was scanned in the Vodafone App. So this will keep listening if your session started with the QR channel was succesfully scanned somewhere. |
 | `web_socket` | *string* | Websocket BASE URL. Connect to this URL to have access to the subscription channels |
 
-Defined in: [models/config.models.ts:97](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L97)
+Defined in: [models/config.models.ts:97](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L97)
 
 ___
 
@@ -178,7 +178,7 @@ ___
 
 The URL you want to be redirected to after redirect from Authorisation
 
-Defined in: [models/config.models.ts:21](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L21)
+Defined in: [models/config.models.ts:21](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L21)
 
 ___
 
@@ -189,7 +189,7 @@ ___
 What type of token(s) you wish to receive
 In case op Open Id Connect this is usually `token id_token`
 
-Defined in: [models/config.models.ts:17](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L17)
+Defined in: [models/config.models.ts:17](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L17)
 
 ___
 
@@ -199,7 +199,7 @@ ___
 
 Array of URL's that are not allowed as `redirect_uri`
 
-Defined in: [models/config.models.ts:35](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L35)
+Defined in: [models/config.models.ts:35](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L35)
 
 ___
 
@@ -210,7 +210,7 @@ ___
 Define the scopes you want acces to. Each scope is seperated by space.
 When using Open Id Connect, scope `openid` is mandatory
 
-Defined in: [models/config.models.ts:48](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L48)
+Defined in: [models/config.models.ts:48](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L48)
 
 ___
 
@@ -220,7 +220,7 @@ ___
 
 The URL you want to use for a silent Logout, if your stack supports it.
 
-Defined in: [models/config.models.ts:30](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L30)
+Defined in: [models/config.models.ts:30](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L30)
 
 ___
 
@@ -230,7 +230,7 @@ ___
 
 The URL you want to be redirected to after redirect from Authorisation, while doing a silent access token refresh
 
-Defined in: [models/config.models.ts:25](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L25)
+Defined in: [models/config.models.ts:25](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L25)
 
 ___
 
@@ -241,7 +241,7 @@ ___
 Define the type of token your want to receive from Authorisation.
 In case of implicit flow this is usually 'Bearer'
 
-Defined in: [models/config.models.ts:53](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L53)
+Defined in: [models/config.models.ts:53](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L53)
 
 ___
 
@@ -251,7 +251,7 @@ ___
 
 `POST` to this endpoint in the two-factor form
 
-Defined in: [models/config.models.ts:81](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L81)
+Defined in: [models/config.models.ts:81](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L81)
 
 ___
 
@@ -261,7 +261,7 @@ ___
 
 `POST` to this endpoint in the two-factor provide MSISDN form
 
-Defined in: [models/config.models.ts:85](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L85)
+Defined in: [models/config.models.ts:85](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L85)
 
 ___
 
@@ -271,7 +271,7 @@ ___
 
 `POST` to this endpoint in to remove an unconfirmed MSISDN
 
-Defined in: [models/config.models.ts:89](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L89)
+Defined in: [models/config.models.ts:89](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L89)
 
 ___
 
@@ -281,7 +281,7 @@ ___
 
 Session Upgrade endpoint
 
-Defined in: [models/config.models.ts:73](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L73)
+Defined in: [models/config.models.ts:73](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L73)
 
 ___
 
@@ -291,4 +291,4 @@ ___
 
 Validate received token endpoint
 
-Defined in: [models/config.models.ts:65](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/config.models.ts#L65)
+Defined in: [models/config.models.ts:65](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/config.models.ts#L65)

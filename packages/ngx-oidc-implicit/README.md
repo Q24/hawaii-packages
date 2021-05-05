@@ -13,8 +13,9 @@ A wrapper for use with Angular on the OIDC Implicit Core package. This package u
 
 ## Installation
 
-`npm install @hawaii-framework/oidc-implicit-core -- save`
-`npm install @hawaii-framework/ngx-oidc-implicit`
+```sh
+npm install @hawaii-framework/oidc-implicit-core @hawaii-framework/ngx-oidc-implicit
+```
 
 
 ## Config
@@ -372,3 +373,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 ### Logout
 
 // TODO
+
+## Publishing
+
+`npm publish dist`

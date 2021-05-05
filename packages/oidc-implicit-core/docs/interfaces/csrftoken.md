@@ -2,7 +2,6 @@
 
 # Interface: CsrfToken
 
-Interface: CsrfToken
 Session bound token. This token remain the same during your HTTP session (exception: changes once after successful login).
 
 ## Table of contents
@@ -21,7 +20,7 @@ Session bound token. This token remain the same during your HTTP session (except
 
 The CSRF Token itself
 
-Defined in: [models/token.models.ts:17](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/token.models.ts#L17)
+Defined in: [models/token.models.ts:16](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L16)
 
 ___
 
@@ -31,7 +30,7 @@ ___
 
 CSRF Token Header name
 
-Defined in: [models/token.models.ts:9](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/token.models.ts#L9)
+Defined in: [models/token.models.ts:8](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L8)
 
 ___
 
@@ -41,4 +40,4 @@ ___
 
 CRSF Token key to be used
 
-Defined in: [models/token.models.ts:13](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/token.models.ts#L13)
+Defined in: [models/token.models.ts:12](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L12)

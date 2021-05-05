@@ -2,6 +2,9 @@
 
 # Interface: TokenValidationOptions
 
+An object that is used to determine whether a token
+meets requirements set forth herein, such as a scope.
+
 ## Table of contents
 
 ### Properties
@@ -15,6 +18,9 @@
 
 • `Optional` **customTokenValidator**: (`token`: *Readonly*<[*Token*](token.md)\>) => *boolean*
 
+A custom validation function that is called when trying
+to retrieve a (possibly pre-existing) Token.
+
 #### Type declaration:
 
 ▸ (`token`: *Readonly*<[*Token*](token.md)\>): *boolean*
@@ -27,9 +33,9 @@
 
 **Returns:** *boolean*
 
-Defined in: [models/token.models.ts:62](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/token.models.ts#L62)
+Defined in: [models/token.models.ts:81](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L81)
 
-Defined in: [models/token.models.ts:62](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/token.models.ts#L62)
+Defined in: [models/token.models.ts:81](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L81)
 
 ___
 
@@ -37,4 +43,6 @@ ___
 
 • `Optional` **scopes**: *string*[]
 
-Defined in: [models/token.models.ts:61](https://github.com/Q24/hawaii-packages/blob/6770c06/packages/oidc-implicit-core/src/models/token.models.ts#L61)
+A list of scopes that the token must have.
+
+Defined in: [models/token.models.ts:76](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L76)

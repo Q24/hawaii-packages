@@ -30,7 +30,7 @@ export class OidcService {
     });
   }
 
-  getStoredCsrfToken(): string {
+  getStoredCsrfToken(): string | null {
     return _OidcService.getStoredCsrfToken();
   }
 
@@ -75,8 +75,8 @@ export class OidcService {
   checkSession(): Observable<boolean> {
     return new Observable<boolean>((observer: Observer<boolean>) => {
       _OidcService.checkSession().then(
-        (hasSession: boolean) => {
-          observer.next(hasSession);
+        () => {
+          observer.next(true);
           observer.complete();
         },
         () => {
@@ -90,8 +90,8 @@ export class OidcService {
   silentRefreshAccessToken(): Observable<boolean> {
     return new Observable<boolean>((observer: Observer<boolean>) => {
       _OidcService.silentRefreshAccessToken().then(
-        (refreshed: boolean) => {
-          observer.next(refreshed);
+        () => {
+          observer.next(true);
           observer.complete();
         },
         () => {
