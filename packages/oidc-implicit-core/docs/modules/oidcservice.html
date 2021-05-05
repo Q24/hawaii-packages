@@ -79,9 +79,7 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#checkiftokenexpiresandrefreshwhenneeded" class="tsd-kind-icon">check<wbr>IfToken<wbr>Expires<wbr>And<wbr>Refresh<wbr>When<wbr>Needed</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#checkiftokenexpiresandrefreshwhenneededwithscopes" class="tsd-kind-icon">check<wbr>IfToken<wbr>Expires<wbr>And<wbr>Refresh<wbr>When<wbr>Needed<wbr>With<wbr>Scopes</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#checksession" class="tsd-kind-icon">check<wbr>Session</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#checksessionwithscopes" class="tsd-kind-icon">check<wbr>Session<wbr>With<wbr>Scopes</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#cleanhashfragment" class="tsd-kind-icon">clean<wbr>Hash<wbr>Fragment</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#cleansessionstorage" class="tsd-kind-icon">clean<wbr>Session<wbr>Storage</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#deletestoredtokens" class="tsd-kind-icon">delete<wbr>Stored<wbr>Tokens</a></li>
@@ -90,7 +88,6 @@
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#getidtokenhint" class="tsd-kind-icon">get<wbr>IdToken<wbr>Hint</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#getstoredcsrftoken" class="tsd-kind-icon">get<wbr>Stored<wbr>Csrf<wbr>Token</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#getstoredtoken" class="tsd-kind-icon">get<wbr>Stored<wbr>Token</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#getstoredtokenwithscopes" class="tsd-kind-icon">get<wbr>Stored<wbr>Token<wbr>With<wbr>Scopes</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#issessionalive" class="tsd-kind-icon">is<wbr>Session<wbr>Alive</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#parsejwt" class="tsd-kind-icon">parse<wbr>Jwt</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="oidcservice.html#silentlogoutbyurl" class="tsd-kind-icon">silent<wbr>Logout<wbr>ByUrl</a></li>
@@ -108,7 +105,7 @@
 					<div class="tsd-signature tsd-kind-icon">Oidc<wbr>Config<wbr>Service<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/oidcconfig.html" class="tsd-signature-type" data-tsd-kind="Interface">OidcConfig</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/config.service.ts#L5">services/config.service.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/config.service.ts#L5">services/config.service.ts:5</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -130,48 +127,13 @@
 					<a name="checkiftokenexpiresandrefreshwhenneeded" class="tsd-anchor"></a>
 					<h3>check<wbr>IfToken<wbr>Expires<wbr>And<wbr>Refresh<wbr>When<wbr>Needed</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>IfToken<wbr>Expires<wbr>And<wbr>Refresh<wbr>When<wbr>Needed<span class="tsd-signature-symbol">(</span>almostExpiredThreshold<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, token<span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">check<wbr>IfToken<wbr>Expires<wbr>And<wbr>Refresh<wbr>When<wbr>Needed<span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a>, tokenValidationOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TokenValidationOptions</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>almostExpiredThreshold<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/session.service.ts#L532">services/session.service.ts:532</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Check if the token expires in the next <em>x</em> seconds.</p>
-								</div>
-								<p>If this is the case,
-								a silent refresh will be triggered and the Promise will resolve to <code>true</code>.</p>
-								<p>If the token does not expire within <em>x</em> seconds, the Promise will resolve
-								to <code>false</code> instead.</p>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>almostExpiredThreshold: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 300</span></h5>
-								</li>
-								<li>
-									<h5>token: <a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
-					<a name="checkiftokenexpiresandrefreshwhenneededwithscopes" class="tsd-anchor"></a>
-					<h3>check<wbr>IfToken<wbr>Expires<wbr>And<wbr>Refresh<wbr>When<wbr>Needed<wbr>With<wbr>Scopes</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>IfToken<wbr>Expires<wbr>And<wbr>Refresh<wbr>When<wbr>Needed<wbr>With<wbr>Scopes<span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a>, __namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TokenValidationOptions</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>almostExpiredThreshold<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/session.service.ts#L564">services/session.service.ts:564</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/session.service.ts#L456">services/session.service.ts:456</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -192,7 +154,10 @@
 									</div>
 								</li>
 								<li>
-									<h5>__namedParameters: <span class="tsd-signature-type">TokenValidationOptions</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>almostExpiredThreshold<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> tokenValidationOptions: <span class="tsd-signature-type">TokenValidationOptions</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>almostExpiredThreshold<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>extra validations for the token</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -203,27 +168,25 @@
 					<a name="checksession" class="tsd-anchor"></a>
 					<h3>check<wbr>Session</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>Session<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Session<span class="tsd-signature-symbol">(</span>tokenValidationOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TokenValidationOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/session.service.ts#L670">services/session.service.ts:670</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/session.service.ts#L553">services/session.service.ts:553</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Checks if the session is authenticated.
-										If this is the case, the Promise will resolve to <code>true</code>.
-										If the session is not authenticated, the browser will
-									be redirected to the login page.</p>
+									<p>Checks if there is a session available.
+									If this is not available, redirect to the authorisation page.</p>
 								</div>
-								<p>CORE METHOD:</p>
 								<p>Before starting with checks, we flush state if needed (in case of session upgrade i.e.)</p>
 								<ol>
 									<li>If there is a valid session storage token, we are done.</li>
-									<li>Otherwise, if there is an <em>access_token</em> in the URL</li>
+									<li>Else, if we may refresh in the background, try to do that.</li>
+									<li>Else, if there is an <em>access_token</em> in the URL;</li>
 								</ol>
 								<ul>
 									<li>a. Validate that the state from the response is equal to the state previously generated on the client.</li>
@@ -231,46 +194,23 @@
 									<li>c. Store the token</li>
 									<li>d. Get a new CSRF token from Authorisation with the newly created session, and save it for i.e. logout usage</li>
 								</ul>
-								<ol start="3">
+								<ol start="4">
 									<li>Check if there&#39;s a session_upgrade_token in the URL, if so, call the session upgrade function</li>
 									<li>Nothing found anywhere, so redirect to authorisation</li>
 								</ol>
-								<p>1,2:</p>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>4,5:
-							<code>HTTP GET</code> Redirects to Authorisation</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
-					<a name="checksessionwithscopes" class="tsd-anchor"></a>
-					<h3>check<wbr>Session<wbr>With<wbr>Scopes</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>Session<wbr>With<wbr>Scopes<span class="tsd-signature-symbol">(</span>tokenValidationOptions<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TokenValidationOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/session.service.ts#L745">services/session.service.ts:745</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Checks if there is a session available with specified scopes.
-									If this is not available, redirect to the authorisation page.</p>
-								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>tokenValidationOptions: <span class="tsd-signature-type">TokenValidationOptions</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> tokenValidationOptions: <span class="tsd-signature-type">TokenValidationOptions</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>If not set, takes the tokens from the config.</p>
+									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>The promise resolves if the check was successful.
-							It will reject (as well as redirect) in case the check did not pass.</p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>A valid token</p>
+							<p>It will reject (as well as redirect) in case the check did not pass.</p>
 						</li>
 					</ul>
 				</section>
@@ -284,7 +224,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/utils/urlUtil.ts#L85">utils/urlUtil.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/utils/urlUtil.ts#L89">utils/urlUtil.ts:89</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -314,7 +254,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/session.service.ts#L40">services/session.service.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/session.service.ts#L39">services/session.service.ts:39</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -336,7 +276,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/token.service.ts#L15">services/token.service.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/token.service.ts#L16">services/token.service.ts:16</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -358,7 +298,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/session.service.ts#L519">services/session.service.ts:519</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/session.service.ts#L439">services/session.service.ts:439</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -386,7 +326,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/token.service.ts#L226">services/token.service.ts:226</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/token.service.ts#L213">services/token.service.ts:213</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -408,7 +348,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/token.service.ts#L182">services/token.service.ts:182</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/token.service.ts#L169">services/token.service.ts:169</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -438,13 +378,13 @@
 					<a name="getstoredcsrftoken" class="tsd-anchor"></a>
 					<h3>get<wbr>Stored<wbr>Csrf<wbr>Token</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Stored<wbr>Csrf<wbr>Token<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Stored<wbr>Csrf<wbr>Token<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/token.service.ts#L218">services/token.service.ts:218</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/token.service.ts#L205">services/token.service.ts:205</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -452,7 +392,7 @@
 									<p>Gets the stored CSRF Token from storage</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -460,36 +400,13 @@
 					<a name="getstoredtoken" class="tsd-anchor"></a>
 					<h3>get<wbr>Stored<wbr>Token</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Stored<wbr>Token<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Stored<wbr>Token<span class="tsd-signature-symbol">(</span>tokenValidationOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TokenValidationOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/token.service.ts#L107">services/token.service.ts:107</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Get a validated, not expired token from sessionStorage</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
-							<p>A valid token</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
-					<a name="getstoredtokenwithscopes" class="tsd-anchor"></a>
-					<h3>get<wbr>Stored<wbr>Token<wbr>With<wbr>Scopes</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Stored<wbr>Token<wbr>With<wbr>Scopes<span class="tsd-signature-symbol">(</span>tokenValidationOptions<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TokenValidationOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/token.service.ts#L127">services/token.service.ts:127</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/token.service.ts#L114">services/token.service.ts:114</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -500,7 +417,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>tokenValidationOptions: <span class="tsd-signature-type">TokenValidationOptions</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> tokenValidationOptions: <span class="tsd-signature-type">TokenValidationOptions</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
@@ -518,7 +435,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/session.service.ts#L56">services/session.service.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/session.service.ts#L55">services/session.service.ts:55</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -544,7 +461,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/utils/jwtUtil.ts#L3">utils/jwtUtil.ts:3</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/utils/jwtUtil.ts#L3">utils/jwtUtil.ts:3</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -567,7 +484,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/session.service.ts#L324">services/session.service.ts:324</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/session.service.ts#L244">services/session.service.ts:244</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -603,13 +520,13 @@
 					<a name="silentrefreshaccesstoken" class="tsd-anchor"></a>
 					<h3>silent<wbr>Refresh<wbr>Access<wbr>Token</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">silent<wbr>Refresh<wbr>Access<wbr>Token<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">silent<wbr>Refresh<wbr>Access<wbr>Token<span class="tsd-signature-symbol">(</span>tokenValidationOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TokenValidationOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/5133e12/packages/oidc-implicit-core/src/services/session.service.ts#L128">services/session.service.ts:128</a></li>
+									<li>Defined in <a href="https://github.com/Q24/hawaii-packages/blob/30cfe74/packages/oidc-implicit-core/src/services/session.service.ts#L130">services/session.service.ts:130</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -617,7 +534,13 @@
 									<p>Silently refresh an access token via iFrame</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> tokenValidationOptions: <span class="tsd-signature-type">TokenValidationOptions</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -643,13 +566,7 @@
 						<a href="oidcservice.html#checkiftokenexpiresandrefreshwhenneeded" class="tsd-kind-icon">check<wbr>IfToken<wbr>Expires<wbr>And<wbr>Refresh<wbr>When<wbr>Needed</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
-						<a href="oidcservice.html#checkiftokenexpiresandrefreshwhenneededwithscopes" class="tsd-kind-icon">check<wbr>IfToken<wbr>Expires<wbr>And<wbr>Refresh<wbr>When<wbr>Needed<wbr>With<wbr>Scopes</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="oidcservice.html#checksession" class="tsd-kind-icon">check<wbr>Session</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-namespace">
-						<a href="oidcservice.html#checksessionwithscopes" class="tsd-kind-icon">check<wbr>Session<wbr>With<wbr>Scopes</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="oidcservice.html#cleanhashfragment" class="tsd-kind-icon">clean<wbr>Hash<wbr>Fragment</a>
@@ -674,9 +591,6 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="oidcservice.html#getstoredtoken" class="tsd-kind-icon">get<wbr>Stored<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-namespace">
-						<a href="oidcservice.html#getstoredtokenwithscopes" class="tsd-kind-icon">get<wbr>Stored<wbr>Token<wbr>With<wbr>Scopes</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="oidcservice.html#issessionalive" class="tsd-kind-icon">is<wbr>Session<wbr>Alive</a>
