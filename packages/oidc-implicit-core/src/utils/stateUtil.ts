@@ -5,7 +5,6 @@ import { OidcConfigService } from "src/services/config.service";
 
 /**
  * Get the saved state string from sessionStorage
- * @returns {State}
  */
 export function getState(): State | null {
   const stateString = StorageUtil.read(
@@ -22,7 +21,6 @@ export function getState(): State | null {
 
 /**
  * Saves the state string to sessionStorage
- * @param {State} state
  */
 export function saveState(state: State): void {
   LogUtil.debug("State saved");

@@ -1,5 +1,4 @@
 /**
- * Interface: CsrfToken
  * Session bound token. This token remain the same during your HTTP session (exception: changes once after successful login).
  */
 export interface CsrfToken {
@@ -18,7 +17,6 @@ export interface CsrfToken {
 }
 
 /**
- * Interface: Token
  * Token received in URL from Authorisation
  */
 export interface Token {
@@ -52,12 +50,33 @@ export interface Token {
   session_upgrade_token?: string;
 }
 
+/**
+ * A JSON Web Token, unpacked. Is used for describing the contents
+ * of an access token.
+ */
 export interface JWT {
+  /**
+   * The scopes the token has.
+   */
   scope: string[];
+  /**
+   * The expiration date of the token.
+   */
   exp: number;
 }
 
+/**
+ * An object that is used to determine whether a token
+ * meets requirements set forth herein, such as a scope.
+ */
 export interface TokenValidationOptions {
+  /**
+   * A list of scopes that the token must have.
+   */
   scopes?: string[];
+  /**
+   * A custom validation function that is called when trying
+   * to retrieve a (possibly pre-existing) Token.
+   */
   customTokenValidator?: (token: Readonly<Token>) => boolean;
 }
