@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@hawaii-framework/oidc-implicit-core": "^2.0.0"
+    "@hawaii-framework/oidc-implicit-core": "^2.0.0",
+    "axios": "^0.21.1"
   }
 }
