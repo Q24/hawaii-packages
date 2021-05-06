@@ -33,9 +33,9 @@ to retrieve a (possibly pre-existing) Token.
 
 **Returns:** *boolean*
 
-Defined in: [models/token.models.ts:81](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L81)
+Defined in: [models/token.models.ts:81](https://github.com/Q24/hawaii-packages/blob/5db829b/packages/oidc-implicit-core/src/models/token.models.ts#L81)
 
-Defined in: [models/token.models.ts:81](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L81)
+Defined in: [models/token.models.ts:81](https://github.com/Q24/hawaii-packages/blob/5db829b/packages/oidc-implicit-core/src/models/token.models.ts#L81)
 
 ___
 
@@ -45,4 +45,4 @@ ___
 
 A list of scopes that the token must have.
 
-Defined in: [models/token.models.ts:76](https://github.com/Q24/hawaii-packages/blob/b83b9d6/packages/oidc-implicit-core/src/models/token.models.ts#L76)
+Defined in: [models/token.models.ts:76](https://github.com/Q24/hawaii-packages/blob/5db829b/packages/oidc-implicit-core/src/models/token.models.ts#L76)

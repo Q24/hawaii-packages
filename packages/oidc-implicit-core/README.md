@@ -1,5 +1,9 @@
 # OIDC Implicit Core
 
+## API Reference
+
+The API reference can be found in the [docs folder](/docs/modules.md)
+
 ## How to set the OIDC Config
 
 ```ts
@@ -291,6 +295,26 @@ If you are creating a logout pixel, you need to:
     1.  Call the logout endpoint with each token
     1.  Remove the token from session storage
 1.  Remove the `_csrf` token from session storage
+
+## Custom validators
+
+It is possible to write a custom validator for a token. This validator will be used to get a valid token from the token store (a list of all previously saved tokens). This is useful if the tokens you are using have some non-standard behaviour.
+
+```ts
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
+
+OidcService.getStoredToken({
+  customTokenValidator: (token) => {
+    if (token.access_token) {
+      const accessToken = OidcService.parseJwt(token.access_token);
+      // The backend is creating special tokens which have `someCustomProperty` set
+      // to an expected value. We need to validate this.
+      return accessToken["someCustomProperty"] === "someExpectedValue";
+    }
+    return false;
+  },
+});
+```
 
 ## FAQ
 
