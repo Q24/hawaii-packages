@@ -1,5 +1,12 @@
 import { JWT } from "../models/token.models";
 
+/**
+ * transforms an JWT string (e.g. from an access token) to a
+ * JWT object.
+ *
+ * @param token A JWT token string
+ * @returns JSON Web Token
+ */
 export function parseJwt(token: string): JWT {
   const base64Url = token.split(".")[1];
   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");

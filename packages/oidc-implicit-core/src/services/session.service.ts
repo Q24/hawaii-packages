@@ -50,6 +50,7 @@ export function cleanSessionStorage(): void {
  * This is normally used in conjunction with a silent logout. It
  * doesn't extend the lifetime of the current session. If a
  * session is found, a logout should NOT be triggered.
+ *
  * @returns The status code of the HTTP response
  */
 export function isSessionAlive(): Promise<{ status: number }> {
@@ -81,6 +82,12 @@ export function isSessionAlive(): Promise<{ status: number }> {
 
 /**
  * Parse the token in the Hash
+ *
+ * Validates if the hash token has the appropriate state which
+ * was previously supplied to the server. If this state matches,
+ * the client will continue by confirming the validity of the
+ * token with the backend. If the token is valid, it is saved
+ * locally in the token store and returned.
  */
 export async function parseToken(hashToken: Token): Promise<Token> {
   LogUtil.debug("Access Token found in session storage temp, validating it");
@@ -120,12 +127,33 @@ export async function parseToken(hashToken: Token): Promise<Token> {
   }
 }
 
+/**
+ * Stores Promises for the silentRefreshAccessToken
+ * temporarily.
+ *
+ * If the silentRefreshAccessToken method is called
+ * concurrently with the same scopes, only 1 iframe
+ * instance will be created. The rest of these concurrent
+ * calls will return the saved Promise.
+ */
 const silentRefreshStore: {
   [iFrameId: string]: Promise<Token>;
 } = {};
 
 /**
- * Silently refresh an access token via iFrame
+ * Silently refresh an access token via iFrame.
+ *
+ * Concurrent requests to this function will resolve to a
+ * singleton Promise.
+ *
+ * Creates an invisible iframe that navigates to the
+ * `authorize_endpoint` to get a new token there. Extracts
+ * the token from the iframe URL and returns it.
+ *
+ * If this function fails for any reason, the Promise will reject.
+ *
+ * @param tokenValidationOptions The options that a token is tested for
+ * @returns A valid token
  */
 export function silentRefreshAccessToken(
   tokenValidationOptions?: TokenValidationOptions,
@@ -140,6 +168,7 @@ export function silentRefreshAccessToken(
     .sort()
     .join("-")}`;
 
+  // If there is a concurrent request to this function, return a singleton promise.
   if (silentRefreshStore[iFrameId]) {
     return silentRefreshStore[iFrameId];
   }
@@ -208,19 +237,22 @@ export function silentRefreshAccessToken(
       }
 
       // Cleanup the iFrame
-      setTimeout(() => iFrame.parentElement!.removeChild(iFrame), 0);
+      setTimeout(() => destroyIframe(iFrame), 0);
     };
   }).finally(() => {
     if (silentRefreshStore[iFrameId]) {
       delete silentRefreshStore[iFrameId];
     }
   });
+  // Put the promise that will resolve in the future in the
+  // silent refresh promises store so that concurrent requests
+  // can take advantage of this.
   silentRefreshStore[iFrameId] = tokenPromise;
   return tokenPromise;
 }
 
 const silentLogoutStore: {
-  [iFrameId: string]: Promise<boolean>;
+  [iFrameId: string]: Promise<void>;
 } = {};
 
 /**
@@ -229,7 +261,7 @@ const silentLogoutStore: {
  *
  * This logout will not redirect the top-level window to the logged-out page.
  * It is important that the result of the returning Promise is used to take
- * an action (e.g. do a redirect).
+ * an action (e.g. do a redirect to the logout page).
  *
  * The logout was successful if the iframe ended up on the configured
  * `post_logout_redirect_uri`.
@@ -238,20 +270,21 @@ const silentLogoutStore: {
  * This *page* should make a POST request to the logout endpoint of the SSO server
  * in an automated fashion, which will cause the user to be logged out.
  * The `id_token_hint` and `csrf_token` will be supplied to the *page* via this
- * function. Defaults to `OidcConfigService.config.silent_logout_uri`
- * @returns *true*, if the logout was successful, *false* if the logout failed.
+ * function. Defaults to `silent_logout_uri` from the config.
+ * @returns The promise resolves if the logout was successful, otherwise it will reject.
  */
 export function silentLogoutByUrl(
   url = OidcConfigService.config.silent_logout_uri,
-): Promise<boolean> {
+): Promise<void> {
   LogUtil.debug("Silent logout by URL started");
   const iframeId = `silentLogoutIframe`;
 
+  // Checks if there is a concurrent silent logout call going on.
   if (silentLogoutStore[iframeId]) {
     return silentLogoutStore[iframeId];
   }
 
-  return new Promise<boolean>((resolve) => {
+  const silentLogoutPromise = new Promise<void>((resolve, reject) => {
     // Create an iFrame
     const iFrame = getLogoutIFrame();
 
@@ -271,13 +304,11 @@ export function silentLogoutByUrl(
       },
       () => {
         LogUtil.debug("no CsrfToken");
-        resolve(false);
+        reject("no_csrf_token");
       },
     );
 
-    /**
-     * Handle the result of the Authorize Redirect in the iFrame
-     */
+    // Handle the result of the Authorize Redirect in the iFrame
     iFrame.onload = () => {
       LogUtil.debug("silent logout iFrame onload triggered", iFrame);
 
@@ -295,8 +326,9 @@ export function silentLogoutByUrl(
           );
 
           clearInterval(intervalTimer);
-          destroyLogoutIFrame(iFrame);
-          resolve(false);
+          destroyIframe(iFrame);
+          reject("timeout");
+          return;
         }
 
         const currentIframeURL = iFrame.contentWindow!.location.href;
@@ -312,8 +344,8 @@ export function silentLogoutByUrl(
           );
 
           clearInterval(intervalTimer);
-          destroyLogoutIFrame(iFrame);
-          resolve(true);
+          destroyIframe(iFrame);
+          resolve();
         }
       }, interval);
     };
@@ -322,6 +354,11 @@ export function silentLogoutByUrl(
       delete silentLogoutStore[iframeId];
     }
   });
+  // Sets the silent logout promise so concurrent calls to this function will
+  // use the same promise.
+  silentLogoutStore[iframeId] = silentLogoutPromise;
+
+  return silentLogoutPromise;
 }
 
 /**
@@ -357,16 +394,22 @@ function getLogoutIFrame(): HTMLIFrameElement {
 }
 
 /**
- *
- * @param iFrame
+ * destroy an iframe in a IE11 friendly-manner.
+ * @param iFrame the iframe to destroy
  */
-function destroyLogoutIFrame(iFrame: HTMLIFrameElement): void {
-  // We remove the child from the parent element to support IE11.
+function destroyIframe(iFrame: HTMLIFrameElement): void {
+  // We use parent.removeChild instead of element.remove to support IE.
   iFrame.parentElement!.removeChild(iFrame);
 }
 
 /**
  * Gather the URL params for Authorize redirect method
+ *
+ * @param scopes the scopes to authorise for.
+ * @param promptNone If true, the user will not be asked to
+ * authorise this app. If no authentication is required,
+ * the user will not be asked with any configuration.
+ * @returns the parameters to use for an authorise request
  */
 function getAuthorizeParams(
   scopes: string[],
@@ -434,7 +477,9 @@ function validateToken(hashParams: Token): Promise<ValidSession> {
 }
 
 /**
- * Get the Authorisation header for usage with rest calls
+ * Get the Authorisation header for usage with rest calls.
+ *
+ * Uses the token type present in the token.
  */
 export function getAuthHeader(token: Token): string {
   return `${token.token_type} ${token.access_token}`;
@@ -451,7 +496,8 @@ export function getAuthHeader(token: Token): string {
  *
  * @param token the token to check
  * @param tokenValidationOptions extra validations for the token
- * @returns
+ * @returns A promise resolving to true or false. May throw and error if the token
+ * we got from the refresh is not valid.
  */
 export async function checkIfTokenExpiresAndRefreshWhenNeeded(
   token: Token,

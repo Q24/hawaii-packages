@@ -1,8 +1,14 @@
 # OIDC Implicit Core
 
+This library implements the [OIDC implicit flow](https://openid.net/specs/openid-connect-implicit-1_0.html) for use in a front-end web application. The library can be used directly with any framework of choice. While it is not strictly necessary to use wrapper, there is one [available for Angular](https://github.com/Q24/hawaii-packages/tree/master/packages/ngx-oidc-implicit).
+
+## Roadmap
+
+A future aim is to have this library certified as [OpenID Relying Party Implicit](https://openid.net/certification/#RPs).
+
 ## API Reference
 
-The API reference can be found in the [docs folder](/docs/modules.md)
+The API reference can be found in the [docs folder](/docs/modules.md).
 
 ## How to set the OIDC Config
 
