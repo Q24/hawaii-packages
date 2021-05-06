@@ -3,9 +3,9 @@
 ## How to set the OIDC Config
 
 ```ts
-import configService from "@hawaii-framework/oidc-implicit-core/dist";
+import { OidcConfig, OidcService } from "@hawaii-framework/oidc-implicit-core";
 
-oidcConfig = {
+OidcService.OidcConfigService.config = {
   authorisation: "",
   client_id: "",
   ...etc,
@@ -14,26 +14,28 @@ oidcConfig = {
 
 ## How to set the Auth headers on API requests
 
-To access resources, a request may need to include authentication information. This is done via te authorization header. In the following example, we use axios' request interceptors to add this authorization header. Take caution that you only include this header in requests for protected resources; simply including the header in every request is a security risk. With axios, you may create various axios instances with different interceptors to deal with this. With other implementations, you may need to include headers at a request level.
+To access resources, a request may need to include authentication information. This is done via te authorization header. Take caution that you only include this header in requests for protected resources; simply including the header in every request is a security risk.
+
+In the following example, we use axios' request interceptors to add this authorization header. With axios, you may create various axios instances with different interceptors to deal with this. With other implementations, you may need to include headers at a request level.
 
 ```ts
-import {
-  TokenService,
-  SessionUtil,
-  SessionService,
-} from "@hawaii-framework/oidc-implicit-core/dist";
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
+import axios, { AxiosRequestConfig } from "axios";
 
 const setAuthHeader = async (
-  config: AxiosRequestConfig
+  config: AxiosRequestConfig,
 ): Promise<AxiosRequestConfig> => {
-  const storedToken = getStoredToken();
+  const storedToken = OidcService.getStoredToken();
 
   if (storedToken) {
-    config.headers["Authorization"] = SessionUtil.getAuthHeader(storedToken);
+    config.headers["Authorization"] = OidcService.getAuthHeader(storedToken);
 
     // For info see Token Expiration section in Readme
-    if (storedToken.expires - Math.round(new Date().getTime() / 1000.0) < 300) {
-      SessionUtil.silentRefreshAccessToken();
+    if (
+      (storedToken.expires || 0) - Math.round(new Date().getTime() / 1000.0) <
+      300
+    ) {
+      OidcService.silentRefreshAccessToken();
     }
     return config;
   } else {
@@ -41,7 +43,7 @@ const setAuthHeader = async (
     // that the user is indeed logged in, or redirect
     // the user to the login page. This redirection
     // will be triggered automatically by the library.
-    const isLoggedIn = await SessionService.checkSession();
+    const isLoggedIn = await OidcService.checkSession();
     if (isLoggedIn) {
       config = await setAuthHeader(config);
       return config;
@@ -62,23 +64,27 @@ axios.interceptors.request.use(setAuthHeader, (error) => {
 On a page level, users should be redirected if they are not authenticated. For this, you can use the check session method. Do note that this method returns a Promise.
 
 ```ts
-import { SessionService } from "@hawaii-framework/oidc-implicit-core/dist";
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
 
-// Somewhere in your router
-SessionService.checkSession().then((isAuthenticated) => {
-  if (isAuthenticated) {
-    // We may proceed.
+async function processProtectedRoute(): Promise<void> {
+  try {
+    await OidcService.checkSession();
+    // We may proceed
+  } catch (error) {
+    // Under normal circumstances, we will never get here, as the checkSession will already have redirected us to the login page in case the authenticated fails.
+    return;
   }
-});
+}
 ```
 
 On a component level, you need to make sure at least a token is stored
 
 ```ts
-import { TokenService } from "@hawaii-framework/oidc-implicit-core/dist";
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
 
-// If a token is stored, we can assume the user is logged in. This call is synchronous and will as such not influence rendering the page.
-getStoredToken();
+// If a token is stored, we can assume the user is logged in.
+// This call is synchronous and will as such not influence rendering the page.
+OidcService.getStoredToken();
 ```
 
 ## Token expiration
@@ -88,12 +94,8 @@ Often times, the access token is set to expire after a certain period. Before th
 A common way to detect application usage is to hook into requests that have been authenticated. These are either requests to the backend API (i.e. requests to protected resources) or front-end navigation to routes that require authentication. In addition, the necessity of creating a new token must be considered. If the expiration time is still far in the future, it should be decided not to renew the token yet.
 
 ```ts
-import {
-  SessionUtil,
-  SessionService,
-  Token,
-  TokenService,
-} from "@hawaii-framework/oidc-implicit-core/dist";
+import { OidcService, Token } from "@hawaii-framework/oidc-implicit-core";
+import { AxiosRequestConfig } from "axios";
 
 const refreshTokenAboutToExpire = (token?: Token) => {
   if (
@@ -101,21 +103,20 @@ const refreshTokenAboutToExpire = (token?: Token) => {
     // The expiry time is calculated in seconds since 1970
     // Check if the token expires in the next 5 minutes, if so, trigger a
     // silent refresh of the Access Token in the OIDC Service
-    token.expires - Date.now() / 1000 < 300
+    (token.expires || 0) - Date.now() / 1000 < 300
   ) {
-    SessionUtil.silentRefreshAccessToken();
+    OidcService.silentRefreshAccessToken();
   }
 };
 
 // ==================================================
 // == SOMEWHERE IN THE ROUTER AUTHENTICATION CHECK ==
 // ==================================================
-SessionService.checkSession().then((isAuthenticated) => {
-  if (isAuthenticated) {
-    const storedToken = getStoredToken();
+OidcService.checkSession().then((token) => {
+  if (token) {
     // If the authentication was successful, we request
     // a new token (if it is about to expire).
-    refreshTokenAboutToExpire(storedToken);
+    refreshTokenAboutToExpire(token);
 
     // Returning the auth check result here...
   }
@@ -124,9 +125,10 @@ SessionService.checkSession().then((isAuthenticated) => {
 // =================================
 // == SOMEWHERE IN AN API REQUEST ==
 // =================================
-const storedToken = getStoredToken();
+const storedToken = OidcService.getStoredToken();
+const config: AxiosRequestConfig = {};
 if (storedToken) {
-  config.headers["Authorization"] = SessionUtil.getAuthHeader(storedToken);
+  config.headers["Authorization"] = OidcService.getAuthHeader(storedToken);
   // After adding the headers, we request
   // a new token (if it is about to expire).
   refreshTokenAboutToExpire(storedToken);
@@ -137,21 +139,31 @@ if (storedToken) {
 
 The login consists of two steps. Step 1 is to send authentication data to the server (_username_ and _password_ and _csrf token_). Step 2 is processing the response from the server.
 
-# Sending authentication data to the server
+### Sending authentication data to the server
 
 Most of the time, it is not needed to create a custom login page. The default page of the CIAM server can be used. The client id can be used by CIAM to determine which login page should be served.
 
 If you are going to create a custom CIAM login page, you need to make sure that besides the username and password, you also send a Cross Site Request Forgery token (csrf) to the SSO server. This can be obtained with the `getCsrfToken()` method.
+
+```ts
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
+
+OidcService.getCsrfToken();
+```
 
 ### Processing the response from the server
 
 An auth token will be present in a response from the server after a successful login. This token must be stored on the user's local computer. The auth token is present in the hash fragment of the redirect url from the server to the client. So, you need to make sure you will not clear the URL before saving it locally.
 
 ```ts
-// The check session method is used for both checking if the user is logged in
-// as well as saving the access token present in the URL hash.
-// After the URL has been saved, it will be cleared.
-await SessionService.checkSession();
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
+
+async function calledWhenTryingToAuthenticateUser() {
+  // The check session method is used for both checking if the user is logged in
+  // as well as saving the access token present in the URL hash.
+  // After the URL has been saved, it will be cleared.
+  await OidcService.checkSession();
+}
 ```
 
 The current implementation of the redirect from the server only goes to a single URL. This means that restoring the user session (the url where the user was before logging in) is a responsibility of the front-end. Take into account that routes which do not require authentication should not call the check session function (as it will trigger a login).
@@ -165,22 +177,22 @@ Because the check session function is used both for the login check and to store
 The logout form needs a **logout endpoint**, a Cross Site Request Forgery Token (**\_csrf**), a URL to redirect to after the logout has succeeded (**post_logout_redirect_uri**) and an ID Token (**id_token_hint**). The form can be submitted in an automated fashion after all inputs have been set. If the _\_csrf_ or _id_token_hint_ cannot be resolved, an error page should be shown.
 
 ```ts
-import configService from "@hawaii-framework/oidc-implicit-core/dist";
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
 
 // The LOGOUT_ENDPOINT can be requested from
-OidcConfigService.config.logout_endpoint;
+OidcService.OidcConfigService.config.logout_endpoint;
 
 // The POST_LOGOUT_REDIRECT_URI can be requested from
-OidcConfigService.config.post_logout_redirect_uri;
+OidcService.OidcConfigService.config.post_logout_redirect_uri;
 
 // The CSRF_TOKEN can be requested from
 //  Synchronously (try this first)
-StorageUtil.read("_csrf");
+OidcService.getStoredCsrfToken();
 //  Asynchronously
-getCsrfToken();
+OidcService.getCsrfToken();
 
 // The ID_TOKEN_HINT can be requested from
-getIdTokenHint({ regex: true });
+OidcService.getIdTokenHint({ regex: true });
 ```
 
 ```html
@@ -206,17 +218,14 @@ In the case a user may still be logged in on another client, they should not be 
 The `isSessionAlive` call does not count as user activity, and will as such not lengthen the session.
 
 ```ts
-import {
-  TokenService,
-  SessionService,
-} from "@hawaii-framework/oidc-implicit-core/dist";
+import { OidcService } from "@hawaii-framework/oidc-implicit-core/dist";
 
 const autoLogoutInterval = setInterval(() => {
   // Get stored token either returns a non-expired token or null
-  const storedToken = getStoredToken();
+  const storedToken = OidcService.getStoredToken();
 
   if (!storedToken) {
-    SessionService.isSessionAlive().catch(() => {
+    OidcService.isSessionAlive().catch(() => {
       // If we are not logged in, no expired check is needed.
       clearInterval(autoLogoutInterval);
 
@@ -245,10 +254,10 @@ The logged out page is used to show the user that he has been logged out. Next t
 Remove possible left-overs of the previous session.
 
 ```ts
-import { SessionService } from "@hawaii-framework/oidc-implicit-core/dist";
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
 
 // Upon opening the logged out page
-SessionService.cleanSessionStorage();
+OidcService.cleanSessionStorage();
 ```
 
 ### Logout pixel
@@ -281,7 +290,7 @@ If you are creating a logout pixel, you need to:
 1.  Make an array of all access tokens in the session storage
     1.  Call the logout endpoint with each token
     1.  Remove the token from session storage
-1.  Remove the \_csrf token from session storage
+1.  Remove the `_csrf` token from session storage
 
 ## FAQ
 
@@ -290,16 +299,14 @@ If you are creating a logout pixel, you need to:
 With a silent logout, you are logged out in the background. This means that you are not redirected to a logged-out page. However, the access token will be invalidated. You would use this when you need the user to be logged out in order to perform a certain action. If you are going to use this method, be sure to clean the session storage afterwards.
 
 ```ts
-import {
-  SessionService,
-  SessionUtil,
-} from "@hawaii-framework/oidc-implicit-core/dist";
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
 
-SessionUtil.silentLogoutByUrl().then((loggedOut) => {
+OidcService.silentLogoutByUrl().then((loggedOut) => {
   if (loggedOut) {
-    SessionService.cleanSessionStorage();
-  }
+    OidcService.cleanSessionStorage();
+
 });
+
 ```
 
 ### What is a silent refresh?

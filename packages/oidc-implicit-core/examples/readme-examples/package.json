@@ -1,0 +1,14 @@
+{
+  "name": "readme-examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hawaii-framework/oidc-implicit-core": "^2.0.0"
+  }
+}

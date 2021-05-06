@@ -1,8 +1,7 @@
-import configService, {
+import {
   OidcConfig,
-  SessionService,
-  TokenService,
-} from '@hawaii-framework/oidc-implicit-core/dist';
+  OidcService,
+} from "@hawaii-framework/oidc-implicit-core";
 import {
   createContext,
   PropsWithChildren,
@@ -11,12 +10,12 @@ import {
   useEffect,
   useMemo,
   useState,
-} from 'react';
+} from "react";
 
 interface OidcContextValue {
   isInitialized: boolean;
   isAuthenticated: boolean;
-  refreshAuthStatus: () => Promise<boolean>;
+  refreshAuthStatus: () => Promise<void>;
   oidcConfig: OidcConfig;
 }
 
@@ -36,18 +35,17 @@ export const OidcProvider = ({
   const [isInitialized, setIsInitialized] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const refreshAuthStatus = useCallback(async () => {
-    const authenticated = await SessionService.checkSession();
-    setIsAuthenticated(authenticated);
-    return authenticated;
-  }, []);
+  const refreshAuthStatus = useCallback(
+    () => OidcService.checkSession().then(() => setIsAuthenticated(true)),
+    [],
+  );
 
   /**
-   * Initialize OIDC Config
+   * Initialize OIsDC Config
    */
   useEffect(() => {
     setIsInitialized(false);
-    oidcConfig = oidcConfig;
+    OidcService.OidcConfigService.config = oidcConfig;
     setIsInitialized(true);
   }, [oidcConfig]);
 
@@ -110,14 +108,15 @@ const useAutomaticLogout = ({
     if (autoLogout && isAuthenticated) {
       const autoLogoutInterval = setInterval(() => {
         // Get stored token either returns a non-expired token or null
-        const storedToken = getStoredToken();
+        const storedToken = OidcService.getStoredToken();
 
         if (!storedToken) {
-          SessionService.isSessionAlive().catch(() => {
+          OidcService.isSessionAlive().catch(() => {
             clearInterval(autoLogoutInterval);
 
             // Navigate to the logged out page via the router.
-            window.location.href = OidcConfigService.config.post_logout_redirect_uri;
+            window.location.href =
+              oidcConfig.post_logout_redirect_uri;
           });
         }
       }, autoLogout);
@@ -128,5 +127,5 @@ const useAutomaticLogout = ({
         }
       };
     }
-  }, [autoLogout, isAuthenticated, OidcConfigService.config.post_logout_redirect_uri]);
+  }, [autoLogout, isAuthenticated, oidcConfig.post_logout_redirect_uri]);
 };
