@@ -8,14 +8,31 @@ import {
 import { GeneratorUtil } from "../utils/generatorUtil";
 import { OidcConfigService } from "./config.service";
 import { parseJwt } from "src/utils/jwtUtil";
-import { transformScopesStringToArray } from 'src/utils/scopeUtil';
+import { transformScopesStringToArray } from "src/utils/scopeUtil";
 
 /**
- * Delete all tokens in sessionStorage for this session.
+ * Deletes all the tokens from the storage.
+ * If tokenValidationOptions is passed in, only a subset will be deleted.
+ *
+ * @param tokenValidationOptions the conditions the tokens which will be deleted should adhere to.
  */
-export function deleteStoredTokens(): void {
-  LogUtil.debug(`Removed Tokens from session storage`);
-  StorageUtil.remove("-token");
+export function deleteStoredTokens(
+  tokenValidationOptions?: TokenValidationOptions,
+): void {
+  if (tokenValidationOptions) {
+    deleteTokensWithOptions(tokenValidationOptions);
+  } else {
+    LogUtil.debug(`Removed Tokens from session storage`);
+    StorageUtil.remove("-token");
+  }
+}
+
+function deleteTokensWithOptions(
+  tokenValidationOptions?: TokenValidationOptions,
+): void {
+  const allTokens = getStoredTokens();
+  const tokensToStore = filterTokens(allTokens, tokenValidationOptions, true);
+  storeTokens(tokensToStore);
 }
 
 function createTokenKey() {
@@ -27,8 +44,8 @@ function createTokenKey() {
  */
 function getStoredTokens(): Token[] {
   const storedTokens = StorageUtil.read(createTokenKey());
-  if(!storedTokens) {
-    return []
+  if (!storedTokens) {
+    return [];
   }
   return JSON.parse(storedTokens);
 }
@@ -90,25 +107,38 @@ export function tokenHasRequiredScopes(
 }
 
 /**
- * check if all separate scopes exist in a token
+ *
+ * @param tokens the tokens to be filtered
+ * @param tokenValidationOptions possible extra validation on a token
+ * @param returnValidTokens if the filter should return the invalid or valid tokens.
+ * @returns the filtered tokens.
  */
 function filterTokens(
   tokens: Token[],
   tokenValidationOptions?: TokenValidationOptions,
+  returnValidTokens = true,
 ): Token[] {
-  const scopes = tokenValidationOptions?.scopes ?? transformScopesStringToArray(OidcConfigService.config.scope);
+  const scopes =
+    tokenValidationOptions?.scopes ??
+    transformScopesStringToArray(OidcConfigService.config.scope);
   const checkScopes = tokenHasRequiredScopes(scopes);
-  const relevantTokens = tokens.filter(checkScopes);
+  const relevantTokens = tokens.filter((token) => {
+    return checkScopes(token) ? returnValidTokens : !returnValidTokens;
+  });
   if (tokenValidationOptions?.customTokenValidator) {
-    return relevantTokens.filter(tokenValidationOptions.customTokenValidator);
+    return relevantTokens.filter((token) => {
+      return tokenValidationOptions.customTokenValidator(token)
+        ? returnValidTokens
+        : !returnValidTokens;
+    });
   }
   return relevantTokens;
 }
 
 /**
- * Gets a valid, non-expired token from session storage for a specific set of scopes.
+ * Gets a valid, non-expired token from session storage given a set of validators.
  *
- * @param scopes the required scopes
+ * @param tokenValidationOptions the required scopes and other validators
  * @returns A valid Token or `null` if no token has been found.
  */
 export function getStoredToken(
@@ -117,10 +147,7 @@ export function getStoredToken(
   // Get the tokens from storage, and make sure they're still valid
   const tokens = getStoredTokens();
   const tokensUnexpired = cleanExpiredTokens(tokens);
-  const tokensFiltered = filterTokens(
-    tokensUnexpired,
-    tokenValidationOptions,
-  );
+  const tokensFiltered = filterTokens(tokensUnexpired, tokenValidationOptions);
 
   // If there's no valid token return null
   if (tokensFiltered.length < 1) {

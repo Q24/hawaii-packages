@@ -4,7 +4,10 @@ This library implements the [OIDC implicit flow](https://openid.net/specs/openid
 
 ## Roadmap
 
-A future aim is to have this library certified as [OpenID Relying Party Implicit](https://openid.net/certification/#RPs).
+* A future aim is to have this library certified as [OpenID Relying Party Implicit](https://openid.net/certification/#RPs).
+* Add support for [all request parameters](https://openid.net/specs/openid-connect-implicit-1_0.html#RequestParameters).
+* Add support for [Code Flow](https://openid.net/specs/openid-connect-basic-1_0.html#CodeFlow).
+* Add support for [Code Flow with PKCE](https://developers.onelogin.com/openid-connect/guides/auth-flow-pkce).
 
 ## API Reference
 

@@ -42,6 +42,9 @@ export interface AuthorizeParams {
    * This way the refresh token call will not 'hang' on the (hidden) login screen, when authorize failed.
    */
   prompt?: string;
+  /**
+   * string value that specifies how the Authorization Server displays the authentication and consent user interface pages to the End-User.
+   */
 }
 
 /**

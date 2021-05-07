@@ -496,7 +496,7 @@ export function getAuthHeader(token: Token): string {
  *
  * @param token the token to check
  * @param tokenValidationOptions extra validations for the token
- * @returns A promise resolving to true or false. May throw and error if the token
+ * @returns A promise. May throw and error if the token
  * we got from the refresh is not valid.
  */
 export async function checkIfTokenExpiresAndRefreshWhenNeeded(
@@ -504,7 +504,7 @@ export async function checkIfTokenExpiresAndRefreshWhenNeeded(
   tokenValidationOptions?: TokenValidationOptions & {
     almostExpiredThreshold?: number;
   },
-): Promise<boolean> {
+): Promise<void> {
   if (
     token.expires &&
     token.expires - Math.round(new Date().getTime() / 1000.0) <
@@ -514,11 +514,11 @@ export async function checkIfTokenExpiresAndRefreshWhenNeeded(
       tokenValidationOptions,
     );
     if (silentRefreshToken) {
-      return true;
+      return;
     }
     throw Error("invalid_token");
   }
-  return false;
+  return;
 }
 
 /**

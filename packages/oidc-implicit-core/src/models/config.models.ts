@@ -130,7 +130,10 @@ export interface OidcConfig {
     confirm: string;
   };
   /**
-   * Debug On/Off (Logs to console)
+   * Verbose logging of inner workings of the package.
    */
   debug?: boolean;
+  /**
+   * string value that specifies how the Authorization Server displays the authentication and consent user interface pages to the End-User.
+   */
 }
