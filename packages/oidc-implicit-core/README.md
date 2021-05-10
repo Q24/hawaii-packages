@@ -1,13 +1,15 @@
+[![npm](https://img.shields.io/npm/v/@hawaii-framework/oidc-implicit-core.svg?style=flat-square)](https://www.npmjs.com/package/@hawaii-framework/oidc-implicit-core)
+
 # OIDC Implicit Core
 
 This library implements the [OIDC implicit flow](https://openid.net/specs/openid-connect-implicit-1_0.html) for use in a front-end web application. The library can be used directly with any framework of choice. While it is not strictly necessary to use wrapper, there is one [available for Angular](https://github.com/Q24/hawaii-packages/tree/master/packages/ngx-oidc-implicit).
 
 ## Roadmap
 
-* A future aim is to have this library certified as [OpenID Relying Party Implicit](https://openid.net/certification/#RPs).
-* Add support for [all request parameters](https://openid.net/specs/openid-connect-implicit-1_0.html#RequestParameters).
-* Add support for [Code Flow](https://openid.net/specs/openid-connect-basic-1_0.html#CodeFlow).
-* Add support for [Code Flow with PKCE](https://developers.onelogin.com/openid-connect/guides/auth-flow-pkce).
+- A future aim is to have this library certified as [OpenID Relying Party Implicit](https://openid.net/certification/#RPs).
+- Add support for [all request parameters](https://openid.net/specs/openid-connect-implicit-1_0.html#RequestParameters).
+- Add support for [Code Flow](https://openid.net/specs/openid-connect-basic-1_0.html#CodeFlow).
+- Add support for [Code Flow with PKCE](https://developers.onelogin.com/openid-connect/guides/auth-flow-pkce).
 
 ## API Reference
 
@@ -344,7 +346,7 @@ OidcService.silentLogoutByUrl().then((loggedOut) => {
 
 ### What is a silent refresh?
 
-With a silent refresh, the lifetime of a token is renewed in the background, without user interaction. The Authorization Server will not display any authentication or consent user interface pages. An error is returned if an End-User is not already authenticated. For more info, see the [OpenID Connect Core spec](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
+a silent refresh, a new access token is fetched in the background, without user interaction. This also extends the lifetime of the session with the Issuer. An error is returned if an End-User is not already authenticated. For more info, see the [OpenID Connect Core spec](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
 
 ### What is the difference between a logout page and a logged out page?
 
