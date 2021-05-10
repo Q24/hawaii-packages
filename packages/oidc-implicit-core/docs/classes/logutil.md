@@ -39,7 +39,7 @@
 
 **Returns:** *void*
 
-Defined in: [utils/logUtil.ts:4](https://github.com/Q24/hawaii-packages/blob/2999af5/packages/oidc-implicit-core/src/utils/logUtil.ts#L4)
+Defined in: [utils/logUtil.ts:4](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L4)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 **Returns:** *void*
 
-Defined in: [utils/logUtil.ts:20](https://github.com/Q24/hawaii-packages/blob/2999af5/packages/oidc-implicit-core/src/utils/logUtil.ts#L20)
+Defined in: [utils/logUtil.ts:20](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L20)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 **Returns:** *void*
 
-Defined in: [utils/logUtil.ts:16](https://github.com/Q24/hawaii-packages/blob/2999af5/packages/oidc-implicit-core/src/utils/logUtil.ts#L16)
+Defined in: [utils/logUtil.ts:16](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L16)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 **Returns:** *void*
 
-Defined in: [utils/logUtil.ts:8](https://github.com/Q24/hawaii-packages/blob/2999af5/packages/oidc-implicit-core/src/utils/logUtil.ts#L8)
+Defined in: [utils/logUtil.ts:8](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L8)
 
 ___
 
@@ -108,4 +108,4 @@ ___
 
 **Returns:** *void*
 
-Defined in: [utils/logUtil.ts:12](https://github.com/Q24/hawaii-packages/blob/2999af5/packages/oidc-implicit-core/src/utils/logUtil.ts#L12)
+Defined in: [utils/logUtil.ts:12](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L12)

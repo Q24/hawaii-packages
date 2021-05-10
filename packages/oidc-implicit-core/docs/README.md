@@ -13,7 +13,7 @@ This library implements the [OIDC implicit flow](https://openid.net/specs/openid
 
 ## API Reference
 
-The API reference can be found in the [docs folder](/docs/modules.md).
+The API reference can be found in the `docs folder`.
 
 ## How to set the OIDC Config
 
@@ -60,7 +60,7 @@ const setAuthHeader = async (
     // will be triggered automatically by the library.
     const isLoggedIn = await OidcService.checkSession();
     if (isLoggedIn) {
-      config = await setAuthHeader(config);
+      config = await setAuthHeader(config);`
       return config;
     } else {
       throw new axios.Cancel("User is not logged in");
