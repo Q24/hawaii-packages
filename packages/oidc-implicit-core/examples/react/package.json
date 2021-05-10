@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@hawaii-framework/oidc-implicit-core": "2.0.0",
+    "@hawaii-framework/oidc-implicit-core": "2.0.0-dev.11",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
     "axios": "^0.21.1",

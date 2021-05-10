@@ -1,10 +1,6 @@
-import {
-  TokenService,
-  SessionUtil,
-  SessionService,
-} from '@hawaii-framework/oidc-implicit-core/dist';
-import axios, { AxiosRequestConfig } from 'axios';
-import { globals } from '../globals';
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
+import axios, { AxiosRequestConfig } from "axios";
+import { globals } from "../globals";
 
 export const authenticatedRequest = axios.create({
   baseURL: globals.restBaseUrl,
@@ -13,25 +9,25 @@ export const authenticatedRequest = axios.create({
 const setAuthHeader = async (
   config: AxiosRequestConfig,
 ): Promise<AxiosRequestConfig> => {
-  const storedToken = getStoredToken();
+  const storedToken = OidcService.getStoredToken();
 
   if (storedToken) {
-    config.headers['Authorization'] = SessionUtil.getAuthHeader(storedToken);
+    config.headers["Authorization"] = OidcService.getAuthHeader(storedToken);
 
     if (
       (storedToken.expires || 0) - Math.round(new Date().getTime() / 1000.0) <
       300
     ) {
-      SessionUtil.silentRefreshAccessToken();
+      OidcService.silentRefreshAccessToken();
     }
     return config;
   } else {
-    const isLoggedIn = await SessionService.checkSession();
+    const isLoggedIn = await OidcService.checkSession();
     if (isLoggedIn) {
       config = await setAuthHeader(config);
       return config;
     } else {
-      throw new axios.Cancel('User is not logged in');
+      throw new axios.Cancel("User is not logged in");
     }
   }
 };

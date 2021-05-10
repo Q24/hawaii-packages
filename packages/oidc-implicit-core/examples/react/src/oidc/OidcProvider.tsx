@@ -1,7 +1,4 @@
-import {
-  OidcConfig,
-  OidcService,
-} from "@hawaii-framework/oidc-implicit-core";
+import { OidcConfig, OidcService } from "@hawaii-framework/oidc-implicit-core";
 import {
   createContext,
   PropsWithChildren,
@@ -115,8 +112,7 @@ const useAutomaticLogout = ({
             clearInterval(autoLogoutInterval);
 
             // Navigate to the logged out page via the router.
-            window.location.href =
-              oidcConfig.post_logout_redirect_uri;
+            window.location.href = oidcConfig.post_logout_redirect_uri;
           });
         }
       }, autoLogout);
