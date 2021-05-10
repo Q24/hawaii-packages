@@ -105,8 +105,8 @@ export class OidcService {
   silentLogoutByUrl(): Observable<boolean> {
     return new Observable<boolean>((observer: Observer<boolean>) => {
       _OidcService.silentLogoutByUrl().then(
-        (loggedOut: boolean) => {
-          observer.next(loggedOut);
+        () => {
+          observer.next(true);
           observer.complete();
         },
         () => {
