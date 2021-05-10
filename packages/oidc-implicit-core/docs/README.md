@@ -2,9 +2,19 @@
 
 # OIDC Implicit Core
 
+This library implements the [OIDC implicit flow](https://openid.net/specs/openid-connect-implicit-1_0.html) for use in a front-end web application. The library can be used directly with any framework of choice. While it is not strictly necessary to use wrapper, there is one [available for Angular](https://github.com/Q24/hawaii-packages/tree/master/packages/ngx-oidc-implicit).
+
+## Roadmap
+
+* A future aim is to have this library certified as [OpenID Relying Party Implicit](https://openid.net/certification/#RPs).
+* Add support for [all request parameters](https://openid.net/specs/openid-connect-implicit-1_0.html#RequestParameters).
+* Add support for [Code Flow](https://openid.net/specs/openid-connect-basic-1_0.html#CodeFlow).
+* Add support for [Code Flow with PKCE](https://developers.onelogin.com/openid-connect/guides/auth-flow-pkce).
+
 ## API Reference
 
-The API reference can be found in the [docs folder](/docs/modules.md)
+The API reference can be found in the [docs folder](/docs/modules.md).
+
 ## How to set the OIDC Config
 
 ```ts
@@ -296,6 +306,26 @@ If you are creating a logout pixel, you need to:
     1.  Call the logout endpoint with each token
     1.  Remove the token from session storage
 1.  Remove the `_csrf` token from session storage
+
+## Custom validators
+
+It is possible to write a custom validator for a token. This validator will be used to get a valid token from the token store (a list of all previously saved tokens). This is useful if the tokens you are using have some non-standard behaviour.
+
+```ts
+import { OidcService } from "@hawaii-framework/oidc-implicit-core";
+
+OidcService.getStoredToken({
+  customTokenValidator: (token) => {
+    if (token.access_token) {
+      const accessToken = OidcService.parseJwt(token.access_token);
+      // The backend is creating special tokens which have `someCustomProperty` set
+      // to an expected value. We need to validate this.
+      return accessToken["someCustomProperty"] === "someExpectedValue";
+    }
+    return false;
+  },
+});
+```
 
 ## FAQ
 

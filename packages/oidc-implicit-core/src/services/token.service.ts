@@ -7,31 +7,34 @@ import {
 } from "../models/token.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
 import { OidcConfigService } from "./config.service";
-import { parseJwt } from "src/utils/jwtUtil";
-import { transformScopesStringToArray } from "src/utils/scopeUtil";
+import { parseJwt } from "../utils/jwtUtil";
+import { transformScopesStringToArray } from "../utils/scopeUtil";
 
 /**
  * Deletes all the tokens from the storage.
- * If tokenValidationOptions is passed in, only a subset will be deleted.
+ * If tokenFilter is passed in, only a subset will be deleted.
  *
- * @param tokenValidationOptions the conditions the tokens which will be deleted should adhere to.
+ * @param tokenFilter if specified, the custom token validator
+ * is called for every token in the store. If a tokenFilter callback
+ * returns true, the token will remain in the store. Otherwise, it
+ * will be deleted (Just like Array.prototype.filter())
  */
 export function deleteStoredTokens(
-  tokenValidationOptions?: TokenValidationOptions,
+  tokenFilter?: (token: Readonly<Token>) => boolean,
 ): void {
-  if (tokenValidationOptions) {
-    deleteTokensWithOptions(tokenValidationOptions);
+  if (tokenFilter) {
+    deleteTokensFiltered(tokenFilter);
   } else {
     LogUtil.debug(`Removed Tokens from session storage`);
     StorageUtil.remove("-token");
   }
 }
 
-function deleteTokensWithOptions(
-  tokenValidationOptions?: TokenValidationOptions,
+function deleteTokensFiltered(
+  tokenFilter?: (token: Readonly<Token>) => boolean,
 ): void {
   const allTokens = getStoredTokens();
-  const tokensToStore = filterTokens(allTokens, tokenValidationOptions, true);
+  const tokensToStore = allTokens.filter(tokenFilter);
   storeTokens(tokensToStore);
 }
 
@@ -116,21 +119,14 @@ export function tokenHasRequiredScopes(
 function filterTokens(
   tokens: Token[],
   tokenValidationOptions?: TokenValidationOptions,
-  returnValidTokens = true,
 ): Token[] {
   const scopes =
     tokenValidationOptions?.scopes ??
     transformScopesStringToArray(OidcConfigService.config.scope);
   const checkScopes = tokenHasRequiredScopes(scopes);
-  const relevantTokens = tokens.filter((token) => {
-    return checkScopes(token) ? returnValidTokens : !returnValidTokens;
-  });
+  const relevantTokens = tokens.filter(checkScopes);
   if (tokenValidationOptions?.customTokenValidator) {
-    return relevantTokens.filter((token) => {
-      return tokenValidationOptions.customTokenValidator(token)
-        ? returnValidTokens
-        : !returnValidTokens;
-    });
+    return relevantTokens.filter(tokenValidationOptions.customTokenValidator);
   }
   return relevantTokens;
 }

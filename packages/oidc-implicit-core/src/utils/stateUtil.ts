@@ -1,7 +1,7 @@
 import { StorageUtil } from "./storageUtil";
 import { LogUtil } from "./logUtil";
 import { State } from "../models/session.models";
-import { OidcConfigService } from "src/services/config.service";
+import { OidcConfigService } from "../services/config.service";
 
 /**
  * Get the saved state string from sessionStorage

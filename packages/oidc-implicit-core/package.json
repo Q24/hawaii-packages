@@ -1,8 +1,8 @@
 {
   "name": "@hawaii-framework/oidc-implicit-core",
-  "version": "2.0.0-dev.9",
+  "version": "2.0.0-dev.11",
   "description": "Core components for implementing Open ID Connect Implicit Flow",
-  "author": "Ilionx",
+  "author": "ilionx",
   "email": "kriemens@ilionx.com",
   "license": "GPL",
   "homepage": "https://github.com/Q24/hawaii-packages/tree/master/packages/oidc-implicit-core",
@@ -26,11 +26,14 @@
     "es2015"
   ],
   "devDependencies": {
+    "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
     "eslint": "^7.21.0",
+    "jest": "^26.6.3",
     "microbundle": "^0.12.0",
     "prettier": "^2.2.1",
+    "ts-jest": "^26.5.6",
     "typedoc": "^0.20.30",
     "typedoc-plugin-markdown": "^3.7.2",
     "typescript": "^4.2.3"
@@ -42,7 +45,8 @@
     "bundle": "rm -rf dist && microbundle --name OidcImplicitCore",
     "dev": "microbundle watch",
     "typedoc": "rm -rf docs && typedoc ./src/index.ts",
-    "lint": "prettier ./src/**/*.ts --write"
+    "lint": "prettier ./src/**/*.ts --write",
+    "test": "npx jest"
   },
   "source": "./src/index.ts",
   "main": "dist/index.js",

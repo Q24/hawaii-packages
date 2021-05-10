@@ -1,6 +1,6 @@
 # OIDC Module
 
-A wrapper for use with Angular on the OIDC Implicit Core package. This package uses the static methods from that library and wraps them with Observables where neccessary.
+A wrapper for use with Angular on the [OIDC Implicit Core package](https://github.com/Q24/hawaii-packages/tree/master/packages/oidc-implicit-core). This package uses the static methods from that library and wraps them with Observables where neccessary.
 
 
 ## Features
@@ -23,7 +23,7 @@ npm install @hawaii-framework/oidc-implicit-core @hawaii-framework/ngx-oidc-impl
 Create a constants file (with an Injection Token) within the src dir somewhere with the following code:
 
 ```typescript
-import {OidcConfig} from '@hawaii-framework/ngx-oidc-implicit/dist';
+import {OidcConfig} from '@hawaii-framework/ngx-oidc-implicit';
 import {InjectionToken} from '@angular/core';
 
 export let OIDC_CONFIG_CONSTANTS = new InjectionToken<OidcConfig>('sso-config.constants');
@@ -145,7 +145,7 @@ export class AuthGuard implements CanActivate {
 
 Use the guard on routes:
 
-```typescript
+```ts
 const routes: Routes = [
     {
         path: '',
@@ -158,7 +158,7 @@ const routes: Routes = [
 ### adding the bearer token to rest-calls
 Example of adding Bearer header to rest calls. I use a service wrapper for this:
 
-```typescript
+```ts
 @Injectable()
 export class RestService {
 
@@ -291,7 +291,7 @@ export class RestService {
 
 ### custom login page
 
-You can configure a custom login page, that's part of the angular stack, therefor there is a login endpoint in the config.
+You can configure a custom login page, that's part of the angular stack, therefore there is a login endpoint in the config.
 Make sure you point the OIDC config to the proper URL within the angular stack. After that a login page is pretty straight forward.
 The form should (for security purposes) be a classic form HTTP POST.
 
@@ -369,10 +369,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 }
 ```
-
-### Logout
-
-// TODO
 
 ## Publishing
 

@@ -1,4 +1,4 @@
-import { OidcConfigService } from "src/services/config.service";
+import { OidcConfigService } from "../services/config.service";
 
 export class LogUtil {
   static debug(msg: string, ...supportingDetails: any[]): void {

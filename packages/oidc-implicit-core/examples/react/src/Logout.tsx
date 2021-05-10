@@ -1,7 +1,7 @@
 import configService, {
   StorageUtil,
   TokenService,
-} from '@hawaii-framework/oidc-implicit-core/dist';
+} from '@hawaii-framework/oidc-implicit-core';
 import { useEffect, useRef, useState } from 'react';
 
 export const Logout = () => {

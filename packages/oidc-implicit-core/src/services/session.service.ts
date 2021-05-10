@@ -5,9 +5,9 @@ import {
   Token,
   TokenValidationOptions,
 } from "../models/token.models";
-import { ValidSession } from "src/models/session.models";
-import { AuthorizeParams } from "src/models/url-param.models";
-import { GeneratorUtil } from "src/utils/generatorUtil";
+import { ValidSession } from "../models/session.models";
+import { AuthorizeParams } from "../models/url-param.models";
+import { GeneratorUtil } from "../utils/generatorUtil";
 import {
   deleteIdTokenHint,
   deleteStoredCsrfToken,
@@ -18,20 +18,20 @@ import {
   storeToken,
   tokenHasRequiredScopes,
 } from "./token.service";
-import { deleteState, getState, saveState } from "src/utils/stateUtil";
-import { deleteNonce, getNonce, saveNonce } from "src/utils/nonceUtil";
+import { deleteState, getState, saveState } from "../utils/stateUtil";
+import { deleteNonce, getNonce, saveNonce } from "../utils/nonceUtil";
 import {
   deleteSessionId,
   getSessionId,
   saveSessionId,
-} from "src/utils/sessionUtil";
+} from "../utils/sessionUtil";
 import {
   createURLParameters,
   getHashFragmentParameters,
   getURLParameters,
-} from "src/utils/urlUtil";
+} from "../utils/urlUtil";
 import { OidcConfigService } from "./config.service";
-import { transformScopesStringToArray } from "src/utils/scopeUtil";
+import { transformScopesStringToArray } from "../utils/scopeUtil";
 
 /**
  * Cleans up the current session: deletes the stored local tokens, state, nonce, id token hint and CSRF token.
