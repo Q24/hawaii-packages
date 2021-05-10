@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/ng-packagr/package.schema.json",
   "name": "@hawaii-framework/ngx-oidc-implicit",
-  "version": "2.2.0-dev.1",
+  "version": "2.2.0",
   "description": "Open ID Connect - Implicit Flow Service for Angular",
   "author": "ilionx",
   "email": "info@qnh.nl",
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@angular/common": "~11.0.0",
     "@angular/core": "~11.0.0",
-    "@hawaii-framework/oidc-implicit-core": "2.0.0-dev.8",
+    "@hawaii-framework/oidc-implicit-core": "^2.0.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.24.0",
@@ -45,6 +45,6 @@
     }
   },
   "peerDependencies": {
-    "@hawaii-framework/oidc-implicit-core": "^2.0.0-dev.8"
+    "@hawaii-framework/oidc-implicit-core": "^2.0.1"
   }
 }
