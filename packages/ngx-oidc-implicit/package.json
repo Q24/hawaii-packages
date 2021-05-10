@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/ng-packagr/package.schema.json",
   "name": "@hawaii-framework/ngx-oidc-implicit",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Open ID Connect - Implicit Flow Service for Angular",
   "author": "ilionx",
   "email": "info@qnh.nl",
