@@ -22,6 +22,7 @@
 - [getStoredToken](oidcservice.md#getstoredtoken)
 - [isSessionAlive](oidcservice.md#issessionalive)
 - [parseJwt](oidcservice.md#parsejwt)
+- [silentGetIdTokenHint](oidcservice.md#silentgetidtokenhint)
 - [silentLogoutByUrl](oidcservice.md#silentlogoutbyurl)
 - [silentRefreshAccessToken](oidcservice.md#silentrefreshaccesstoken)
 
@@ -39,7 +40,7 @@ A service containing the config
 | :------ | :------ | :------ |
 | `get **config**(): [*OidcConfig*](../interfaces/oidcconfig.md)` | *object* | Get the global OIDC config |
 
-Defined in: [services/config.service.ts:8](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/config.service.ts#L8)
+Defined in: [services/config.service.ts:8](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/config.service.ts#L8)
 
 ## Functions
 
@@ -67,7 +68,7 @@ to `false` instead.
 A promise. May throw and error if the token
 we got from the refresh is not valid.
 
-Defined in: [services/session.service.ts:502](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L502)
+Defined in: [services/session.service.ts:635](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L635)
 
 ___
 
@@ -101,7 +102,7 @@ A valid token
 
 It will reject (as well as redirect) in case the check did not pass.
 
-Defined in: [services/session.service.ts:599](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L599)
+Defined in: [services/session.service.ts:732](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L732)
 
 ___
 
@@ -124,7 +125,7 @@ an *access_token* when a user uses the *BACK* button in the browser.
 
 the URL without the hash fragment
 
-Defined in: [utils/urlUtil.ts:92](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/urlUtil.ts#L92)
+Defined in: [utils/urlUtil.ts:92](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/utils/urlUtil.ts#L92)
 
 ___
 
@@ -136,7 +137,7 @@ Cleans up the current session: deletes the stored local tokens, state, nonce, id
 
 **Returns:** *void*
 
-Defined in: [services/session.service.ts:39](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L39)
+Defined in: [services/session.service.ts:40](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L40)
 
 ___
 
@@ -155,7 +156,7 @@ If tokenFilter is passed in, only a subset will be deleted.
 
 **Returns:** *void*
 
-Defined in: [services/token.service.ts:22](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L22)
+Defined in: [services/token.service.ts:22](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L22)
 
 ___
 
@@ -175,7 +176,7 @@ Uses the token type present in the token.
 
 **Returns:** *string*
 
-Defined in: [services/session.service.ts:484](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L484)
+Defined in: [services/session.service.ts:617](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L617)
 
 ___
 
@@ -187,7 +188,7 @@ Get a CSRF Token from the authorisation server
 
 **Returns:** *Promise*<[*CsrfToken*](../interfaces/csrftoken.md)\>
 
-Defined in: [services/token.service.ts:236](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L236)
+Defined in: [services/token.service.ts:237](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L237)
 
 ___
 
@@ -210,7 +211,7 @@ During logout, the regex option should be enabled if we are not sure that the *c
 
 **Returns:** *string* \| ``null``
 
-Defined in: [services/token.service.ts:192](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L192)
+Defined in: [services/token.service.ts:193](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L193)
 
 ___
 
@@ -222,7 +223,7 @@ Gets the stored CSRF Token from storage
 
 **Returns:** *string* \| ``null``
 
-Defined in: [services/token.service.ts:228](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L228)
+Defined in: [services/token.service.ts:229](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L229)
 
 ___
 
@@ -242,7 +243,7 @@ Gets a valid, non-expired token from session storage given a set of validators.
 
 A valid Token or `null` if no token has been found.
 
-Defined in: [services/token.service.ts:140](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L140)
+Defined in: [services/token.service.ts:140](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L140)
 
 ___
 
@@ -259,7 +260,7 @@ session is found, a logout should NOT be triggered.
 
 The status code of the HTTP response
 
-Defined in: [services/session.service.ts:56](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L56)
+Defined in: [services/session.service.ts:57](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L57)
 
 ___
 
@@ -280,7 +281,36 @@ JWT object.
 
 JSON Web Token
 
-Defined in: [utils/jwtUtil.ts:10](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/jwtUtil.ts#L10)
+Defined in: [utils/jwtUtil.ts:10](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/utils/jwtUtil.ts#L10)
+
+___
+
+### silentGetIdTokenHint
+
+▸ **silentGetIdTokenHint**(`scopes`: *string*[]): *Promise*<string\>
+
+Silently get an id token via iFrame.
+
+Concurrent requests to this function will resolve to a
+singleton Promise.
+
+Creates an invisible iframe that navigates to the
+`authorize_endpoint` to get a new token there. Extracts
+the id token from the iframe URL and returns it.
+
+If this function fails for any reason, the Promise will reject.
+
+#### Parameters:
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `scopes` | *string*[] | The scopes that the id token has. |
+
+**Returns:** *Promise*<string\>
+
+A valid token
+
+Defined in: [services/session.service.ts:292](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L292)
 
 ___
 
@@ -308,7 +338,7 @@ The logout was successful if the iframe ended up on the configured
 
 The promise resolves if the logout was successful, otherwise it will reject.
 
-Defined in: [services/session.service.ts:276](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L276)
+Defined in: [services/session.service.ts:409](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L409)
 
 ___
 
@@ -337,4 +367,4 @@ If this function fails for any reason, the Promise will reject.
 
 A valid token
 
-Defined in: [services/session.service.ts:158](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L158)
+Defined in: [services/session.service.ts:168](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L168)

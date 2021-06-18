@@ -5,6 +5,7 @@ export {
   isSessionAlive,
   silentLogoutByUrl,
   silentRefreshAccessToken,
+  silentGetIdTokenHint,
   getAuthHeader,
   checkIfTokenExpiresAndRefreshWhenNeeded,
 } from "./services/session.service";

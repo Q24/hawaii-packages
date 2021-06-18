@@ -15,6 +15,7 @@ import {
   getCsrfToken,
   getIdTokenHint,
   getStoredToken,
+  saveIdTokenHint,
   storeToken,
   tokenHasRequiredScopes,
 } from "./token.service";
@@ -81,16 +82,12 @@ export function isSessionAlive(): Promise<{ status: number }> {
 }
 
 /**
- * Parse the token in the Hash
+ * Checks if the token has a valid state. If not, throw an error.
  *
- * Validates if the hash token has the appropriate state which
- * was previously supplied to the server. If this state matches,
- * the client will continue by confirming the validity of the
- * token with the backend. If the token is valid, it is saved
- * locally in the token store and returned.
+ * @param hashToken the token to be validated
  */
-export async function parseToken(hashToken: Token): Promise<Token> {
-  LogUtil.debug("Access Token found in session storage temp, validating it");
+export function validateTokenState(hashToken: Token): void {
+  LogUtil.debug("Validating Token state");
   const stateObj = getState();
 
   // We received a token from SSO, so we need to validate the state
@@ -104,8 +101,21 @@ export async function parseToken(hashToken: Token): Promise<Token> {
     "State from URL validated against state in session storage state object",
     stateObj,
   );
+}
 
-  // State validated, so now let's validate the token with Hawaii Backend
+/**
+ * Parse the token in the Hash
+ *
+ * Validates if the hash token has the appropriate state which
+ * was previously supplied to the server. If this state matches,
+ * the client will continue by confirming the validity of the
+ * token with the backend. If the token is valid, it is saved
+ * locally in the token store and returned.
+ */
+export async function parseToken(hashToken: Token): Promise<Token> {
+  validateTokenState(hashToken);
+
+  // State validated, so now let's validate the token with Backend
   try {
     const validSession = await validateToken(hashToken);
     LogUtil.debug("Token validated by backend", validSession);
@@ -249,6 +259,129 @@ export function silentRefreshAccessToken(
   // can take advantage of this.
   silentRefreshStore[iFrameId] = tokenPromise;
   return tokenPromise;
+}
+
+/**
+ * Stores Promises for the silentGetIdTokenHint
+ * temporarily.
+ *
+ * If the silentGetIdTokenHint method is called
+ * concurrently with the same scopes, only 1 iframe
+ * instance will be created. The rest of these concurrent
+ * calls will return the saved Promise.
+ */
+const silentRefreshIdTokenStore: {
+  [iFrameId: string]: Promise<string>;
+} = {};
+
+/**
+ * Silently get an id token via iFrame.
+ *
+ * Concurrent requests to this function will resolve to a
+ * singleton Promise.
+ *
+ * Creates an invisible iframe that navigates to the
+ * `authorize_endpoint` to get a new token there. Extracts
+ * the id token from the iframe URL and returns it.
+ *
+ * If this function fails for any reason, the Promise will reject.
+ *
+ * @param scopes The scopes that the id token has.
+ * @returns A valid token
+ */
+export function silentGetIdTokenHint(scopes: string[]): Promise<string> {
+  const _scopes: string[] =
+    scopes ?? transformScopesStringToArray(OidcConfigService.config.scope);
+  LogUtil.debug("Silent refresh started");
+
+  const iFrameId = `silentRefreshAccessTokenIframe-${_scopes
+    .slice()
+    .sort()
+    .join("-")}`;
+
+  // If there is a concurrent request to this function, return a singleton promise.
+  if (silentRefreshIdTokenStore[iFrameId]) {
+    return silentRefreshIdTokenStore[iFrameId];
+  }
+  const idTokenPromise = new Promise<string>((resolve, reject) => {
+    const iFrame = document.createElement("iframe");
+    iFrame.id = iFrameId;
+    iFrame.style.display = "none";
+
+    const promptNone = true;
+    const authorizeParams = getAuthorizeParams(_scopes, promptNone);
+
+    // Append the iFrame, and set the source if the iFrame to the Authorize redirect, as long as there's no error
+    // For older FireFox and IE versions first append the iFrame and then set its source attribute.
+    const urlParams = getURLParameters();
+    if (!urlParams["error"]) {
+      window.document.body.appendChild(iFrame);
+      LogUtil.debug(
+        "Do silent refresh redirect to SSO with options:",
+        authorizeParams,
+      );
+      iFrame.src = `${
+        OidcConfigService.config.authorize_endpoint
+      }?${createURLParameters(authorizeParams)}`;
+    } else {
+      LogUtil.debug(
+        `Error in silent refresh authorize redirect: ${urlParams["error"]}`,
+      );
+      reject("invalid_token");
+    }
+
+    // Handle the result of the Authorize Redirect in the iFrame
+    iFrame.onload = () => {
+      LogUtil.debug("silent refresh iFrame loaded", iFrame);
+
+      // Get the URL from the iFrame
+      const hashToken = getHashFragmentParameters(
+        iFrame.contentWindow!.location.href.split("#")[1],
+      );
+
+      // Clean the hashfragment from storage
+      if (hashToken) {
+        LogUtil.debug("Hash Fragment params from sessionStorage", hashToken);
+        StorageUtil.remove("hash_fragment");
+      }
+
+      if (hashToken.state) {
+        LogUtil.debug(
+          "State found in silent refresh return URL, validating it",
+        );
+
+        try {
+          validateTokenState(hashToken);
+        } catch (error) {
+          reject(error);
+          return;
+        }
+
+        if (!hashToken.id_token) {
+          reject("no id token in token");
+          return;
+        }
+
+        saveIdTokenHint(hashToken.id_token);
+        resolve(hashToken.id_token);
+      } else {
+        LogUtil.debug("No token found in silent refresh return URL");
+        reject("no_token_found");
+      }
+
+      // Cleanup the iFrame
+      setTimeout(() => destroyIframe(iFrame), 0);
+    };
+  }).finally(() => {
+    if (silentRefreshIdTokenStore[iFrameId]) {
+      delete silentRefreshIdTokenStore[iFrameId];
+    }
+  });
+  // Put the promise that will resolve in the future in the
+  // silent refresh promises store so that concurrent requests
+  // can take advantage of this.
+  silentRefreshIdTokenStore[iFrameId] = idTokenPromise;
+  return idTokenPromise;
 }
 
 const silentLogoutStore: {
