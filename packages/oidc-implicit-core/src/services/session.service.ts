@@ -172,6 +172,8 @@ export function silentRefreshAccessToken(
   if (silentRefreshStore[iFrameId]) {
     return silentRefreshStore[iFrameId];
   }
+  let iframeLoadTimeout: number;
+
   const tokenPromise = new Promise<Token>((resolve, reject) => {
     const iFrame = document.createElement("iframe");
     iFrame.id = iFrameId;
@@ -239,10 +241,14 @@ export function silentRefreshAccessToken(
       // Cleanup the iFrame
       setTimeout(() => destroyIframe(iFrame), 0);
     };
+    iframeLoadTimeout = window.setTimeout(() => {
+      reject("iframe_load_timeout");
+    }, 7000);
   }).finally(() => {
     if (silentRefreshStore[iFrameId]) {
       delete silentRefreshStore[iFrameId];
     }
+    window.clearTimeout(iframeLoadTimeout);
   });
   // Put the promise that will resolve in the future in the
   // silent refresh promises store so that concurrent requests
@@ -283,6 +289,8 @@ export function silentLogoutByUrl(
   if (silentLogoutStore[iframeId]) {
     return silentLogoutStore[iframeId];
   }
+
+  let iframeLoadTimeout: number;
 
   const silentLogoutPromise = new Promise<void>((resolve, reject) => {
     // Create an iFrame
@@ -349,10 +357,14 @@ export function silentLogoutByUrl(
         }
       }, interval);
     };
+    iframeLoadTimeout = window.setTimeout(() => {
+      reject("iframe_load_timeout");
+    }, 7000);
   }).finally(() => {
     if (silentLogoutStore[iframeId]) {
       delete silentLogoutStore[iframeId];
     }
+    window.clearTimeout(iframeLoadTimeout);
   });
   // Sets the silent logout promise so concurrent calls to this function will
   // use the same promise.
