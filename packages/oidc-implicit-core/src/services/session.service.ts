@@ -417,14 +417,12 @@ function getAuthorizeParams(
 ): AuthorizeParams {
   const stateObj = getState() || {
     state: GeneratorUtil.generateState(),
-    providerId: OidcConfigService.config.provider_id,
   };
 
   const urlVars: AuthorizeParams = {
     nonce: getNonce() || GeneratorUtil.generateNonce(),
     state: stateObj.state,
     authorization: OidcConfigService.config.authorisation,
-    providerId: OidcConfigService.config.provider_id,
     client_id: OidcConfigService.config.client_id,
     response_type: OidcConfigService.config.response_type,
     redirect_uri:
@@ -432,8 +430,11 @@ function getAuthorizeParams(
         ? OidcConfigService.config.silent_refresh_uri
         : OidcConfigService.config.redirect_uri,
     scope: scopes.join(" "),
-    prompt: promptNone ? "none" : "",
   };
+
+  if (promptNone) {
+    urlVars.prompt = "none";
+  }
 
   // Save the generated state & nonce
   saveState(stateObj);

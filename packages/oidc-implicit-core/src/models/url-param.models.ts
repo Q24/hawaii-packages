@@ -1,50 +1,18 @@
+import type { ImplicitRequestParameters } from "./implicit-request-parameters.models";
+
 /**
  * Authorize redirect URL Parameters
  */
-export interface AuthorizeParams {
-  /**
-   * State string
-   */
-  state: string;
-  /**
-   * Nonce string
-   */
-  nonce: string;
+export interface AuthorizeParams extends ImplicitRequestParameters {
   /**
    * Authorisation endpoint
    */
   authorization: string;
-  /**
-   * The ID of the Authorisation
-   */
-  providerId: string;
-  /**
-   * The ID of your client
-   */
-  client_id: string;
-  /**
-   * What type of token(s) you wish to receive
-   * In case op Open Id Connect this is usually `token id_token`
-   */
-  response_type: string;
+
   /**
    * The URL you want to be redirected to after redirect from Authorisation
    */
   redirect_uri: string;
-  /**
-   * Define the scopes you want to add to your session.
-   * Multiple scopes will be added in a single strings, separated by spaces.
-   */
-  scope: string;
-
-  /**
-   * We add prompt=none to the URL when silently refreshing an access token.
-   * This way the refresh token call will not 'hang' on the (hidden) login screen, when authorize failed.
-   */
-  prompt?: string;
-  /**
-   * string value that specifies how the Authorization Server displays the authentication and consent user interface pages to the End-User.
-   */
 }
 
 /**
