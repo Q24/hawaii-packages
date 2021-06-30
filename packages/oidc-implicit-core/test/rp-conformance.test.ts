@@ -7,7 +7,7 @@ describe("Response Type & Response Mode", () => {
 describe("ID Token", () => {
   it("Rejects ID Token with invalid `iss` claim", () => {});
 
-  it("Rejects ID Token without sub claim Rejects ID Token without 'sub' claim", () => {});
+  it("Rejects ID Token without `sub` claim", () => {});
 
   it("Rejects ID Token with invalid `aud` claim", () => {});
 

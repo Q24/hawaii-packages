@@ -1,3 +1,5 @@
+import type { JWTHeader } from "./jwt-header.models";
+
 /**
  * Session bound token. This token remain the same during your HTTP session (exception: changes once after successful login).
  */
@@ -50,11 +52,18 @@ export interface Token {
   session_upgrade_token?: string;
 }
 
+export interface JWT<T = JWTPayload> {
+  header: JWTHeader;
+  payload: T;
+  verifySignature: string;
+}
+
+
 /**
  * A JSON Web Token, unpacked. Is used for describing the contents
  * of an access token.
  */
-export interface JWT {
+export interface JWTPayload {
   /**
    * The scopes the token has.
    */

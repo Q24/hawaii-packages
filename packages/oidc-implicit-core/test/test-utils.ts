@@ -5,10 +5,10 @@ export function initConfig() {
   OidcService.OidcConfigService.config = {
     provider_id: "provider_id",
     client_id: constants.client_id,
-    response_type: "Bearer",
+    response_type: "id_token token",
     redirect_uri: "localhost",
     restricted_redirect_uris: [],
-    authorisation: "authorisation",
+    authorization: "authorisation",
     post_logout_redirect_uri: "post_logout_redirect_uri",
     scope: "email openid",
     token_type: "token_type",

@@ -8,11 +8,6 @@ export interface AuthorizeParams extends ImplicitRequestParameters {
    * Authorisation endpoint
    */
   authorization: string;
-
-  /**
-   * The URL you want to be redirected to after redirect from Authorisation
-   */
-  redirect_uri: string;
 }
 
 /**

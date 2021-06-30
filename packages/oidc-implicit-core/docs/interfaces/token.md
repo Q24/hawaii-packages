@@ -24,7 +24,7 @@ Token received in URL from Authorisation
 
 Token for use with REST calls
 
-Defined in: [models/token.models.ts:26](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L26)
+Defined in: [models/token.models.ts:26](https://github.com/Q24/hawaii-packages/blob/00a5256/packages/oidc-implicit-core/src/models/token.models.ts#L26)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 Expiry time of token
 
-Defined in: [models/token.models.ts:46](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L46)
+Defined in: [models/token.models.ts:46](https://github.com/Q24/hawaii-packages/blob/00a5256/packages/oidc-implicit-core/src/models/token.models.ts#L46)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 Token expiry in seconds
 
-Defined in: [models/token.models.ts:38](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L38)
+Defined in: [models/token.models.ts:38](https://github.com/Q24/hawaii-packages/blob/00a5256/packages/oidc-implicit-core/src/models/token.models.ts#L38)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 ID Token
 
-Defined in: [models/token.models.ts:42](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L42)
+Defined in: [models/token.models.ts:42](https://github.com/Q24/hawaii-packages/blob/00a5256/packages/oidc-implicit-core/src/models/token.models.ts#L42)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 Session Upgrade token received from Authorisation
 
-Defined in: [models/token.models.ts:50](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L50)
+Defined in: [models/token.models.ts:50](https://github.com/Q24/hawaii-packages/blob/00a5256/packages/oidc-implicit-core/src/models/token.models.ts#L50)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 State string
 
-Defined in: [models/token.models.ts:34](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L34)
+Defined in: [models/token.models.ts:34](https://github.com/Q24/hawaii-packages/blob/00a5256/packages/oidc-implicit-core/src/models/token.models.ts#L34)
 
 ___
 
@@ -84,4 +84,4 @@ ___
 
 Type of token received, usually `Bearer`
 
-Defined in: [models/token.models.ts:30](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L30)
+Defined in: [models/token.models.ts:30](https://github.com/Q24/hawaii-packages/blob/00a5256/packages/oidc-implicit-core/src/models/token.models.ts#L30)

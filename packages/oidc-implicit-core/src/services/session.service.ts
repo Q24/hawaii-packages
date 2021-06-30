@@ -32,6 +32,8 @@ import {
 } from "../utils/urlUtil";
 import { OidcConfigService } from "./config.service";
 import { transformScopesStringToArray } from "../utils/scopeUtil";
+import { parseJwt } from "../jwt/parseJwt";
+import { IdToken } from "../models/IdToken.models";
 
 /**
  * Cleans up the current session: deletes the stored local tokens, state, nonce, id token hint and CSRF token.
@@ -80,6 +82,24 @@ export function isSessionAlive(): Promise<{ status: number }> {
   });
 }
 
+
+function validateTokenState(token: Token): void {
+  LogUtil.debug("Access Token found in session storage temp, validating it");
+  const stateObj = getState();
+
+  // We received a token from SSO, so we need to validate the state
+  if (!stateObj || token.state !== stateObj.state) {
+    LogUtil.error("Authorisation Token not valid");
+    LogUtil.debug("State NOT valid");
+    throw Error("token_state_invalid");
+  }
+
+  LogUtil.debug(
+    "State from URL validated against state in session storage state object",
+    stateObj,
+  );
+}
+
 /**
  * Parse the token in the Hash
  *
@@ -90,24 +110,11 @@ export function isSessionAlive(): Promise<{ status: number }> {
  * locally in the token store and returned.
  */
 export async function parseToken(hashToken: Token): Promise<Token> {
-  LogUtil.debug("Access Token found in session storage temp, validating it");
-  const stateObj = getState();
+  validateTokenState(hashToken);
 
-  // We received a token from SSO, so we need to validate the state
-  if (!stateObj || hashToken.state !== stateObj.state) {
-    LogUtil.error("Authorisation Token not valid");
-    LogUtil.debug("State NOT valid");
-    throw Error("token_state_invalid");
-  }
-
-  LogUtil.debug(
-    "State from URL validated against state in session storage state object",
-    stateObj,
-  );
-
-  // State validated, so now let's validate the token with Hawaii Backend
+  // State validated, so now let's validate the token with Backend validation endpoint
   try {
-    const validSession = await validateToken(hashToken);
+    const validSession = await validateTokenBackend(hashToken);
     LogUtil.debug("Token validated by backend", validSession);
 
     // Store the token in the storage
@@ -289,24 +296,28 @@ export function silentLogoutByUrl(
     const iFrame = getLogoutIFrame();
 
     // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
-    getCsrfToken().then(
-      (response: CsrfToken) => {
-        const csrfToken: CsrfToken = response;
+    (async () => {
+      let csrfToken: CsrfToken | undefined;
+      if (OidcConfigService.config.csrf_token_endpoint) {
+        try {
+          csrfToken = await getCsrfToken();
+        } catch (error) {
+          LogUtil.debug("no CsrfToken");
+          reject("no_csrf_token");
+        }
+      }
 
-        LogUtil.debug(
-          `Do silent logout with URL ${url}?id_token_hint=${getIdTokenHint()}&csrf_token=${
-            csrfToken.csrf_token
-          }`,
-        );
-        iFrame.src = `${url}?id_token_hint=${getIdTokenHint()}&csrf_token=${
+      LogUtil.debug(
+        `Do silent logout with URL ${url}?id_token_hint=${getIdTokenHint()}&csrf_token=${
           csrfToken.csrf_token
-        }`;
-      },
-      () => {
-        LogUtil.debug("no CsrfToken");
-        reject("no_csrf_token");
-      },
-    );
+        }`,
+      );
+      let iframeUrl = `${url}?id_token_hint=${getIdTokenHint()}`;
+      if (OidcConfigService.config.csrf_token_endpoint) {
+        iframeUrl += `&csrf_token=${csrfToken.csrf_token}`;
+      }
+      iFrame.src = iframeUrl;
+    })();
 
     // Handle the result of the Authorize Redirect in the iFrame
     iFrame.onload = () => {
@@ -422,7 +433,7 @@ function getAuthorizeParams(
   const urlVars: AuthorizeParams = {
     nonce: getNonce() || GeneratorUtil.generateNonce(),
     state: stateObj.state,
-    authorization: OidcConfigService.config.authorisation,
+    authorization: OidcConfigService.config.authorization,
     client_id: OidcConfigService.config.client_id,
     response_type: OidcConfigService.config.response_type,
     redirect_uri:
@@ -444,15 +455,25 @@ function getAuthorizeParams(
   return urlVars;
 }
 
+interface ValidateTokenRequest {
+  nonce: string;
+  id_token: string;
+  access_token?: string;
+}
+
 /**
  * Posts the received token to the Backend for decryption and validation
  */
-function validateToken(hashParams: Token): Promise<ValidSession> {
-  const data = {
+function validateTokenBackend(hashParams: Token): Promise<ValidSession> {
+  const data: ValidateTokenRequest = {
     nonce: getNonce(),
     id_token: hashParams.id_token,
-    access_token: hashParams.access_token,
   };
+
+  // Access token is optional
+  if (hashParams.access_token) {
+    data.access_token = hashParams.access_token;
+  }
 
   LogUtil.debug("Validate token with TokenValidation Endpoint");
 
@@ -574,7 +595,7 @@ function doSessionUpgradeRedirect(token: Token): void {
 
   // Do the authorize redirect
   const urlParams = createURLParameters(urlVars);
-  window.location.href = `${OidcConfigService.config.authorisation}/sso/upgrade-session?${urlParams}`;
+  window.location.href = `${OidcConfigService.config.authorization}/sso/upgrade-session?${urlParams}`;
 }
 
 /**
@@ -634,15 +655,30 @@ export async function checkSession(
       LogUtil.debug("Token from silent refresh is valid.");
       return tokenFromSilentRefresh;
     }
+  } else {
+    LogUtil.debug("Background refresh not allowed");
   }
 
   // No valid token found in storage, so we need to get a new one.
   // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
-  const csrfToken = await getCsrfToken();
-  // Store the CSRF Token for future calls that need it. I.e. Logout
-  StorageUtil.store("_csrf", csrfToken.csrf_token);
+  if (OidcConfigService.config.csrf_token_endpoint) {
+    const csrfToken = await getCsrfToken();
+    // Store the CSRF Token for future calls that need it. I.e. Logout
+    StorageUtil.store("_csrf", csrfToken.csrf_token);
+  }
 
-  if (hashToken && hashToken.access_token && hashToken.state) {
+  if (
+    hashToken &&
+    (hashToken.access_token || hashToken.id_token) &&
+    hashToken.state
+  ) {
+    LogUtil.debug(
+      "An access token or id token has been found in the URL",
+      "access token",
+      hashToken.access_token,
+      "id token",
+      hashToken.id_token,
+    );
     // 3 --- There's an access_token in the URL
     const hashFragmentToken = await parseToken(hashToken);
     if (hashFragmentToken) {
@@ -669,7 +705,7 @@ function getHashToken(): Token | null {
 
   // If we don't have an access token in the browser storage,
   // but do have one in the url bar hash (https://example.com/#<fragment>)
-  if (!hashFragment && window.location.hash.indexOf("access_token") !== -1) {
+  if (!hashFragment && window.location.hash.indexOf("id_token") !== -1) {
     hashFragment = window.location.hash.substring(1);
     clearHashFragmentFromUrl();
   }

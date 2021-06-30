@@ -38,6 +38,11 @@ export interface ImplicitRequestParameters {
   scope: "openid" | string;
 
   /**
+   * The URL you want to be redirected to after redirect from Authorisation
+   */
+  redirect_uri: string;
+
+  /**
    * Opaque value used to maintain state between the request and the callback.
    */
   state: string;

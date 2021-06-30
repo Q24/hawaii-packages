@@ -7,7 +7,7 @@ import {
 } from "../models/token.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
 import { OidcConfigService } from "./config.service";
-import { parseJwt } from "../utils/jwtUtil";
+import { parseJwt } from "../jwt/parseJwt";
 import { transformScopesStringToArray } from "../utils/scopeUtil";
 
 /**
@@ -93,7 +93,7 @@ export function tokenHasRequiredScopes(
     if (!token.access_token) {
       return false;
     }
-    const accessToken = parseJwt(token.access_token);
+    const { payload: accessToken } = parseJwt(token.access_token);
     // All scopes must specified in the scopes and context must be represented in the token
     if (
       !requiredScopes.every((requiredScope) =>

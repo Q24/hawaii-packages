@@ -1,11 +1,10 @@
+import { OpenIDProviderMetadata } from "./open-id-provider-metadata.models";
+
 /**
  * Config Object for OIDC Service
  */
 export interface OidcConfig {
-  /**
-   * Set the ID of the Authorisation
-   */
-  provider_id: string;
+  providerMetadata: OpenIDProviderMetadata;
   /**
    * Set the ID of your client
    */
@@ -34,9 +33,9 @@ export interface OidcConfig {
    */
   restricted_redirect_uris: string[];
   /**
-   * The base URL of the Authorisation
+   * The base URL of the Authorization
    */
-  authorisation: string;
+  authorization: string;
   /**
    * The URL you want to be redirected to after logging out
    */
@@ -58,7 +57,7 @@ export interface OidcConfig {
   /**
    * CSRF token endpoint
    */
-  csrf_token_endpoint: string;
+  csrf_token_endpoint?: string;
   /**
    * Validate received token endpoint
    */
@@ -136,4 +135,16 @@ export interface OidcConfig {
   /**
    * string value that specifies how the Authorization Server displays the authentication and consent user interface pages to the End-User.
    */
+
+  /**
+   * TODO: find out what this is.
+   */
+  trusted_audiences?: string[];
+
+  /**
+   * 
+   */
+  issued_at_threshold?: number;
+
+  issuer: string;
 }
