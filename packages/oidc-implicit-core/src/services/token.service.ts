@@ -4,7 +4,7 @@ import {
   CsrfToken,
   Token,
   TokenValidationOptions,
-} from "../jwt/model/token.models";
+} from "../jwt/model/token.model";
 import { GeneratorUtil } from "../utils/generatorUtil";
 import { OidcConfigService } from "./config.service";
 import { parseJwt } from "../jwt/parseJwt";
