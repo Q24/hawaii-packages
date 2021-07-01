@@ -13,7 +13,13 @@ declare module "jsrsasign-reduced" {
       hextype?: string,
     ): RSAKey | KJUR.crypto.DSA | KJUR.crypto.ECDSA;,
   };
+  export function hextob64u(s: string): string;
   export const KJUR = {
+    crypto: {
+      Util: {
+        hashString(s: string, alg: string): string;,
+      },
+    },
     jws: {
       JWS: {
         verify(

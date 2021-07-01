@@ -4,7 +4,7 @@ import {
   CsrfToken,
   Token,
   TokenValidationOptions,
-} from "../models/token.models";
+} from "../jwt/model/token.model";
 import { ValidSession } from "../models/session.models";
 import { AuthorizeParams } from "../models/url-param.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
@@ -32,8 +32,7 @@ import {
 } from "../utils/urlUtil";
 import { OidcConfigService } from "./config.service";
 import { transformScopesStringToArray } from "../utils/scopeUtil";
-import { parseJwt } from "../jwt/parseJwt";
-import { IdToken } from "../models/IdToken.models";
+import { validateTokenState } from "../stateValidation";
 
 /**
  * Cleans up the current session: deletes the stored local tokens, state, nonce, id token hint and CSRF token.
@@ -80,24 +79,6 @@ export function isSessionAlive(): Promise<{ status: number }> {
     };
     xhr.send();
   });
-}
-
-
-function validateTokenState(token: Token): void {
-  LogUtil.debug("Access Token found in session storage temp, validating it");
-  const stateObj = getState();
-
-  // We received a token from SSO, so we need to validate the state
-  if (!stateObj || token.state !== stateObj.state) {
-    LogUtil.error("Authorisation Token not valid");
-    LogUtil.debug("State NOT valid");
-    throw Error("token_state_invalid");
-  }
-
-  LogUtil.debug(
-    "State from URL validated against state in session storage state object",
-    stateObj,
-  );
 }
 
 /**

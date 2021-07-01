@@ -6,10 +6,9 @@ import { getNonce } from "./utils/nonceUtil";
 import { KEYUTIL, KJUR } from "jsrsasign-reduced";
 import { LogUtil } from "./utils/logUtil";
 import { validateJwtString } from "./jwt/validateJwtString";
-import type { JWTHeader } from "./models/jwt-header.models";
-import { JsonWebKeySet } from "./models/jwk.models";
+import type { JWTHeader } from "./jwt/model/jwt-header.model";
 
-const keyAlgorithms = [
+const supportedKeyAlgs = [
   "HS256",
   "HS384",
   "HS512",
@@ -23,11 +22,8 @@ const keyAlgorithms = [
   "PS512",
 ];
 
-function validSignature(
-  idTokenString: string,
-  jwks: JsonWebKeySet,
-  headerData: JWTHeader,
-): boolean {
+function validSignature(idTokenString: string, headerData: JWTHeader): boolean {
+  const jwks = OidcConfigService.config.jwks;
   if (!jwks.keys) {
     return false;
   }
@@ -40,7 +36,7 @@ function validSignature(
   const kid = headerData.kid;
   const alg = headerData.alg;
 
-  if (!keyAlgorithms.includes(alg as string)) {
+  if (!supportedKeyAlgs.includes(alg as string)) {
     LogUtil.warn("alg not supported", alg);
 
     return false;
@@ -151,15 +147,12 @@ function nonceIsValid(idToken: IdToken) {
  *
  * @param idTokenString the id token as JWT string
  */
-export function validateIdToken(
-  idTokenString: string,
-  jwks: JsonWebKeySet,
-): void {
+export function validateIdToken(idTokenString: string): void {
   validateJwtString(idTokenString);
   const { header, payload: idTokenPayload } = parseJwt<IdToken>(idTokenString);
   // The Issuer Identifier for the OpenID Provider (which is typically obtained
   // during Discovery) MUST exactly match the value of the iss (issuer) Claim.
-  if (idTokenPayload.iss !== OidcConfigService.config.authorization) {
+  if (idTokenPayload.iss !== OidcConfigService.config.providerMetadata.issuer) {
     throw Error("id_token_invalid__issuer_mismatch");
   }
 
@@ -192,11 +185,12 @@ export function validateIdToken(
   // The Client MUST validate the signature of the ID Token according to JWS
   // [JWS] using the algorithm specified in the alg Header Parameter of the JOSE
   // Header. The Client MUST use the keys provided by the Issuer.
-  // TODO
-
   // The alg value SHOULD be RS256. Validation of tokens using other signing
   // algorithms is described in the OpenID Connect Core 1.0 [OpenID.Core]
   // specification.
+  if (!validSignature(idTokenString, header)) {
+    throw Error("id_token_invalid__invalid_signature");
+  }
 
   // The current time MUST be before the time represented by the exp Claim
   // (possibly allowing for some small leeway to account for clock skew).
@@ -236,7 +230,4 @@ export function validateIdToken(
     throw Error("id_token_invalid__no_iat");
   }
 
-  if (!validSignature(idTokenString, jwks, header)) {
-    throw Error("id_token_invalid__invalid_signature");
-  }
 }

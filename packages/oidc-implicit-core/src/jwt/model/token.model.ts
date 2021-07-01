@@ -1,4 +1,4 @@
-import type { JWTHeader } from "./jwt-header.models";
+import type { JWTHeader } from "./jwt-header.model";
 
 /**
  * Session bound token. This token remain the same during your HTTP session (exception: changes once after successful login).

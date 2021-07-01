@@ -1,4 +1,4 @@
-import type { JWT, JWTPayload } from "../models/token.models";
+import type { JWT, JWTPayload } from "./model/token.model";
 
 function decodeJwtPart(jwtPart: string) {
   const base64 = jwtPart.replace(/-/g, "+").replace(/_/g, "/");

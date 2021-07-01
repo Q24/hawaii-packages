@@ -1,4 +1,9 @@
-import { OpenIDProviderMetadata } from "../models/open-id-provider-metadata.models";
+/**
+ * Once the OpenID Provider has been identified, the configuration information for
+ * that OP is retrieved from a well-known location as a JSON document, including
+ * its OAuth 2.0 endpoint locations.
+ */
+import type { OpenIDProviderMetadata } from "../models/open-id-provider-metadata.models";
 import { OidcConfigService } from "../services/config.service";
 
 /**
@@ -10,7 +15,7 @@ import { OidcConfigService } from "../services/config.service";
  * this specification and MUST be returned using the application/json content
  * type.
  */
-export function getOpenIdConfiguration(): Promise<OpenIDProviderMetadata> {
+function fetchOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
   const openIdConfigurationUrl = `${OidcConfigService.config.issuer}/.well-known/openid-configuration`;
 
   return new Promise<OpenIDProviderMetadata>((resolve, reject) => {
@@ -31,4 +36,27 @@ export function getOpenIdConfiguration(): Promise<OpenIDProviderMetadata> {
     };
     xhr.send();
   });
+}
+
+/**
+ * sets the local provider metadata to the remote provider metadata.
+ *
+ * @returns the metadata
+ */
+export async function getRemoteOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
+  const providerMetadata = await fetchOpenIdProviderMetadata();
+  OidcConfigService.config.providerMetadata = providerMetadata;
+  return providerMetadata;
+}
+
+/**
+ * tries to get the local metadata; if not found, get the remote metadata.
+ *
+ * @returns the metadata
+ */
+export async function getOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
+  if (OidcConfigService.config.providerMetadata) {
+    return OidcConfigService.config.providerMetadata;
+  }
+  return getRemoteOpenIdProviderMetadata();
 }

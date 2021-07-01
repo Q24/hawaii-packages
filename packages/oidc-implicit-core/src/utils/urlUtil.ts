@@ -1,4 +1,4 @@
-import { Token } from "../models/token.models";
+import { Token } from "../jwt/model/token.model";
 import { URLParams } from "../models/url-param.models";
 
 /**

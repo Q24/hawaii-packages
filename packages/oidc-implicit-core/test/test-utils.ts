@@ -1,9 +1,8 @@
 import { OidcService } from "../src/index";
-import { constants } from './constants';
+import { constants } from "./constants";
 
 export function initConfig() {
   OidcService.OidcConfigService.config = {
-    provider_id: "provider_id",
     client_id: constants.client_id,
     response_type: "id_token token",
     redirect_uri: "localhost",
@@ -22,5 +21,6 @@ export function initConfig() {
     twofactor_msisdn_endpoint: "twofactor_msisdn_endpoint",
     twofactor_msisdn_reset: "twofactor_msisdn_reset",
     logout_endpoint: "logout_endpoint",
+    issuer: "",
   };
 }

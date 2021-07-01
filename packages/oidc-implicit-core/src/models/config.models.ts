@@ -1,10 +1,12 @@
+import { JsonWebKeySet } from "../jwt/model/jwk.model";
 import { OpenIDProviderMetadata } from "./open-id-provider-metadata.models";
 
 /**
  * Config Object for OIDC Service
  */
 export interface OidcConfig {
-  providerMetadata: OpenIDProviderMetadata;
+  jwks?: JsonWebKeySet;
+  providerMetadata?: OpenIDProviderMetadata;
   /**
    * Set the ID of your client
    */
@@ -142,7 +144,7 @@ export interface OidcConfig {
   trusted_audiences?: string[];
 
   /**
-   * 
+   *
    */
   issued_at_threshold?: number;
 
