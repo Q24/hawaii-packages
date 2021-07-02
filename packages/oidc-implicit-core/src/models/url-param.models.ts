@@ -1,15 +1,3 @@
-import type { ImplicitRequestParameters } from "./implicit-request-parameters.models";
-
-/**
- * Authorize redirect URL Parameters
- */
-export interface AuthorizeParams extends ImplicitRequestParameters {
-  /**
-   * Authorisation endpoint
-   */
-  authorization: string;
-}
-
 /**
  * Flush state param
  */

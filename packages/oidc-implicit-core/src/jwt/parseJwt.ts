@@ -1,4 +1,5 @@
-import type { JWT, JWTPayload } from "./model/token.model";
+import { IdTokenPayload } from "../models/IdToken.models";
+import type { JWT, AccessTokenPayload } from "./model/token.model";
 
 function decodeJwtPart(jwtPart: string) {
   const base64 = jwtPart.replace(/-/g, "+").replace(/_/g, "/");
@@ -21,7 +22,7 @@ function decodeJwtPart(jwtPart: string) {
  * @param token A JWT token string
  * @returns JSON Web Token
  */
-export function parseJwt<T = JWTPayload>(token: string): JWT<T> {
+export function parseJwt<T = AccessTokenPayload>(token: string): JWT<T> {
   const parts = token.split(".");
 
   const header = parts[0];
@@ -34,3 +35,6 @@ export function parseJwt<T = JWTPayload>(token: string): JWT<T> {
     verifySignature,
   };
 }
+
+export const parseIdToken = (token: string): JWT<IdTokenPayload> =>
+  parseJwt<IdTokenPayload>(token);

@@ -2,7 +2,7 @@ import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
 import {
   CsrfToken,
-  Token,
+  AuthResult,
   TokenValidationOptions,
 } from "../jwt/model/token.model";
 import { GeneratorUtil } from "../utils/generatorUtil";
@@ -14,86 +14,86 @@ import { transformScopesStringToArray } from "../utils/scopeUtil";
  * Deletes all the tokens from the storage.
  * If tokenFilter is passed in, only a subset will be deleted.
  *
- * @param tokenFilter if specified, the custom token validator
+ * @param authResultFilter if specified, the custom token validator
  * is called for every token in the store. If a tokenFilter callback
  * returns true, the token will remain in the store. Otherwise, it
  * will be deleted (Just like Array.prototype.filter())
  */
 export function deleteStoredTokens(
-  tokenFilter?: (token: Readonly<Token>) => boolean,
+  authResultFilter?: (authResult: Readonly<AuthResult>) => boolean,
 ): void {
-  if (tokenFilter) {
-    deleteTokensFiltered(tokenFilter);
+  if (authResultFilter) {
+    deleteAuthResultsFiltered(authResultFilter);
   } else {
     LogUtil.debug(`Removed Tokens from session storage`);
     StorageUtil.remove("-token");
   }
 }
 
-function deleteTokensFiltered(
-  tokenFilter?: (token: Readonly<Token>) => boolean,
+function deleteAuthResultsFiltered(
+  authResultFilter?: (authResult: Readonly<AuthResult>) => boolean,
 ): void {
-  const allTokens = getStoredTokens();
-  const tokensToStore = allTokens.filter(tokenFilter);
-  storeTokens(tokensToStore);
+  const allAuthResults = getStoredAuthResults();
+  const authResultsToStore = allAuthResults.filter(authResultFilter);
+  storeAuthResults(authResultsToStore);
 }
 
-function createTokenKey() {
-  return `${OidcConfigService.config.client_id}-token`;
+function createAuthResultKey() {
+  return `${OidcConfigService.config.client_id}-authResult`;
 }
 
 /**
- * Get all token stored in session Storage in an Array
+ * Get all auth results stored in session Storage in an Array
  */
-function getStoredTokens(): Token[] {
-  const storedTokens = StorageUtil.read(createTokenKey());
-  if (!storedTokens) {
+function getStoredAuthResults(): AuthResult[] {
+  const storedAuthResults = StorageUtil.read(createAuthResultKey());
+  if (!storedAuthResults) {
     return [];
   }
-  return JSON.parse(storedTokens);
+  return JSON.parse(storedAuthResults);
 }
 
 /**
- * Stores an array of Tokens to the session Storage
+ * Stores an array of auth results to the session Storage
  */
-function storeTokens(tokens: Token[]): void {
-  LogUtil.debug("Saved Tokens to session storage");
-  StorageUtil.store(createTokenKey(), JSON.stringify(tokens));
+function storeAuthResults(authResults: AuthResult[]): void {
+  LogUtil.debug("Saved Auth Results to session storage");
+  StorageUtil.store(createAuthResultKey(), JSON.stringify(authResults));
 }
 
 /**
- * Compare the expiry time of a stored token with the current time.
- * If the token has expired, remove it from the array.
- * If something was removed from the Array, cleanup the session storage by re-saving the cleaned token array.
+ * Compare the expiry time of a stored auth result with the current time.
+ * If the auth results has expired, remove it from the array.
+ * If something was removed from the Array, cleanup the session storage by re-saving the cleaned auth results array.
  *
  * @returns the cleaned array.
  */
-function cleanExpiredTokens(storedTokens: Token[]): Token[] {
+function cleanExpiredAuthResults(storedAuthResults: AuthResult[]): AuthResult[] {
   const time = GeneratorUtil.epoch();
-  const cleanTokens = storedTokens.filter((element: Token) => {
+  const cleanAuthResults = storedAuthResults.filter((element: AuthResult) => {
     return element.expires && element.expires > time + 5;
   });
 
-  if (storedTokens.length > cleanTokens.length) {
-    LogUtil.debug("Updated token storage after clean.");
-    storeTokens(cleanTokens);
+  if (storedAuthResults.length > cleanAuthResults.length) {
+    LogUtil.debug("Updated auth results storage after clean.");
+    storeAuthResults(cleanAuthResults);
   }
 
-  return cleanTokens;
+  return cleanAuthResults;
 }
 
 /**
- * @param requiredScopes the scopes which must be present in the token.
- * @returns A function to check if a token has the specified scopes.
+ * @param requiredScopes the scopes which must be present in the auth results.
+ * @returns A function to check if an auth result has the specified scopes.
  */
 export function tokenHasRequiredScopes(
   requiredScopes: string[],
-): (token: Token) => boolean {
-  return function checkScopes(token: Token): boolean {
-    if (!token.access_token) {
+): (authResult: AuthResult) => boolean {
+  return function checkScopes(authResult: AuthResult): boolean {
+    if (!authResult.access_token) {
       return false;
     }
-    const { payload: accessToken } = parseJwt(token.access_token);
+    const { payload: accessToken } = parseJwt(authResult.access_token);
     // All scopes must specified in the scopes and context must be represented in the token
     if (
       !requiredScopes.every((requiredScope) =>
@@ -111,20 +111,20 @@ export function tokenHasRequiredScopes(
 
 /**
  *
- * @param tokens the tokens to be filtered
+ * @param authResults the tokens to be filtered
  * @param tokenValidationOptions possible extra validation on a token
  * @param returnValidTokens if the filter should return the invalid or valid tokens.
  * @returns the filtered tokens.
  */
-function filterTokens(
-  tokens: Token[],
+function filterAuthResults(
+  authResults: AuthResult[],
   tokenValidationOptions?: TokenValidationOptions,
-): Token[] {
+): AuthResult[] {
   const scopes =
     tokenValidationOptions?.scopes ??
     transformScopesStringToArray(OidcConfigService.config.scope);
   const checkScopes = tokenHasRequiredScopes(scopes);
-  const relevantTokens = tokens.filter(checkScopes);
+  const relevantTokens = authResults.filter(checkScopes);
   if (tokenValidationOptions?.customTokenValidator) {
     return relevantTokens.filter(tokenValidationOptions.customTokenValidator);
   }
@@ -137,13 +137,13 @@ function filterTokens(
  * @param tokenValidationOptions the required scopes and other validators
  * @returns A valid Token or `null` if no token has been found.
  */
-export function getStoredToken(
+export function getStoredAuthResult(
   tokenValidationOptions?: TokenValidationOptions,
-): Token | null {
+): AuthResult | null {
   // Get the tokens from storage, and make sure they're still valid
-  const tokens = getStoredTokens();
-  const tokensUnexpired = cleanExpiredTokens(tokens);
-  const tokensFiltered = filterTokens(tokensUnexpired, tokenValidationOptions);
+  const tokens = getStoredAuthResults();
+  const tokensUnexpired = cleanExpiredAuthResults(tokens);
+  const tokensFiltered = filterAuthResults(tokensUnexpired, tokenValidationOptions);
 
   // If there's no valid token return null
   if (tokensFiltered.length < 1) {
@@ -163,19 +163,19 @@ export function getStoredToken(
  * * Save the new token array
  * * Return the cleaned set of Tokens
  */
-export function storeToken(token: Token): void {
-  const tokens = getStoredTokens();
+export function storeToken(authResult: AuthResult): void {
+  const tokens = getStoredAuthResults();
 
-  if (token.id_token) {
-    saveIdTokenHint(token.id_token);
+  if (authResult.id_token) {
+    storeIdToken(authResult.id_token);
   }
 
-  token.expires = token.expires_in
-    ? GeneratorUtil.epoch() + (parseInt(token.expires_in, 10) - 30)
+  authResult.expires = authResult.expires_in
+    ? GeneratorUtil.epoch() + (parseInt(authResult.expires_in, 10) - 30)
     : undefined;
-  tokens.unshift(token);
-  const tokensCleaned = cleanExpiredTokens(tokens);
-  storeTokens(tokensCleaned);
+  tokens.unshift(authResult);
+  const tokensCleaned = cleanExpiredAuthResults(tokens);
+  storeAuthResults(tokensCleaned);
 }
 
 function createIdTokenHintKey(): string {
@@ -203,7 +203,7 @@ export function getIdTokenHint(options = { regex: false }): string | null {
 /**
  * Saves the ID token hint to sessionStorage
  */
-export function saveIdTokenHint(idTokenHint: string): void {
+export function storeIdToken(idTokenHint: string): void {
   StorageUtil.store(createIdTokenHintKey(), idTokenHint);
 }
 

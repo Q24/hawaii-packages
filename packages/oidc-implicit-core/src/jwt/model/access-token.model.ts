@@ -1,0 +1,7 @@
+interface AccessTokenHeader {
+
+}
+
+interface AccessTokenPayload {
+
+}

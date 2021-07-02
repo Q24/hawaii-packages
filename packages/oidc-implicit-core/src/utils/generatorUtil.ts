@@ -1,7 +1,6 @@
 export class GeneratorUtil {
   /**
-   * Return the current time in seconds since 1970
-   * @returns {number}
+   * @returns the current time in seconds since 1970
    */
   static epoch(): number {
     return Math.round(new Date().getTime() / 1000.0);

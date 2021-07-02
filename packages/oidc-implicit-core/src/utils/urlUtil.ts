@@ -1,4 +1,4 @@
-import { Token } from "../jwt/model/token.model";
+import { AuthResult } from "../jwt/model/token.model";
 import { URLParams } from "../models/url-param.models";
 
 /**
@@ -62,9 +62,9 @@ export function createURLParameters(urlVars: {
  *
  * Get Hash Fragment parameters from sessionStorage
  * @param {string} hash_fragment
- * @returns {Token}
+ * @returns {AuthResult}
  */
-export function getHashFragmentParameters(hash_fragment: string): Token {
+export function hashFragmentToAuthResult(hash_fragment: string): AuthResult {
   const result = {};
   let urlVariablesToParse;
 

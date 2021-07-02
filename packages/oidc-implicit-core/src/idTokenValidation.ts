@@ -1,4 +1,4 @@
-import { IdToken } from "./models/IdToken.models";
+import { IdTokenPayload } from "./models/IdToken.models";
 import { OidcConfigService } from "./services/config.service";
 import { GeneratorUtil } from "./utils/generatorUtil";
 import { parseJwt } from "./jwt/parseJwt";
@@ -97,11 +97,11 @@ function validSignature(idTokenString: string, headerData: JWTHeader): boolean {
   }
 }
 
-function hasClientIdAudience(idToken: IdToken) {
+function hasClientIdAudience(idToken: IdTokenPayload) {
   return idToken.aud.includes(OidcConfigService.config.client_id);
 }
 
-function hasOnlyTrustedAudiences(idToken: IdToken) {
+function hasOnlyTrustedAudiences(idToken: IdTokenPayload) {
   if (typeof idToken.aud === "string") {
     return idToken.aud === OidcConfigService.config.client_id;
   }
@@ -113,30 +113,28 @@ function hasOnlyTrustedAudiences(idToken: IdToken) {
   });
 }
 
-function hasMultipleAudiences(idToken: IdToken) {
+function hasMultipleAudiences(idToken: IdTokenPayload) {
   return typeof idToken.aud !== "string" && idToken.aud.length > 1;
 }
 
-function hasAzpClaim(idToken: IdToken) {
-  return typeof idToken["azp"] !== "undefined";
+function hasAzpClaim(idToken: IdTokenPayload) {
+  return typeof idToken.azp !== "undefined";
 }
 
-function azpClaimValid(idToken: IdToken) {
-  return idToken["azp"] === OidcConfigService.config.client_id;
+function azpClaimValid(idToken: IdTokenPayload) {
+  return idToken.azp === OidcConfigService.config.client_id;
 }
 
-function tokenIsExpired(idToken: IdToken) {
+function tokenIsExpired(idToken: IdTokenPayload) {
   return GeneratorUtil.epoch() > idToken.exp;
 }
 
-function iatTooOld(idToken: IdToken) {
-  return (
-    idToken.iat + (OidcConfigService.config.issued_at_threshold || 30) >
-    GeneratorUtil.epoch()
-  );
+function iatOffsetTooBig(idToken: IdTokenPayload) {
+  const offset = Math.abs(GeneratorUtil.epoch() - idToken.iat);
+  return offset > (OidcConfigService.config.issued_at_threshold || 30);
 }
 
-function nonceIsValid(idToken: IdToken) {
+function nonceIsValid(idToken: IdTokenPayload) {
   return getNonce() === idToken.nonce;
 }
 
@@ -148,37 +146,66 @@ function nonceIsValid(idToken: IdToken) {
  * @param idTokenString the id token as JWT string
  */
 export function validateIdToken(idTokenString: string): void {
+  LogUtil.debug("Validating ID Token");
+
   validateJwtString(idTokenString);
-  const { header, payload: idTokenPayload } = parseJwt<IdToken>(idTokenString);
+  const { header, payload: idTokenPayload } = parseJwt<IdTokenPayload>(
+    idTokenString,
+  );
+
+  if (!idTokenPayload.sub) {
+    LogUtil.error("The ID Token does not have a sub claim");
+
+    throw Error("id_token_invalid__no_sub");
+  }
+  if (!idTokenPayload.iat) {
+    LogUtil.error("The ID Token does not have a iat claim");
+
+    throw Error("id_token_invalid__no_iat");
+  }
+
   // The Issuer Identifier for the OpenID Provider (which is typically obtained
   // during Discovery) MUST exactly match the value of the iss (issuer) Claim.
   if (idTokenPayload.iss !== OidcConfigService.config.providerMetadata.issuer) {
+    LogUtil.error("Issuer of ID token not the same as configured issuer");
+
     throw Error("id_token_invalid__issuer_mismatch");
   }
 
   // The Client MUST validate that the aud (audience) Claim contains its
   // client_id value registered at the Issuer identified by the iss (issuer)
   // Claim as an audience. The ID Token MUST be rejected if the ID Token does
-  // not list the Client as a valid audience, or if it contains additional
-  // audiences not trusted by the Client.
-  if (
-    !(
-      hasClientIdAudience(idTokenPayload) &&
-      hasOnlyTrustedAudiences(idTokenPayload)
-    )
-  ) {
+  // not list the Client as a valid audience,
+  if (!hasClientIdAudience(idTokenPayload)) {
+    LogUtil.error("The ID token does not have the client_id as audience.");
+
+    throw Error("id_token_invalid__no_client_id");
+  }
+
+  // or if it contains additional audiences not trusted by the Client.
+  if (!hasOnlyTrustedAudiences(idTokenPayload)) {
+    LogUtil.error(
+      "One or more of the audiences this payload has is not trusted.",
+    );
+
     throw Error("id_token_invalid__audience_mismatch");
   }
 
   // If the ID Token contains multiple audiences, the Client SHOULD verify that
   // an azp Claim is present.
   if (hasMultipleAudiences(idTokenPayload) && !hasAzpClaim(idTokenPayload)) {
+    LogUtil.error(
+      "The ID token has multiple audiences, but no AZP claim is present",
+    );
+
     throw Error("id_token_invalid__azp_not_present");
   }
 
   // If an azp (authorized party) Claim is present, the Client SHOULD verify
   // that its client_id is the Claim Value.
   if (hasAzpClaim(idTokenPayload) && !azpClaimValid(idTokenPayload)) {
+    LogUtil.error("The AZP claim does not equal the client_id");
+
     throw Error("id_token_invalid__azp_invalid");
   }
 
@@ -189,19 +216,25 @@ export function validateIdToken(idTokenString: string): void {
   // algorithms is described in the OpenID Connect Core 1.0 [OpenID.Core]
   // specification.
   if (!validSignature(idTokenString, header)) {
+    LogUtil.error("The ID token signature is invalid");
+
     throw Error("id_token_invalid__invalid_signature");
   }
 
   // The current time MUST be before the time represented by the exp Claim
   // (possibly allowing for some small leeway to account for clock skew).
   if (tokenIsExpired(idTokenPayload)) {
+    LogUtil.error("The ID token is expired");
+
     throw Error("id_token_invalid__expired");
   }
 
   // The iat Claim can be used to reject tokens that were issued too far away
   // from the current time, limiting the amount of time that nonces need to be
   // stored to prevent attacks. The acceptable range is Client specific.
-  if (iatTooOld(idTokenPayload)) {
+  if (iatOffsetTooBig(idTokenPayload)) {
+    LogUtil.error("The ID token issued at claim (iat) is from too long ago.");
+
     throw Error("id_token_invalid__iat_too_old");
   }
 
@@ -210,6 +243,8 @@ export function validateIdToken(idTokenString: string): void {
   // SHOULD check the nonce value for replay attacks. The precise method for
   // detecting replay attacks is Client specific.
   if (!nonceIsValid(idTokenPayload)) {
+    LogUtil.error("The ID token nonce does not equal the stored nonce.");
+
     throw Error("id_token_invalid__nonce_invalid");
   }
 
@@ -222,12 +257,4 @@ export function validateIdToken(idTokenString: string): void {
   // value and request re-authentication if it determines too much time has
   // elapsed since the last End-User authentication.
   // TODO
-
-  if (!idTokenPayload.sub) {
-    throw Error("id_token_invalid__no_sub");
-  }
-  if (!idTokenPayload.iat) {
-    throw Error("id_token_invalid__no_iat");
-  }
-
 }

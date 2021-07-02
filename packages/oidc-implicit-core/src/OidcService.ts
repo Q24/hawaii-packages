@@ -1,3 +1,4 @@
+export { getUserInfo } from "./user-info/getUserInfo";
 export { OidcConfigService } from "./services/config.service";
 export {
   checkSession,
@@ -12,8 +13,9 @@ export {
   deleteStoredTokens,
   getCsrfToken,
   getIdTokenHint,
-  getStoredToken,
+  getStoredAuthResult as getStoredToken,
   getStoredCsrfToken,
 } from "./services/token.service";
 export { cleanHashFragment } from "./utils/urlUtil";
 export { parseJwt } from "./jwt/parseJwt";
+

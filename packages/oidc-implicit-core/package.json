@@ -42,8 +42,8 @@
     "prepublishOnly": "npm run build",
     "copyCleanHashFragment": "cp ./clean-hash-fragment.js dist/clean-hash-fragment.js",
     "build": "npm run bundle && npm run copyCleanHashFragment && npm run typedoc",
-    "bundle": "rm -rf dist && microbundle --name OidcImplicitCore",
-    "dev": "microbundle watch",
+    "bundle": "rm -rf dist && microbundle --name OidcImplicitCore --external none",
+    "dev": "microbundle watch --name OidcImplicitCore --external none",
     "typedoc": "rm -rf docs && typedoc ./src/index.ts",
     "lint": "prettier ./src/**/*.ts --write",
     "test": "npx jest --watch"
@@ -55,6 +55,8 @@
   "unpkg": "dist/index.umd.js",
   "typings": "./dist/index.d.ts",
   "dependencies": {
+    "@types/jsrsasign": "^8.0.12",
+    "jsrsasign": "^10.3.0",
     "jsrsasign-reduced": "^8.0.15"
   }
 }

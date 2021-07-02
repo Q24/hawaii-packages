@@ -5,6 +5,11 @@
  */
 import type { OpenIDProviderMetadata } from "../models/open-id-provider-metadata.models";
 import { OidcConfigService } from "../services/config.service";
+import { LogUtil } from "../utils/logUtil";
+import {
+  getStoredOpenIDProviderMetadata,
+  setStoredOpenIDProviderMetadata,
+} from "./open-id-provider-metadata-storage";
 
 /**
  * OpenID Providers supporting Discovery MUST make a JSON document available at
@@ -16,20 +21,23 @@ import { OidcConfigService } from "../services/config.service";
  * type.
  */
 function fetchOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
+  LogUtil.debug("getting provider metadata");
+
   const openIdConfigurationUrl = `${OidcConfigService.config.issuer}/.well-known/openid-configuration`;
 
   return new Promise<OpenIDProviderMetadata>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
     xhr.open("GET", openIdConfigurationUrl, true);
-
-    xhr.withCredentials = true;
-
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
-        if (xhr.status === 204) {
-          resolve(JSON.parse(xhr.responseText));
+        if (xhr.status >= 200 && xhr.status <= 300) {
+          const providerMetadata = JSON.parse(xhr.responseText);
+          LogUtil.debug("successfully got provider metadata", providerMetadata);
+
+          resolve(providerMetadata);
         } else {
+          LogUtil.error("could not get provider metadata", xhr.statusText);
           reject(xhr.statusText);
         }
       }
@@ -45,6 +53,7 @@ function fetchOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
  */
 export async function getRemoteOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
   const providerMetadata = await fetchOpenIdProviderMetadata();
+  setStoredOpenIDProviderMetadata(providerMetadata);
   OidcConfigService.config.providerMetadata = providerMetadata;
   return providerMetadata;
 }
@@ -55,8 +64,9 @@ export async function getRemoteOpenIdProviderMetadata(): Promise<OpenIDProviderM
  * @returns the metadata
  */
 export async function getOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
-  if (OidcConfigService.config.providerMetadata) {
-    return OidcConfigService.config.providerMetadata;
+  const stored = getStoredOpenIDProviderMetadata();
+  if (stored) {
+    return stored;
   }
   return getRemoteOpenIdProviderMetadata();
 }

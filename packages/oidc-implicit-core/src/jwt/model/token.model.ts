@@ -19,29 +19,44 @@ export interface CsrfToken {
 }
 
 /**
- * Token received in URL from Authorisation
+ * https://openid.net/specs/openid-connect-implicit-1_0.html#ImplicitOK
+ *
+ * If the End-User grants the access request, the Authorization Server issues an
+ * Access Token and delivers it to the Client by adding the following parameters
+ * to the fragment component of the Redirection URI using the
+ * application/x-www-form-urlencoded format as defined in Section 4.2.2 of OAuth
+ * 2.0 [RFC6749] and OAuth 2.0 Multiple Response Type Encoding Practices
+ * [OAuth.Responses].
+ *
+ * In the Implicit Flow, the entire response is returned in the fragment
+ * component of the Redirection URI, as defined in 4.2.2 of OAuth 2.0 [RFC6749].
  */
-export interface Token {
+export interface AuthResult {
   /**
-   * Token for use with REST calls
+   * Access Token for the UserInfo Endpoint.
    */
   access_token?: string;
   /**
-   * Type of token received, usually `Bearer`
+   * REQUIRED. OAuth 2.0 Token Type value. The value MUST be Bearer, as
+   * specified in OAuth 2.0 Bearer Token Usage [RFC6750], for Clients using this
+   * subset. Note that the token_type value is case insensitive.
    */
-  token_type?: string;
+  token_type?: "Bearer";
   /**
-   * State string
+   * OAuth 2.0 state value. REQUIRED if the state parameter is present in the
+   * Authorization Request. Clients MUST verify that the state value is equal to
+   * the value of state parameter in the Authorization Request.
    */
   state?: string;
-  /**
-   * Token expiry in seconds
-   */
-  expires_in?: string;
   /**
    * ID Token
    */
   id_token?: string;
+  /**
+   * Expiration time of the Access Token in seconds since the response was
+   * generated.
+   */
+  expires_in?: string;
   /**
    * Expiry time of token
    */
@@ -52,26 +67,51 @@ export interface Token {
   session_upgrade_token?: string;
 }
 
-export interface JWT<T = JWTPayload> {
+export interface JWT<T = AccessTokenPayload> {
   header: JWTHeader;
   payload: T;
   verifySignature: string;
 }
 
-
 /**
  * A JSON Web Token, unpacked. Is used for describing the contents
  * of an access token.
  */
-export interface JWTPayload {
+export interface AccessTokenPayload {
   /**
    * The scopes the token has.
    */
   scope: string[];
+
   /**
    * The expiration date of the token.
    */
-  exp: number;
+  exp?: number;
+
+  /**
+   * Subject
+   */
+  sub?: string;
+
+  /**
+   * Authorized party
+   */
+  azp?: string;
+
+  /**
+   * Issuer
+   */
+  iss?: string;
+
+  /**
+   * Issued At time
+   */
+  iat?: number;
+
+  /**
+   * JWT ID (unique for token)
+   */
+  jti?: string;
 }
 
 /**
@@ -87,5 +127,5 @@ export interface TokenValidationOptions {
    * A custom validation function that is called when trying
    * to retrieve a (possibly pre-existing) Token.
    */
-  customTokenValidator?: (token: Readonly<Token>) => boolean;
+  customTokenValidator?: (token: Readonly<AuthResult>) => boolean;
 }

@@ -1,3 +1,24 @@
+import { parseIdToken } from "../jwt/parseJwt";
+import { OidcConfigService } from "../services/config.service";
+import { getStoredAuthResult } from "../services/token.service";
+import { LogUtil } from "../utils/logUtil";
+import { getStoredUserInfo, setStoredUserInfo } from "./user-info-storage";
+import { UserInfo } from "./UserInfo.model";
+
+/**
+ * Due to the possibility of token substitution attacks, the UserInfo Response
+ * is not guaranteed to be about the End-User identified by the sub (subject)
+ * element of the ID Token. The sub Claim in the UserInfo Response MUST be
+ * verified to exactly match the sub Claim in the ID Token; if they do not
+ * match, the UserInfo Response values MUST NOT be used.
+ */
+function verifyUserInfoResponse(userInfo: UserInfo) {
+  const authResult = getStoredAuthResult();
+  const { payload } = parseIdToken(authResult.id_token);
+
+  return payload.sub === userInfo.sub;
+}
+
 /**
  * # 2.3.  UserInfo Endpoint
  *
@@ -29,12 +50,6 @@
  * string value. The sub (subject) Claim MUST always be returned in the UserInfo
  * Response.
  *
- * NOTE: Due to the possibility of token substitution attacks, the UserInfo
- * Response is not guaranteed to be about the End-User identified by the sub
- * (subject) element of the ID Token. The sub Claim in the UserInfo Response
- * MUST be verified to exactly match the sub Claim in the ID Token; if they do
- * not match, the UserInfo Response values MUST NOT be used.
- *
  * The Client MUST verify that the OP that responded was the intended OP through
  * a TLS server certificate check, per RFC 6125 [RFC6125].
  *
@@ -42,5 +57,59 @@
  * When an error condition occurs, the UserInfo Endpoint returns an Error
  * Response as defined in Section 3 of OAuth 2.0 Bearer Token Usage [RFC6750].
  */
-export function getUserInfo() {
+function fetchUserInfo(): Promise<UserInfo> {
+  const userinfoEndpoint =
+    OidcConfigService.config.providerMetadata.userinfo_endpoint;
+
+  return new Promise<UserInfo>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("GET", userinfoEndpoint, true);
+
+    xhr.withCredentials = true;
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 204) {
+          const userInfo = JSON.parse(xhr.responseText);
+
+          if (verifyUserInfoResponse(userInfo)) {
+            resolve(userInfo);
+          } else {
+            LogUtil.error(
+              "The subject of the user info response is not the same as the id token",
+            );
+            reject("userinfo_response_invalid");
+          }
+        } else {
+          reject(xhr.statusText);
+        }
+      }
+    };
+    xhr.send();
+  });
+}
+
+/**
+ * sets the local user info to the remote user info.
+ *
+ * @returns the user info
+ */
+async function getRemoteUserInfo(): Promise<UserInfo> {
+  const userInfo = await fetchUserInfo();
+  setStoredUserInfo(userInfo);
+  return userInfo;
+}
+
+/**
+ * tries to get the local user info; if not found, get the remote user info.
+ *
+ * @returns the user info
+ */
+export async function getUserInfo(): Promise<UserInfo> {
+  const storedUserInfo = getStoredUserInfo();
+  if (storedUserInfo) {
+    return storedUserInfo;
+  }
+  return getRemoteUserInfo();
 }

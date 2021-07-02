@@ -35,10 +35,6 @@ export interface OidcConfig {
    */
   restricted_redirect_uris: string[];
   /**
-   * The base URL of the Authorization
-   */
-  authorization: string;
-  /**
    * The URL you want to be redirected to after logging out
    */
   post_logout_redirect_uri: string;
@@ -53,17 +49,13 @@ export interface OidcConfig {
    */
   token_type: string;
   /**
-   * Authorisation endpoint
-   */
-  authorize_endpoint: string;
-  /**
    * CSRF token endpoint
    */
   csrf_token_endpoint?: string;
   /**
    * Validate received token endpoint
    */
-  validate_token_endpoint: string;
+  validate_token_endpoint?: string;
   /**
    * Endpoint for checking if a session is still used somewhere
    */

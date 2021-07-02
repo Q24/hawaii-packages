@@ -2,11 +2,10 @@ import { StorageUtil } from "../utils/storageUtil";
 import { LogUtil } from "../utils/logUtil";
 import {
   CsrfToken,
-  Token,
+  AuthResult,
   TokenValidationOptions,
 } from "../jwt/model/token.model";
 import { ValidSession } from "../models/session.models";
-import { AuthorizeParams } from "../models/url-param.models";
 import { GeneratorUtil } from "../utils/generatorUtil";
 import {
   deleteIdTokenHint,
@@ -14,7 +13,7 @@ import {
   deleteStoredTokens,
   getCsrfToken,
   getIdTokenHint,
-  getStoredToken,
+  getStoredAuthResult,
   storeToken,
   tokenHasRequiredScopes,
 } from "./token.service";
@@ -27,12 +26,19 @@ import {
 } from "../utils/sessionUtil";
 import {
   createURLParameters,
-  getHashFragmentParameters,
+  hashFragmentToAuthResult,
   getURLParameters,
 } from "../utils/urlUtil";
 import { OidcConfigService } from "./config.service";
 import { transformScopesStringToArray } from "../utils/scopeUtil";
-import { validateTokenState } from "../stateValidation";
+import { validateState } from "../stateValidation";
+import { validateIdToken } from "../idTokenValidation";
+import { validateAccessToken } from "../accessTokenValidation";
+import { ImplicitRequestParameters } from "../models/implicit-request-parameters.models";
+import { getOpenIdProviderMetadata } from "../discovery/getOpenIdProviderMetadata";
+import { getJwks } from "../discovery/getJwks";
+import { restoreJsonWebKeySet } from "../discovery/jwks-storage";
+import { restoreOpenIDProviderMetadata } from "../discovery/open-id-provider-metadata-storage";
 
 /**
  * Cleans up the current session: deletes the stored local tokens, state, nonce, id token hint and CSRF token.
@@ -90,29 +96,34 @@ export function isSessionAlive(): Promise<{ status: number }> {
  * token with the backend. If the token is valid, it is saved
  * locally in the token store and returned.
  */
-export async function parseToken(hashToken: Token): Promise<Token> {
-  validateTokenState(hashToken);
+export async function validateAndStoreAuthResult(
+  authResult: AuthResult,
+): Promise<AuthResult> {
+  validateState(authResult.state);
+  validateIdToken(authResult.id_token);
+  validateAccessToken(authResult);
 
-  // State validated, so now let's validate the token with Backend validation endpoint
-  try {
-    const validSession = await validateTokenBackend(hashToken);
-    LogUtil.debug("Token validated by backend", validSession);
+  if (OidcConfigService.config.validate_token_endpoint) {
+    try {
+      const validSession = await validateTokenBackend(authResult);
+      LogUtil.debug("Token validated by backend", validSession);
 
-    // Store the token in the storage
-    storeToken(hashToken);
+      // Store the session ID
+      saveSessionId(validSession.user_session_id);
 
-    // Store the session ID
-    saveSessionId(validSession.user_session_id);
-
-    // We're logged in with token in URL
-    LogUtil.debug("Token from URL validated, you may proceed.");
-    return hashToken;
-  } catch (error) {
-    // Something's wrong with the token according to the backend
-    LogUtil.error("Authorisation Token not valid");
-    LogUtil.debug("Token NOT validated by backend", error);
-    throw Error("token_invalid_backend");
+      // We're logged in with token in URL
+      LogUtil.debug("Token from URL validated, you may proceed.");
+    } catch (error) {
+      // Something's wrong with the token according to the backend
+      LogUtil.error("Authorisation Token not valid");
+      LogUtil.debug("Token NOT validated by backend", error);
+      throw Error("token_invalid_backend");
+    }
   }
+
+  // Store the token in the storage
+  storeToken(authResult);
+  return authResult;
 }
 
 /**
@@ -125,7 +136,7 @@ export async function parseToken(hashToken: Token): Promise<Token> {
  * calls will return the saved Promise.
  */
 const silentRefreshStore: {
-  [iFrameId: string]: Promise<Token>;
+  [iFrameId: string]: Promise<AuthResult>;
 } = {};
 
 /**
@@ -145,7 +156,7 @@ const silentRefreshStore: {
  */
 export function silentRefreshAccessToken(
   tokenValidationOptions?: TokenValidationOptions,
-): Promise<Token> {
+): Promise<AuthResult> {
   const scopes: string[] =
     tokenValidationOptions?.scopes ??
     transformScopesStringToArray(OidcConfigService.config.scope);
@@ -160,7 +171,7 @@ export function silentRefreshAccessToken(
   if (silentRefreshStore[iFrameId]) {
     return silentRefreshStore[iFrameId];
   }
-  const tokenPromise = new Promise<Token>((resolve, reject) => {
+  const tokenPromise = new Promise<AuthResult>((resolve, reject) => {
     const iFrame = document.createElement("iframe");
     iFrame.id = iFrameId;
     iFrame.style.display = "none";
@@ -178,7 +189,7 @@ export function silentRefreshAccessToken(
         authorizeParams,
       );
       iFrame.src = `${
-        OidcConfigService.config.authorize_endpoint
+        OidcConfigService.config.providerMetadata.authorization_endpoint
       }?${createURLParameters(authorizeParams)}`;
     } else {
       LogUtil.debug(
@@ -192,7 +203,7 @@ export function silentRefreshAccessToken(
       LogUtil.debug("silent refresh iFrame loaded", iFrame);
 
       // Get the URL from the iFrame
-      const hashToken = getHashFragmentParameters(
+      const hashToken = hashFragmentToAuthResult(
         iFrame.contentWindow!.location.href.split("#")[1],
       );
 
@@ -207,7 +218,7 @@ export function silentRefreshAccessToken(
           "Access Token found in silent refresh return URL, validating it",
         );
 
-        parseToken(hashToken).then((token) => {
+        validateAndStoreAuthResult(hashToken).then((token) => {
           const hasRequiredScopes = tokenHasRequiredScopes(scopes)(token);
           LogUtil.debug("has required scopes:", hasRequiredScopes);
           const isValidByExtraMeans =
@@ -406,15 +417,14 @@ function destroyIframe(iFrame: HTMLIFrameElement): void {
 function getAuthorizeParams(
   scopes: string[],
   promptNone = false,
-): AuthorizeParams {
+): ImplicitRequestParameters {
   const stateObj = getState() || {
     state: GeneratorUtil.generateState(),
   };
 
-  const urlVars: AuthorizeParams = {
+  const urlVars: ImplicitRequestParameters = {
     nonce: getNonce() || GeneratorUtil.generateNonce(),
     state: stateObj.state,
-    authorization: OidcConfigService.config.authorization,
     client_id: OidcConfigService.config.client_id,
     response_type: OidcConfigService.config.response_type,
     redirect_uri:
@@ -445,7 +455,7 @@ interface ValidateTokenRequest {
 /**
  * Posts the received token to the Backend for decryption and validation
  */
-function validateTokenBackend(hashParams: Token): Promise<ValidSession> {
+function validateTokenBackend(hashParams: AuthResult): Promise<ValidSession> {
   const data: ValidateTokenRequest = {
     nonce: getNonce(),
     id_token: hashParams.id_token,
@@ -484,8 +494,8 @@ function validateTokenBackend(hashParams: Token): Promise<ValidSession> {
  *
  * Uses the token type present in the token.
  */
-export function getAuthHeader(token: Token): string {
-  return `${token.token_type} ${token.access_token}`;
+export function getAuthHeader(authResult: AuthResult): string {
+  return `${authResult.token_type} ${authResult.access_token}`;
 }
 
 /**
@@ -497,20 +507,20 @@ export function getAuthHeader(token: Token): string {
  * If the token does not expire within *x* seconds, the Promise will resolve
  * to `false` instead.
  *
- * @param token the token to check
+ * @param authResult the token to check
  * @param tokenValidationOptions extra validations for the token
  * @returns A promise. May throw and error if the token
  * we got from the refresh is not valid.
  */
 export async function checkIfTokenExpiresAndRefreshWhenNeeded(
-  token: Token,
+  authResult: AuthResult,
   tokenValidationOptions?: TokenValidationOptions & {
     almostExpiredThreshold?: number;
   },
 ): Promise<void> {
   if (
-    token.expires &&
-    token.expires - Math.round(new Date().getTime() / 1000.0) <
+    authResult.expires &&
+    authResult.expires - Math.round(new Date().getTime() / 1000.0) <
       (tokenValidationOptions?.almostExpiredThreshold ?? 300)
   ) {
     const silentRefreshToken = await silentRefreshAccessToken(
@@ -547,7 +557,7 @@ function authorizeRedirect(): void {
       authorizeParams,
     );
     window.location.href = `${
-      OidcConfigService.config.authorize_endpoint
+      OidcConfigService.config.providerMetadata.authorization_endpoint
     }?${createURLParameters(authorizeParams)}`;
   } else {
     // Error in authorize redirect
@@ -563,20 +573,20 @@ function authorizeRedirect(): void {
  * The Authorisation then upgrades the session, and will then redirect back. The next authorizeRedirect() call will
  * then return a valid token, because the session was upgraded.
  */
-function doSessionUpgradeRedirect(token: Token): void {
+function doSessionUpgradeRedirect(authResult: AuthResult): void {
   const urlVars = {
-    session_upgrade_token: token.session_upgrade_token,
+    session_upgrade_token: authResult.session_upgrade_token,
     redirect_uri: `${OidcConfigService.config.redirect_uri}?flush_state=true`,
   };
 
   LogUtil.debug(
     "Session upgrade function triggered with token: ",
-    token.session_upgrade_token,
+    authResult.session_upgrade_token,
   );
 
   // Do the authorize redirect
   const urlParams = createURLParameters(urlVars);
-  window.location.href = `${OidcConfigService.config.authorization}/sso/upgrade-session?${urlParams}`;
+  window.location.href = `${OidcConfigService.config.providerMetadata.issuer}/upgrade-session?${urlParams}`;
 }
 
 /**
@@ -601,12 +611,16 @@ function doSessionUpgradeRedirect(token: Token): void {
  */
 export async function checkSession(
   tokenValidationOptions?: TokenValidationOptions,
-): Promise<Token> {
+): Promise<AuthResult> {
+  restoreJsonWebKeySet();
+  restoreOpenIDProviderMetadata();
+  await getOpenIdProviderMetadata();
+  await getJwks();
   const allowBackgroundRefresh = !!tokenValidationOptions;
   const urlParams = getURLParameters(window.location.href);
 
   // With Clean Hash fragment implemented in Head
-  const hashToken = getHashToken();
+  const hashToken = getHashAuthResult();
 
   LogUtil.debug("Check session with params:", urlParams);
   // Make sure the state is 'clean' when doing a session upgrade
@@ -621,10 +635,10 @@ export async function checkSession(
   }
 
   // 1 --- Let's first check if we still have a valid token stored local, if so use that token
-  const storedToken = getStoredToken(tokenValidationOptions);
-  if (storedToken) {
+  const storedAuthResult = getStoredAuthResult(tokenValidationOptions);
+  if (storedAuthResult) {
     LogUtil.debug("Local token found, you may proceed");
-    return storedToken;
+    return storedAuthResult;
   }
 
   if (allowBackgroundRefresh) {
@@ -661,7 +675,7 @@ export async function checkSession(
       hashToken.id_token,
     );
     // 3 --- There's an access_token in the URL
-    const hashFragmentToken = await parseToken(hashToken);
+    const hashFragmentToken = await validateAndStoreAuthResult(hashToken);
     if (hashFragmentToken) {
       return hashFragmentToken;
     }
@@ -681,7 +695,7 @@ export async function checkSession(
   }
 }
 
-function getHashToken(): Token | null {
+function getHashAuthResult(): AuthResult | null {
   let hashFragment = StorageUtil.read("hash_fragment");
 
   // If we don't have an access token in the browser storage,
@@ -691,15 +705,15 @@ function getHashToken(): Token | null {
     clearHashFragmentFromUrl();
   }
 
-  const hashToken = hashFragment
-    ? getHashFragmentParameters(hashFragment)
+  const authResult = hashFragment
+    ? hashFragmentToAuthResult(hashFragment)
     : null;
 
   // Clean the hash fragment from storage
-  if (hashToken) {
+  if (authResult) {
     StorageUtil.remove("hash_fragment");
   }
-  return hashToken;
+  return authResult;
 }
 
 /**
