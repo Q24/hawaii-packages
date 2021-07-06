@@ -10,6 +10,7 @@ This library implements the [OIDC implicit flow](https://openid.net/specs/openid
 - Add support for [all request parameters](https://openid.net/specs/openid-connect-implicit-1_0.html#RequestParameters).
 - Add support for [Code Flow](https://openid.net/specs/openid-connect-basic-1_0.html#CodeFlow).
 - Add support for [Code Flow with PKCE](https://developers.onelogin.com/openid-connect/guides/auth-flow-pkce).
+- Move to native Web Crypto API when IE11 support is not needed anymore.
 
 ## API Reference
 
