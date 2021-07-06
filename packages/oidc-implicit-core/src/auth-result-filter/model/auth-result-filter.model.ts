@@ -1,4 +1,4 @@
-import { AuthResult } from "../../jwt/model/jwt.model";
+import { AuthResult } from "../../jwt/model/auth-result.model";
 
 export interface AuthResultFilter {
   (authResult: Readonly<AuthResult>): boolean;

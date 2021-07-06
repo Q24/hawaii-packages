@@ -21,6 +21,7 @@ describe("validate JWT string", () => {
   });
   it("throws on an invalid JWT token (not a string)", () => {
     expect(() => {
+      // @ts-ignore
       validateJwtString(null);
     }).toThrow();
   });

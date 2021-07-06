@@ -1,33 +1,47 @@
 [@hawaii-framework/oidc-implicit-core](../README.md) / [Exports](../modules.md) / JWT
 
-# Interface: JWT
+# Interface: JWT<T\>
 
-A JSON Web Token, unpacked. Is used for describing the contents
-of an access token.
+## Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | `AccessTokenPayload` |
 
 ## Table of contents
 
 ### Properties
 
-- [exp](jwt.md#exp)
-- [scope](jwt.md#scope)
+- [header](jwt.md#header)
+- [payload](jwt.md#payload)
+- [verifySignature](jwt.md#verifysignature)
 
 ## Properties
 
-### exp
+### header
 
-• **exp**: *number*
+• **header**: `JWTHeader`
 
-The expiration date of the token.
+#### Defined in
 
-Defined in: [models/token.models.ts:65](https://github.com/Q24/hawaii-packages/blob/00a5256/packages/oidc-implicit-core/src/models/token.models.ts#L65)
+[jwt/model/jwt.model.ts:4](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/jwt/model/jwt.model.ts#L4)
 
 ___
 
-### scope
+### payload
 
-• **scope**: *string*[]
+• **payload**: `T`
 
-The scopes the token has.
+#### Defined in
 
-Defined in: [models/token.models.ts:61](https://github.com/Q24/hawaii-packages/blob/00a5256/packages/oidc-implicit-core/src/models/token.models.ts#L61)
+[jwt/model/jwt.model.ts:5](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/jwt/model/jwt.model.ts#L5)
+
+___
+
+### verifySignature
+
+• **verifySignature**: `string`
+
+#### Defined in
+
+[jwt/model/jwt.model.ts:6](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/jwt/model/jwt.model.ts#L6)
