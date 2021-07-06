@@ -1,5 +1,5 @@
-import { LogUtil } from "./utils/logUtil";
-import { getState } from "./utils/stateUtil";
+import { LogUtil } from "../utils/logUtil";
+import { getState } from "../utils/stateUtil";
 
 /**
  * checks if the state is valid. If not throws.
@@ -12,14 +12,14 @@ export function validateState(state: string): void {
   const storedState = getState();
 
   // We received a token from SSO, so we need to validate the state
-  if (!storedState || state !== storedState.state) {
+  if (!storedState || state !== storedState) {
     LogUtil.error("Authorisation Token not valid");
     LogUtil.debug("State NOT valid");
     throw Error("state_invalid");
   }
 
   LogUtil.debug(
-    "State from URL validated against state in session storage state object",
+    "State from URL validated against state in session storage state",
     storedState,
   );
 }

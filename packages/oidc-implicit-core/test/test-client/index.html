@@ -12,6 +12,22 @@
     <title>Document</title>
   </head>
   <body>
+    <button id="clearSession">clearSession</button>
+    <button onclick="window.location.href = ''">refresh</button>
     <button id="checkSession">checkSession</button>
+    <div>
+      <label for="scope">scope</label>
+      <input id="scope" value="openid" />
+      <label for="response_type"></label>
+      <input id="response_type" value="id_token" />
+    </div>
+    <div>
+      <button id="getUserInfo">get user info</button>
+    </div>
   </body>
+  <script>
+    document.getElementById("clearSession").onclick = () => {
+      window.sessionStorage.clear();
+    };
+  </script>
 </html>

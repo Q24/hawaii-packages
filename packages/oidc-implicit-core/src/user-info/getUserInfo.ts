@@ -1,9 +1,11 @@
+import { assertProviderMetadata } from "../discovery/assert-provider-metadata";
 import { parseIdToken } from "../jwt/parseJwt";
-import { OidcConfigService } from "../services/config.service";
-import { getStoredAuthResult } from "../services/token.service";
+import { OidcConfigService } from "../configuration/config.service";
 import { LogUtil } from "../utils/logUtil";
 import { getStoredUserInfo, setStoredUserInfo } from "./user-info-storage";
 import { UserInfo } from "./UserInfo.model";
+import { getAuthHeader } from "../authentication/utils/auth-header";
+import { getStoredAuthResult } from "../authentication/utils/auth-result";
 
 /**
  * Due to the possibility of token substitution attacks, the UserInfo Response
@@ -14,6 +16,9 @@ import { UserInfo } from "./UserInfo.model";
  */
 function verifyUserInfoResponse(userInfo: UserInfo) {
   const authResult = getStoredAuthResult();
+  if (!authResult) {
+    throw new Error("could not get auth result from local storage");
+  }
   const { payload } = parseIdToken(authResult.id_token);
 
   return payload.sub === userInfo.sub;
@@ -58,15 +63,26 @@ function verifyUserInfoResponse(userInfo: UserInfo) {
  * Response as defined in Section 3 of OAuth 2.0 Bearer Token Usage [RFC6750].
  */
 function fetchUserInfo(): Promise<UserInfo> {
+  assertProviderMetadata(OidcConfigService.config.providerMetadata);
   const userinfoEndpoint =
     OidcConfigService.config.providerMetadata.userinfo_endpoint;
+  if (!userinfoEndpoint) {
+    LogUtil.error(
+      "Server does not implement user info endpoint, or userinfo endpoint is not set.",
+    );
+    throw new Error("User info endpoint not set");
+  }
 
   return new Promise<UserInfo>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
+    const authResult = getStoredAuthResult();
+    if (!authResult) {
+      throw new Error("could not get auth result from local storage");
+    }
+    const authorization = getAuthHeader(authResult);
 
     xhr.open("GET", userinfoEndpoint, true);
-
-    xhr.withCredentials = true;
+    xhr.setRequestHeader("Authorization", authorization);
 
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {

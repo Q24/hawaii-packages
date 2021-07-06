@@ -1,13 +1,16 @@
-import type { JsonWebKeySet } from "../jwt/model/jwk.model";
-import { OidcConfigService } from "../services/config.service";
+import type { JsonWebKeySet } from "./model/jwks.model";
+import { OidcConfigService } from "../configuration/config.service";
 import { LogUtil } from "../utils/logUtil";
-import { getOpenIdProviderMetadata } from "./getOpenIdProviderMetadata";
+import { assertProviderMetadata } from "./assert-provider-metadata";
+import { getOpenIdProviderMetadata } from "./get-openid-provider-metadata";
 import { getStoredJsonWebKeySet, setStoredJsonWebKeySet } from "./jwks-storage";
 
 function fetchJwks(): Promise<JsonWebKeySet> {
   return new Promise<JsonWebKeySet>((resolve, reject) => {
     LogUtil.debug("getting jwks");
     const xhr = new XMLHttpRequest();
+
+    assertProviderMetadata(OidcConfigService.config.providerMetadata);
 
     xhr.open("GET", OidcConfigService.config.providerMetadata.jwks_uri, true);
 

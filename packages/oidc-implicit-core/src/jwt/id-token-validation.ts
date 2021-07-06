@@ -1,12 +1,13 @@
-import { IdTokenPayload } from "./models/IdToken.models";
-import { OidcConfigService } from "./services/config.service";
-import { GeneratorUtil } from "./utils/generatorUtil";
-import { parseJwt } from "./jwt/parseJwt";
-import { getNonce } from "./utils/nonceUtil";
+import { IdTokenPayload } from "../jwt/model/id-token.model";
+import { OidcConfigService } from "../configuration/config.service";
+import { GeneratorUtil } from "../utils/generatorUtil";
+import { parseJwt } from "../jwt/parseJwt";
+import { getNonce } from "../utils/nonceUtil";
 import { KEYUTIL, KJUR } from "jsrsasign-reduced";
-import { LogUtil } from "./utils/logUtil";
-import { validateJwtString } from "./jwt/validateJwtString";
-import type { JWTHeader } from "./jwt/model/jwt-header.model";
+import { LogUtil } from "../utils/logUtil";
+import { validateJwtString } from "../jwt/validateJwtString";
+import { assertProviderMetadata } from "../discovery/assert-provider-metadata";
+import { JWTHeader } from "./model/jwt.model";
 
 const supportedKeyAlgs = [
   "HS256",
@@ -24,7 +25,8 @@ const supportedKeyAlgs = [
 
 function validSignature(idTokenString: string, headerData: JWTHeader): boolean {
   const jwks = OidcConfigService.config.jwks;
-  if (!jwks.keys) {
+  if (!jwks || !jwks.keys) {
+    LogUtil.error("JWKs not defined");
     return false;
   }
 
@@ -109,7 +111,9 @@ function hasOnlyTrustedAudiences(idToken: IdTokenPayload) {
     if (idToken.aud === OidcConfigService.config.client_id) {
       return true;
     }
-    return OidcConfigService.config.trusted_audiences.includes(audience);
+    return (OidcConfigService.config.trusted_audiences || []).includes(
+      audience,
+    );
   });
 }
 
@@ -131,7 +135,7 @@ function tokenIsExpired(idToken: IdTokenPayload) {
 
 function iatOffsetTooBig(idToken: IdTokenPayload) {
   const offset = Math.abs(GeneratorUtil.epoch() - idToken.iat);
-  return offset > (OidcConfigService.config.issued_at_threshold || 30);
+  return offset > (OidcConfigService.config.issuedAtMaxOffset || 30);
 }
 
 function nonceIsValid(idToken: IdTokenPayload) {
@@ -147,6 +151,7 @@ function nonceIsValid(idToken: IdTokenPayload) {
  */
 export function validateIdToken(idTokenString: string): void {
   LogUtil.debug("Validating ID Token");
+  assertProviderMetadata(OidcConfigService.config.providerMetadata);
 
   validateJwtString(idTokenString);
   const { header, payload: idTokenPayload } = parseJwt<IdTokenPayload>(

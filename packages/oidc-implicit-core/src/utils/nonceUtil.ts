@@ -1,4 +1,4 @@
-import { OidcConfigService } from "../services/config.service";
+import { OidcConfigService } from "../configuration/config.service";
 import { StorageUtil } from "./storageUtil";
 
 /**

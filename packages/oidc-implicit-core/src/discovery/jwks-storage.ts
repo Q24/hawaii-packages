@@ -1,11 +1,14 @@
-import type { JsonWebKeySet } from "../jwt/model/jwk.model";
-import { OidcConfigService } from "../services/config.service";
+import type { JsonWebKeySet } from "./model/jwks.model";
+import { OidcConfigService } from "../configuration/config.service";
 import { StorageUtil } from "../utils/storageUtil";
 
 const jsonWebKeySetStorageKey = "JsonWebKeySet";
 
-export const getStoredJsonWebKeySet = (): JsonWebKeySet => {
+export const getStoredJsonWebKeySet = (): JsonWebKeySet | null => {
   const jsonWebKeySetString = StorageUtil.read(jsonWebKeySetStorageKey);
+  if (!jsonWebKeySetString) {
+    return null;
+  }
   return JSON.parse(jsonWebKeySetString);
 };
 export const setStoredJsonWebKeySet = (jsonWebKeySet: JsonWebKeySet): void =>
@@ -17,5 +20,7 @@ export const deleteStoredJsonWebKeySet = (): void => {
 
 export const restoreJsonWebKeySet = () => {
   const stored = getStoredJsonWebKeySet();
-  OidcConfigService.config.jwks = stored;
+  if (stored) {
+    OidcConfigService.config.jwks = stored;
+  }
 };

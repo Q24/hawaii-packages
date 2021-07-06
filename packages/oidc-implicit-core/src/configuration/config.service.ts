@@ -1,6 +1,6 @@
-import { OidcConfig } from "../models/config.models";
+import { OidcConfig } from "./model/config.model";
 
-let oidcConfig: OidcConfig | undefined;
+let oidcConfig: OidcConfig;
 
 /**
  * A service containing the config

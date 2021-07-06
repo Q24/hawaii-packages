@@ -1,3 +1,11 @@
+import { AccessTokenPayload } from "./access-token.model";
+
+export interface JWT<T = AccessTokenPayload> {
+  header: JWTHeader;
+  payload: T;
+  verifySignature: string;
+}
+
 /**
  * See https://datatracker.ietf.org/doc/html/rfc7515
  */

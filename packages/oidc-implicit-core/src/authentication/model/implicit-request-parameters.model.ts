@@ -1,4 +1,4 @@
-import type { RegistrationClientMetadata } from "./registration-client-metadata.models";
+import type { RegistrationClientMetadata } from "./registration-client-metadata.model";
 
 export interface ImplicitRequestParameters {
   /**

@@ -1,5 +1,7 @@
-import { IdTokenPayload } from "../models/IdToken.models";
-import type { JWT, AccessTokenPayload } from "./model/token.model";
+import { IdTokenPayload } from "./model/id-token.model";
+import { LogUtil } from "../utils/logUtil";
+import type { JWT } from "./model/jwt.model";
+import type { AccessTokenPayload } from "./model/access-token.model";
 
 function decodeJwtPart(jwtPart: string) {
   const base64 = jwtPart.replace(/-/g, "+").replace(/_/g, "/");
@@ -24,6 +26,10 @@ function decodeJwtPart(jwtPart: string) {
  */
 export function parseJwt<T = AccessTokenPayload>(token: string): JWT<T> {
   const parts = token.split(".");
+  if (parts.length < 3) {
+    LogUtil.error("token is not a jwt token", token);
+    throw new Error("token is not a JWT token");
+  }
 
   const header = parts[0];
   const payload = parts[1];

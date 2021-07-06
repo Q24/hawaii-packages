@@ -3,8 +3,8 @@
  * that OP is retrieved from a well-known location as a JSON document, including
  * its OAuth 2.0 endpoint locations.
  */
-import type { OpenIDProviderMetadata } from "../models/open-id-provider-metadata.models";
-import { OidcConfigService } from "../services/config.service";
+import type { OpenIDProviderMetadata } from "./model/openid-provider-metadata.model";
+import { OidcConfigService } from "../configuration/config.service";
 import { LogUtil } from "../utils/logUtil";
 import {
   getStoredOpenIDProviderMetadata,

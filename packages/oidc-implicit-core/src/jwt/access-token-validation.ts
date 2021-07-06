@@ -1,7 +1,7 @@
-import { LogUtil } from "./utils/logUtil";
+import { LogUtil } from "../utils/logUtil";
 import { hextob64u, KJUR } from "jsrsasign-reduced";
-import { AuthResult } from "./jwt/model/token.model";
-import { parseIdToken } from "./jwt/parseJwt";
+import { parseIdToken } from "./parseJwt";
+import type { AuthResult } from "./model/auth-result.model";
 
 function generateAtHash(accessToken: string, sha: string): string {
   const hash = KJUR.crypto.Util.hashString(accessToken, sha);

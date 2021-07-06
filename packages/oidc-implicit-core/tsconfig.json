@@ -10,6 +10,6 @@
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "ESNext",
-    "strict": false
+    "strict": true
   },
 }

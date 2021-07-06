@@ -1,13 +1,16 @@
-import { OpenIDProviderMetadata } from "../models/open-id-provider-metadata.models";
-import { OidcConfigService } from "../services/config.service";
+import { OpenIDProviderMetadata } from "./model/openid-provider-metadata.model";
+import { OidcConfigService } from "../configuration/config.service";
 import { StorageUtil } from "../utils/storageUtil";
 
 const openIDProviderMetadataStorageKey = "OpenIDProviderMetadata";
 
-export const getStoredOpenIDProviderMetadata = (): OpenIDProviderMetadata => {
+export const getStoredOpenIDProviderMetadata = (): OpenIDProviderMetadata | null => {
   const openIDProviderMetadataString = StorageUtil.read(
     openIDProviderMetadataStorageKey,
   );
+  if (!openIDProviderMetadataString) {
+    return null;
+  }
   return JSON.parse(openIDProviderMetadataString);
 };
 export const setStoredOpenIDProviderMetadata = (
@@ -24,5 +27,7 @@ export const deleteStoredOpenIDProviderMetadata = (): void => {
 
 export const restoreOpenIDProviderMetadata = () => {
   const stored = getStoredOpenIDProviderMetadata();
-  OidcConfigService.config.providerMetadata = stored;
+  if (stored) {
+    OidcConfigService.config.providerMetadata = stored;
+  }
 };

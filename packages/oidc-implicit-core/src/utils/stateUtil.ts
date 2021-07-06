@@ -1,33 +1,28 @@
 import { StorageUtil } from "./storageUtil";
 import { LogUtil } from "./logUtil";
-import { State } from "../models/session.models";
-import { OidcConfigService } from "../services/config.service";
+import { OidcConfigService } from "../configuration/config.service";
 
 /**
  * Get the saved state string from sessionStorage
  */
-export function getState(): State | null {
-  const stateString = StorageUtil.read(
+export function getState(): string | null {
+  const state = StorageUtil.read(
     `${OidcConfigService.config.client_id}-state`,
   );
-  if (!stateString) {
-    LogUtil.debug("state was not found in storage", stateString);
+  if (!state) {
+    LogUtil.debug("state was not found in storage", state);
     return null;
   }
-  const storedState = JSON.parse(stateString);
-  LogUtil.debug("Got state from storage", storedState);
-  return storedState;
+  LogUtil.debug("Got state from storage", state);
+  return state;
 }
 
 /**
  * Saves the state string to sessionStorage
  */
-export function saveState(state: State): void {
+export function saveState(state: string): void {
   LogUtil.debug("State saved");
-  StorageUtil.store(
-    `${OidcConfigService.config.client_id}-state`,
-    JSON.stringify(state),
-  );
+  StorageUtil.store(`${OidcConfigService.config.client_id}-state`, state);
 }
 
 /**

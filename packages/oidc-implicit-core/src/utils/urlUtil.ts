@@ -1,4 +1,4 @@
-import { AuthResult } from "../jwt/model/token.model";
+import { AuthResult } from "../jwt/model/auth-result.model";
 import { URLParams } from "../models/url-param.models";
 
 /**
@@ -58,6 +58,16 @@ export function createURLParameters(urlVars: {
   return params.join("&");
 }
 
+function isAuthResult(
+  potentialAuthResult: Partial<AuthResult>,
+): potentialAuthResult is AuthResult {
+  if (!potentialAuthResult.id_token || !potentialAuthResult.state) {
+    return false;
+  }
+
+  return true;
+}
+
 /**
  *
  * Get Hash Fragment parameters from sessionStorage
@@ -65,7 +75,7 @@ export function createURLParameters(urlVars: {
  * @returns {AuthResult}
  */
 export function hashFragmentToAuthResult(hash_fragment: string): AuthResult {
-  const result = {};
+  const result: Partial<AuthResult> = {};
   let urlVariablesToParse;
 
   if (hash_fragment) {
@@ -75,6 +85,10 @@ export function hashFragmentToAuthResult(hash_fragment: string): AuthResult {
       const parameter = urlVar.split("=");
       result[parameter[0]] = parameter[1];
     }
+  }
+
+  if (!isAuthResult(result)) {
+    throw new Error("Hash fragment is no auth result");
   }
 
   return result;

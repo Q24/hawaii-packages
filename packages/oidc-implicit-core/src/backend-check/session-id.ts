@@ -1,5 +1,5 @@
-import { OidcConfigService } from "../services/config.service";
-import { StorageUtil } from "./storageUtil";
+import { OidcConfigService } from "../configuration/config.service";
+import { StorageUtil } from "../utils/storageUtil";
 
 /**
  * Get the saved session ID string from storage

@@ -1,7 +1,7 @@
 /**
  * Providers have metadata describing their configuration. These OpenID Provider
  * Metadata values are used by OpenID Connect
- * 
+ *
  * See https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
  */
 export interface OpenIDProviderMetadata {
@@ -186,7 +186,7 @@ export interface OpenIDProviderMetadata {
    * OpenID Provider supports. These values are described in Section 3.1.2.1 of
    * OpenID Connect Core 1.0 [OpenID.Core].
    */
-  display_values_supported?: string;[]
+  display_values_supported?: string[];
 
   /**
    * JSON array containing a list of the Claim Types that the OpenID Provider
