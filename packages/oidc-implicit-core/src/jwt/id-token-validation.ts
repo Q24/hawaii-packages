@@ -1,5 +1,4 @@
 import { IdTokenPayload } from "../jwt/model/id-token.model";
-import { OidcConfigService } from "../configuration/config.service";
 import { GeneratorUtil } from "../utils/generatorUtil";
 import { parseJwt } from "../jwt/parseJwt";
 import { getNonce } from "../utils/nonceUtil";
@@ -8,6 +7,8 @@ import { LogUtil } from "../utils/logUtil";
 import { validateJwtString } from "../jwt/validateJwtString";
 import { assertProviderMetadata } from "../discovery/assert-provider-metadata";
 import { JWTHeader } from "./model/jwt.model";
+import { state } from "../state/state";
+import { config } from "../configuration/config.service";
 
 const supportedKeyAlgs = [
   "HS256",
@@ -24,7 +25,7 @@ const supportedKeyAlgs = [
 ];
 
 function validSignature(idTokenString: string, headerData: JWTHeader): boolean {
-  const jwks = OidcConfigService.config.jwks;
+  const jwks = state.jwks;
   if (!jwks || !jwks.keys) {
     LogUtil.error("JWKs not defined");
     return false;
@@ -100,20 +101,18 @@ function validSignature(idTokenString: string, headerData: JWTHeader): boolean {
 }
 
 function hasClientIdAudience(idToken: IdTokenPayload) {
-  return idToken.aud.includes(OidcConfigService.config.client_id);
+  return idToken.aud.includes(config.client_id);
 }
 
 function hasOnlyTrustedAudiences(idToken: IdTokenPayload) {
   if (typeof idToken.aud === "string") {
-    return idToken.aud === OidcConfigService.config.client_id;
+    return idToken.aud === config.client_id;
   }
   return idToken.aud.every((audience) => {
-    if (idToken.aud === OidcConfigService.config.client_id) {
+    if (idToken.aud === config.client_id) {
       return true;
     }
-    return (OidcConfigService.config.trusted_audiences || []).includes(
-      audience,
-    );
+    return (config.trusted_audiences || []).includes(audience);
   });
 }
 
@@ -126,7 +125,7 @@ function hasAzpClaim(idToken: IdTokenPayload) {
 }
 
 function azpClaimValid(idToken: IdTokenPayload) {
-  return idToken.azp === OidcConfigService.config.client_id;
+  return idToken.azp === config.client_id;
 }
 
 function tokenIsExpired(idToken: IdTokenPayload) {
@@ -135,7 +134,7 @@ function tokenIsExpired(idToken: IdTokenPayload) {
 
 function iatOffsetTooBig(idToken: IdTokenPayload) {
   const offset = Math.abs(GeneratorUtil.epoch() - idToken.iat);
-  return offset > (OidcConfigService.config.issuedAtMaxOffset || 30);
+  return offset > (config.issuedAtMaxOffset || 30);
 }
 
 function nonceIsValid(idToken: IdTokenPayload) {
@@ -151,7 +150,7 @@ function nonceIsValid(idToken: IdTokenPayload) {
  */
 export function validateIdToken(idTokenString: string): void {
   LogUtil.debug("Validating ID Token");
-  assertProviderMetadata(OidcConfigService.config.providerMetadata);
+  assertProviderMetadata(state.providerMetadata);
 
   validateJwtString(idTokenString);
   const { header, payload: idTokenPayload } = parseJwt<IdTokenPayload>(
@@ -171,7 +170,7 @@ export function validateIdToken(idTokenString: string): void {
 
   // The Issuer Identifier for the OpenID Provider (which is typically obtained
   // during Discovery) MUST exactly match the value of the iss (issuer) Claim.
-  if (idTokenPayload.iss !== OidcConfigService.config.providerMetadata.issuer) {
+  if (idTokenPayload.iss !== state.providerMetadata.issuer) {
     LogUtil.error("Issuer of ID token not the same as configured issuer");
 
     throw Error("id_token_invalid__issuer_mismatch");

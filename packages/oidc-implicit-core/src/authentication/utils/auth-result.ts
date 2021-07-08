@@ -1,7 +1,7 @@
 import { getAllAuthResultFilters } from "../../auth-result-filter/all-filters";
 import { filterAuthResults } from "../../auth-result-filter/filter-auth-results";
 import { AuthResultFilter } from "../../auth-result-filter/model/auth-result-filter.model";
-import { OidcConfigService } from "../../configuration/config.service";
+import { config } from "../../configuration/config.service";
 import { AuthResult } from "../../jwt/model/auth-result.model";
 import { epochSeconds } from "../../utils/epoch-seconds";
 import { LogUtil } from "../../utils/logUtil";
@@ -35,7 +35,7 @@ function deleteAuthResultsFiltered(authResultFilter: AuthResultFilter): void {
 }
 
 function createAuthResultKey() {
-  return `${OidcConfigService.config.client_id}-authResult`;
+  return `${config.client_id}-authResult`;
 }
 
 /**

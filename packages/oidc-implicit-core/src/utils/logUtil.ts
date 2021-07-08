@@ -1,4 +1,4 @@
-import { OidcConfigService } from "../configuration/config.service";
+import { config } from "../configuration/config.service";
 
 export class LogUtil {
   static debug(msg: string, ...supportingDetails: any[]): void {
@@ -23,7 +23,7 @@ export class LogUtil {
     ...supportingDetails: any[]
   ) {
     if (logType === "log") {
-      if (OidcConfigService.config.debug) {
+      if (config.debug) {
         console[logType](msg, ...supportingDetails);
       }
     } else {

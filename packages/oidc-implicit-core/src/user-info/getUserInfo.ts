@@ -1,11 +1,11 @@
 import { assertProviderMetadata } from "../discovery/assert-provider-metadata";
 import { parseIdToken } from "../jwt/parseJwt";
-import { OidcConfigService } from "../configuration/config.service";
 import { LogUtil } from "../utils/logUtil";
 import { getStoredUserInfo, setStoredUserInfo } from "./user-info-storage";
 import { UserInfo } from "./UserInfo.model";
 import { getAuthHeader } from "../authentication/utils/auth-header";
 import { getStoredAuthResult } from "../authentication/utils/auth-result";
+import { state } from "../state/state";
 
 /**
  * Due to the possibility of token substitution attacks, the UserInfo Response
@@ -63,9 +63,8 @@ function verifyUserInfoResponse(userInfo: UserInfo) {
  * Response as defined in Section 3 of OAuth 2.0 Bearer Token Usage [RFC6750].
  */
 function fetchUserInfo(): Promise<UserInfo> {
-  assertProviderMetadata(OidcConfigService.config.providerMetadata);
-  const userinfoEndpoint =
-    OidcConfigService.config.providerMetadata.userinfo_endpoint;
+  assertProviderMetadata(state.providerMetadata);
+  const userinfoEndpoint = state.providerMetadata.userinfo_endpoint;
   if (!userinfoEndpoint) {
     LogUtil.error(
       "Server does not implement user info endpoint, or userinfo endpoint is not set.",
@@ -83,6 +82,7 @@ function fetchUserInfo(): Promise<UserInfo> {
 
     xhr.open("GET", userinfoEndpoint, true);
     xhr.setRequestHeader("Authorization", authorization);
+    xhr.withCredentials = true;
 
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {

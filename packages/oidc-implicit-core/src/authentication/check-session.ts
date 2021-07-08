@@ -1,9 +1,10 @@
-import { AuthResultFilter } from "../auth-result-filter/model/auth-result-filter.model";
-import { OidcConfigService } from "../configuration/config.service";
+import { config } from "../configuration/config.service";
 import { getCsrfResult } from "../csrf/csrf";
 import { assertProviderMetadata } from "../discovery/assert-provider-metadata";
+import { discovery } from "../discovery/discovery";
 import { AuthResult } from "../jwt/model/auth-result.model";
 import { AuthValidationOptions } from "../jwt/model/auth-validation-options.model";
+import { state } from "../state/state";
 import { cleanSessionStorage } from "../utils/clean-storage";
 import { LogUtil } from "../utils/logUtil";
 import { transformScopesStringToArray } from "../utils/scopeUtil";
@@ -41,6 +42,7 @@ import { validateAndStoreAuthResult } from "./utils/validate-store-auth-result";
 export async function checkSession(
   authValidationOptions?: AuthValidationOptions,
 ): Promise<AuthResult> {
+  await discovery();
   const allowBackgroundRefresh = !!authValidationOptions?.extraAuthFilters;
   const urlParams = getURLParameters(window.location.href);
 
@@ -54,13 +56,13 @@ export async function checkSession(
     LogUtil.debug("Flush state present, so cleaning the storage");
 
     // Remove flush_state param from query params, so we only do it once
-    OidcConfigService.config.redirect_uri = OidcConfigService.config.redirect_uri.split(
-      "?",
-    )[0];
+    config.redirect_uri = config.redirect_uri.split("?")[0];
   }
 
   // 1 --- Let's first check if we still have a valid token stored local, if so use that token
-  const storedAuthResult = getStoredAuthResult(authValidationOptions?.extraAuthFilters);
+  const storedAuthResult = getStoredAuthResult(
+    authValidationOptions?.extraAuthFilters,
+  );
   if (storedAuthResult) {
     LogUtil.debug("Local token found, you may proceed");
     return storedAuthResult;
@@ -79,7 +81,7 @@ export async function checkSession(
 
   // No valid token found in storage, so we need to get a new one.
   // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
-  if (OidcConfigService.config.csrf_token_endpoint) {
+  if (config.csrf_token_endpoint) {
     const csrfToken = await getCsrfResult();
     // Store the CSRF Token for future calls that need it. I.e. Logout
     StorageUtil.store("_csrf", csrfToken.csrf_token);
@@ -128,7 +130,7 @@ export async function checkSession(
 function doSessionUpgradeRedirect(authResult: AuthResult): void {
   const urlVars = {
     session_upgrade_token: authResult.session_upgrade_token,
-    redirect_uri: `${OidcConfigService.config.redirect_uri}?flush_state=true`,
+    redirect_uri: `${config.redirect_uri}?flush_state=true`,
   };
 
   LogUtil.debug(
@@ -138,8 +140,8 @@ function doSessionUpgradeRedirect(authResult: AuthResult): void {
 
   // Do the authorize redirect
   const urlParams = createURLParameters(urlVars);
-  assertProviderMetadata(OidcConfigService.config.providerMetadata);
-  window.location.href = `${OidcConfigService.config.providerMetadata.issuer}/upgrade-session?${urlParams}`;
+  assertProviderMetadata(state.providerMetadata);
+  window.location.href = `${state.providerMetadata.issuer}/upgrade-session?${urlParams}`;
 }
 
 function getHashAuthResult(): AuthResult | null {
@@ -185,7 +187,7 @@ function authorizeRedirect(): void {
   // Clean up Storage before we begin
   cleanSessionStorage();
 
-  const scopes = transformScopesStringToArray(OidcConfigService.config.scope);
+  const scopes = transformScopesStringToArray(config.scope);
   const authorizeParams = getAuthorizeParams(scopes);
   const urlParams = getURLParameters();
 
@@ -196,9 +198,9 @@ function authorizeRedirect(): void {
       "Do authorisation redirect to SSO with options:",
       authorizeParams,
     );
-    assertProviderMetadata(OidcConfigService.config.providerMetadata);
+    assertProviderMetadata(state.providerMetadata);
     window.location.href = `${
-      OidcConfigService.config.providerMetadata.authorization_endpoint
+      state.providerMetadata.authorization_endpoint
     }?${createURLParameters(authorizeParams)}`;
   } else {
     // Error in authorize redirect

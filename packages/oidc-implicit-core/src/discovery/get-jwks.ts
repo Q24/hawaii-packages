@@ -1,18 +1,18 @@
 import type { JsonWebKeySet } from "./model/jwks.model";
-import { OidcConfigService } from "../configuration/config.service";
 import { LogUtil } from "../utils/logUtil";
 import { assertProviderMetadata } from "./assert-provider-metadata";
 import { getOpenIdProviderMetadata } from "./get-openid-provider-metadata";
 import { getStoredJsonWebKeySet, setStoredJsonWebKeySet } from "./jwks-storage";
+import { state } from "../state/state";
 
 function fetchJwks(): Promise<JsonWebKeySet> {
   return new Promise<JsonWebKeySet>((resolve, reject) => {
     LogUtil.debug("getting jwks");
     const xhr = new XMLHttpRequest();
 
-    assertProviderMetadata(OidcConfigService.config.providerMetadata);
+    assertProviderMetadata(state.providerMetadata);
 
-    xhr.open("GET", OidcConfigService.config.providerMetadata.jwks_uri, true);
+    xhr.open("GET", state.providerMetadata.jwks_uri, true);
 
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
@@ -46,7 +46,7 @@ export async function getRemoteJwks(): Promise<JsonWebKeySet> {
   }
   const jwks = await fetchJwks();
   setStoredJsonWebKeySet(jwks);
-  OidcConfigService.config.jwks = jwks;
+  state.jwks = jwks;
 
   return jwks;
 }

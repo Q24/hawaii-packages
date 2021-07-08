@@ -1,9 +1,9 @@
-import { OidcConfigService } from "../../configuration/config.service";
 import { ImplicitRequestParameters } from "../model/implicit-request-parameters.model";
 import { GeneratorUtil } from "../../utils/generatorUtil";
 import { LogUtil } from "../../utils/logUtil";
 import { getNonce, saveNonce } from "../../utils/nonceUtil";
 import { getState, saveState } from "../../utils/stateUtil";
+import { config } from "../../configuration/config.service";
 
 /**
  * Gather the URL params for Authorize redirect method
@@ -22,12 +22,12 @@ export function getAuthorizeParams(
   const urlVars: ImplicitRequestParameters = {
     nonce: getNonce() || GeneratorUtil.generateNonce(),
     state: storedState,
-    client_id: OidcConfigService.config.client_id,
-    response_type: OidcConfigService.config.response_type,
+    client_id: config.client_id,
+    response_type: config.response_type,
     redirect_uri:
-      promptNone && OidcConfigService.config.silent_refresh_uri
-        ? OidcConfigService.config.silent_refresh_uri
-        : OidcConfigService.config.redirect_uri,
+      promptNone && config.silent_refresh_uri
+        ? config.silent_refresh_uri
+        : config.redirect_uri,
     scope: scopes.join(" "),
   };
 

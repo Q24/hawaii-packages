@@ -1,9 +1,9 @@
 import { getAllAuthResultFilters } from "../auth-result-filter/all-filters";
-import { AuthResultFilter } from "../auth-result-filter/model/auth-result-filter.model";
-import { OidcConfigService } from "../configuration/config.service";
+import { config } from "../configuration/config.service";
 import { assertProviderMetadata } from "../discovery/assert-provider-metadata";
 import { AuthResult } from "../jwt/model/auth-result.model";
 import { AuthValidationOptions } from "../jwt/model/auth-validation-options.model";
+import { state } from "../state/state";
 import { LogUtil } from "../utils/logUtil";
 import { transformScopesStringToArray } from "../utils/scopeUtil";
 import { StorageUtil } from "../utils/storageUtil";
@@ -49,7 +49,7 @@ export function silentRefresh(
 ): Promise<AuthResult> {
   const scopes: string[] =
     authValidationOptions?.scopes ??
-    transformScopesStringToArray(OidcConfigService.config.scope);
+    transformScopesStringToArray(config.scope);
   LogUtil.debug("Silent refresh started");
 
   const iFrameId = `silentRefreshAccessTokenIframe-${scopes
@@ -62,7 +62,7 @@ export function silentRefresh(
     return silentRefreshStore[iFrameId];
   }
   const tokenPromise = new Promise<AuthResult>((resolve, reject) => {
-    assertProviderMetadata(OidcConfigService.config.providerMetadata);
+    assertProviderMetadata(state.providerMetadata);
     const iFrame = document.createElement("iframe");
     iFrame.id = iFrameId;
     iFrame.style.display = "none";
@@ -80,7 +80,7 @@ export function silentRefresh(
         authorizeParams,
       );
       iFrame.src = `${
-        OidcConfigService.config.providerMetadata.authorization_endpoint
+        state.providerMetadata.authorization_endpoint
       }?${createURLParameters(authorizeParams)}`;
     } else {
       LogUtil.debug(

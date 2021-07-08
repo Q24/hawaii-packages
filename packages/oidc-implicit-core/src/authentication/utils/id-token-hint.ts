@@ -1,8 +1,8 @@
-import { OidcConfigService } from "../../configuration/config.service";
+import { config } from "../../configuration/config.service";
 import { StorageUtil } from "../../utils/storageUtil";
 
 function createIdTokenHintKey(): string {
-  return `${OidcConfigService.config.client_id}-id-token-hint`;
+  return `${config.client_id}-id-token-hint`;
 }
 
 /**

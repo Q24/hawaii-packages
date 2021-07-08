@@ -1,6 +1,6 @@
 import { OpenIDProviderMetadata } from "./model/openid-provider-metadata.model";
-import { OidcConfigService } from "../configuration/config.service";
 import { StorageUtil } from "../utils/storageUtil";
+import { state } from "../state/state";
 
 const openIDProviderMetadataStorageKey = "OpenIDProviderMetadata";
 
@@ -28,6 +28,6 @@ export const deleteStoredOpenIDProviderMetadata = (): void => {
 export const restoreOpenIDProviderMetadata = () => {
   const stored = getStoredOpenIDProviderMetadata();
   if (stored) {
-    OidcConfigService.config.providerMetadata = stored;
+    state.providerMetadata = stored;
   }
 };

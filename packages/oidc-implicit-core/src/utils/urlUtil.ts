@@ -1,6 +1,14 @@
 import { AuthResult } from "../jwt/model/auth-result.model";
-import { URLParams } from "../models/url-param.models";
 
+/**
+ * Flush state param
+ */
+ export interface URLParams {
+  /**
+   * Flush state param
+   */
+  flush_state?: boolean;
+}
 /**
  * Return an object with URL parameters
  * @param url

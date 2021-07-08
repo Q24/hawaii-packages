@@ -1,7 +1,7 @@
 import { CsrfResult } from "./csrf.model";
 import { LogUtil } from "../utils/logUtil";
 import { StorageUtil } from "../utils/storageUtil";
-import { OidcConfigService } from "../configuration/config.service";
+import { config } from "../configuration/config.service";
 
 /**
  * Deletes the stored CSRF Token from storage
@@ -14,25 +14,25 @@ export function deleteStoredCsrfToken(): void {
 /**
  * Gets the stored CSRF Token from storage
  */
-export function getStoredCsrfToken(): string | null {
+export function getStoredCsrfResult(): string | null {
   LogUtil.debug(`Get CSRF Token from session storage`);
   return StorageUtil.read("_csrf");
 }
 
 /**
- * Get a CSRF Token from the authorisation server
+ * Get a CSRF Token from the authorization server
  */
 export function getCsrfResult(): Promise<CsrfResult> {
   LogUtil.debug("Get CSRF token from Authorisation");
 
   return new Promise<CsrfResult>((resolve, reject) => {
-    if (!OidcConfigService.config.csrf_token_endpoint) {
+    if (!config.csrf_token_endpoint) {
       reject("csrf token endpoint not defined");
       return;
     }
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", OidcConfigService.config.csrf_token_endpoint, true);
+    xhr.open("POST", config.csrf_token_endpoint, true);
     xhr.withCredentials = true;
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {

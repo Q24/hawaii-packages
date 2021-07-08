@@ -4,12 +4,13 @@
  * its OAuth 2.0 endpoint locations.
  */
 import type { OpenIDProviderMetadata } from "./model/openid-provider-metadata.model";
-import { OidcConfigService } from "../configuration/config.service";
 import { LogUtil } from "../utils/logUtil";
 import {
   getStoredOpenIDProviderMetadata,
   setStoredOpenIDProviderMetadata,
 } from "./open-id-provider-metadata-storage";
+import { config } from "../configuration/config.service";
+import { state } from "../state/state";
 
 /**
  * OpenID Providers supporting Discovery MUST make a JSON document available at
@@ -23,7 +24,7 @@ import {
 function fetchOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
   LogUtil.debug("getting provider metadata");
 
-  const openIdConfigurationUrl = `${OidcConfigService.config.issuer}/.well-known/openid-configuration`;
+  const openIdConfigurationUrl = `${config.issuer}/.well-known/openid-configuration`;
 
   return new Promise<OpenIDProviderMetadata>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -54,7 +55,7 @@ function fetchOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
 export async function getRemoteOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
   const providerMetadata = await fetchOpenIdProviderMetadata();
   setStoredOpenIDProviderMetadata(providerMetadata);
-  OidcConfigService.config.providerMetadata = providerMetadata;
+  state.providerMetadata = providerMetadata;
   return providerMetadata;
 }
 

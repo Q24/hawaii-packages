@@ -1,4 +1,4 @@
-import { OidcConfigService } from "../configuration/config.service";
+import { config } from "../configuration/config.service";
 import { getCsrfResult } from "../csrf/csrf";
 import { LogUtil } from "../utils/logUtil";
 import { getIdTokenHint } from "./utils/id-token-hint";
@@ -26,9 +26,7 @@ const silentLogoutStore: {
  * function. Defaults to `silent_logout_uri` from the config.
  * @returns The promise resolves if the logout was successful, otherwise it will reject.
  */
-export function silentLogout(
-  url = OidcConfigService.config.silent_logout_uri,
-): Promise<void> {
+export function silentLogout(url = config.silent_logout_uri): Promise<void> {
   LogUtil.debug("Silent logout by URL started");
   const iframeId = `silentLogoutIframe`;
 
@@ -44,7 +42,7 @@ export function silentLogout(
     // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
     (async () => {
       let iframeUrl = `${url}?id_token_hint=${getIdTokenHint()}`;
-      if (OidcConfigService.config.csrf_token_endpoint) {
+      if (config.csrf_token_endpoint) {
         try {
           const csrfResult = await getCsrfResult();
           iframeUrl += `&csrf_token=${csrfResult.csrf_token}`;
@@ -72,7 +70,7 @@ export function silentLogout(
           LogUtil.debug(
             "Silent logout failed after 5000",
             iFrame.contentWindow?.location.href,
-            OidcConfigService.config.post_logout_redirect_uri,
+            config.post_logout_redirect_uri,
           );
 
           clearInterval(intervalTimer);
@@ -82,15 +80,11 @@ export function silentLogout(
         }
 
         const currentIframeURL = iFrame.contentWindow!.location.href;
-        if (
-          currentIframeURL.indexOf(
-            OidcConfigService.config.post_logout_redirect_uri,
-          ) === 0
-        ) {
+        if (currentIframeURL.indexOf(config.post_logout_redirect_uri) === 0) {
           LogUtil.debug(
             "Silent logout successful",
             iFrame.contentWindow!.location.href,
-            OidcConfigService.config.post_logout_redirect_uri,
+            config.post_logout_redirect_uri,
           );
 
           clearInterval(intervalTimer);

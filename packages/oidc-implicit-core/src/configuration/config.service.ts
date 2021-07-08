@@ -1,21 +1,13 @@
 import { OidcConfig } from "./model/config.model";
 
-let oidcConfig: OidcConfig;
+export let config: OidcConfig = {} as OidcConfig;
 
-/**
- * A service containing the config
- */
-export const OidcConfigService = {
-  /**
-   * Get the global OIDC config
-   */
-  get config(): OidcConfig {
-    return oidcConfig;
-  },
-  /**
-   * Set the global OIDC config
-   */
-  set config(config: OidcConfig) {
-    oidcConfig = config;
-  },
-};
+export function configure(
+  configuration: ((configuration: OidcConfig) => OidcConfig) | OidcConfig,
+): void {
+  if (typeof configuration === "function") {
+    config = configuration(config);
+  } else {
+    config = configuration;
+  }
+}

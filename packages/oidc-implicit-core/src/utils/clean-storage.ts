@@ -2,6 +2,9 @@ import { deleteAuthResults } from "../authentication/utils/auth-result";
 import { deleteIdTokenHint } from "../authentication/utils/id-token-hint";
 import { deleteSessionId } from "../backend-check/session-id";
 import { deleteStoredCsrfToken } from "../csrf/csrf";
+import { deleteStoredJsonWebKeySet } from "../discovery/jwks-storage";
+import { deleteStoredOpenIDProviderMetadata } from "../discovery/open-id-provider-metadata-storage";
+import { deleteStoredUserInfo } from "../user-info/user-info-storage";
 import { deleteNonce } from "./nonceUtil";
 import { deleteState } from "./stateUtil";
 
@@ -16,4 +19,7 @@ export function cleanSessionStorage(): void {
   deleteNonce();
   deleteSessionId();
   deleteStoredCsrfToken();
+  deleteStoredJsonWebKeySet();
+  deleteStoredOpenIDProviderMetadata();
+  deleteStoredUserInfo();
 }

@@ -1,4 +1,4 @@
-import { OidcConfigService } from "../configuration/config.service";
+import { config } from "../configuration/config.service";
 import { LogUtil } from "../utils/logUtil";
 import { getSessionId } from "./session-id";
 
@@ -18,7 +18,7 @@ export function isSessionAlive(): Promise<{ status: number }> {
 
     xhr.open(
       "GET",
-      `${OidcConfigService.config.is_session_alive_endpoint}/${getSessionId()}`,
+      `${config.is_session_alive_endpoint}/${getSessionId()}`,
       true,
     );
 

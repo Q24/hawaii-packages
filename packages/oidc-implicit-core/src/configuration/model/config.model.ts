@@ -1,28 +1,27 @@
 import { AuthResultFilter } from "../../auth-result-filter/model/auth-result-filter.model";
-import { JsonWebKeySet } from "../../discovery/model/jwks.model";
-import { OpenIDProviderMetadata } from "../../discovery/model/openid-provider-metadata.model";
 
 /**
  * Config Object for OIDC Service
  */
 export interface OidcConfig {
-  jwks?: JsonWebKeySet;
-  providerMetadata?: OpenIDProviderMetadata;
   /**
    * Set the ID of your client
    */
   client_id: string;
+
   /**
    * What type of token(s) you wish to receive
    * In case op Open Id Connect this is usually `token id_token`
    */
   response_type: "id_token" | "id_token token";
+
   /**
-   * The URL you want to be redirected to after redirect from Authorisation
+   * The URL you want to be redirected to after redirect from Authorization
    */
   redirect_uri: string;
+
   /**
-   * The URL you want to be redirected to after redirect from Authorisation, while doing a silent access token refresh
+   * The URL you want to be redirected to after redirect from Authorization, while doing a silent access token refresh
    */
   silent_refresh_uri?: string;
 
@@ -68,7 +67,7 @@ export interface OidcConfig {
   debug?: boolean;
 
   /**
-   * Audiences (client_id's) other than the current client which are allowed in
+   * Audiences (client_ids) other than the current client which are allowed in
    * the audiences claim.
    */
   trusted_audiences?: string[];

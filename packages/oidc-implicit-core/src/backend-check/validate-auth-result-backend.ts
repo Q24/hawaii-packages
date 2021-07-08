@@ -1,4 +1,4 @@
-import { OidcConfigService } from "../configuration/config.service";
+import { config } from "../configuration/config.service";
 import { AuthResult } from "../jwt/model/auth-result.model";
 import { LogUtil } from "../utils/logUtil";
 import { getNonce } from "../utils/nonceUtil";
@@ -21,8 +21,10 @@ interface ValidateTokenRequest {
 /**
  * Posts the received token to the Backend for decryption and validation
  */
-export async function validateAuthResultBackend(authResult: AuthResult): Promise<void> {
-  if (!OidcConfigService.config.validate_token_endpoint) {
+export async function validateAuthResultBackend(
+  authResult: AuthResult,
+): Promise<void> {
+  if (!config.validate_token_endpoint) {
     return;
   }
   const nonce = getNonce();
@@ -43,11 +45,11 @@ export async function validateAuthResultBackend(authResult: AuthResult): Promise
 
   return new Promise<void>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    if (!OidcConfigService.config.validate_token_endpoint) {
+    if (!config.validate_token_endpoint) {
       throw new Error("Token Validation endpoint must be defined");
     }
 
-    xhr.open("POST", OidcConfigService.config.validate_token_endpoint, true);
+    xhr.open("POST", config.validate_token_endpoint, true);
 
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
