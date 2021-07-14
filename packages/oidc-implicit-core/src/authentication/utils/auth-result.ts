@@ -9,13 +9,13 @@ import { StorageUtil } from "../../utils/storageUtil";
 import { storeIdToken } from "./id-token-hint";
 
 /**
- * Deletes all the tokens from the storage.
- * If tokenFilter is passed in, only a subset will be deleted.
+ * Deletes all the auth results from the storage. If authResultFilter is passed
+ * in, only a subset will be deleted.
  *
- * @param authResultFilter if specified, the custom token validator
- * is called for every token in the store. If a tokenFilter callback
- * returns true, the token will remain in the store. Otherwise, it
- * will be deleted (Just like Array.prototype.filter())
+ * @param authResultFilter if specified, the authResultFilter is called for
+ * every auth result in the store. If a authResultFilter callback returns true,
+ * the auth result will remain in the store. Otherwise, it will be deleted (Just
+ * like Array.prototype.filter())
  */
 export function deleteAuthResults(
   authResultFilter?: (authResult: Readonly<AuthResult>) => boolean,

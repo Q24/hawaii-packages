@@ -1,20 +1,24 @@
-import { OidcService } from "@hawaii-framework/oidc-implicit-core";
+import {
+  config,
+  getStoredCsrfResult,
+  getCsrfResult,
+  getIdTokenHint,
+} from "@hawaii-framework/oidc-implicit-core";
 import { useEffect, useRef, useState } from "react";
 
 export const Logout = () => {
-  const logoutAction = OidcService.OidcConfigService.config.logout_endpoint;
+  const logoutAction = config.logout_endpoint;
   const [csrf, setCsrf] = useState("");
-  const postLogoutUri =
-    OidcService.OidcConfigService.config.post_logout_redirect_uri;
+  const postLogoutUri = config.post_logout_redirect_uri;
   const [idTokenHint, setIdTokenHint] = useState("");
 
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     const getCsrf = async () => {
-      let _csrf = OidcService.getStoredCsrfToken();
+      let _csrf = getStoredCsrfResult();
       if (!_csrf) {
-        _csrf = (await OidcService.getCsrfToken()).csrf_token;
+        _csrf = (await getCsrfResult()).csrf_token;
       }
       setCsrf(_csrf);
     };
@@ -22,12 +26,11 @@ export const Logout = () => {
   }, []);
 
   useEffect(() => {
-    const getIdTokenHint = async () => {
-      let idTokenHint = OidcService.getIdTokenHint({ regex: true })!;
-
+    const _getIdTokenHint = async () => {
+      let idTokenHint = getIdTokenHint({ regex: true })!;
       setIdTokenHint(idTokenHint);
     };
-    getIdTokenHint();
+    _getIdTokenHint();
   }, []);
 
   useEffect(() => {

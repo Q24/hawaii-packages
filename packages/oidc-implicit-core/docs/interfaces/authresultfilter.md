@@ -20,4 +20,4 @@
 
 #### Defined in
 
-[auth-result-filter/model/auth-result-filter.model.ts:3](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/auth-result-filter/model/auth-result-filter.model.ts#L3)
+[auth-result-filter/model/auth-result-filter.model.ts:3](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/auth-result-filter/model/auth-result-filter.model.ts#L3)

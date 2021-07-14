@@ -1,4 +1,10 @@
-import { OidcConfig, OidcService } from "@hawaii-framework/oidc-implicit-core";
+import {
+  checkSession,
+  configure,
+  getStoredAuthResult,
+  isSessionAlive,
+  OidcConfig,
+} from "@hawaii-framework/oidc-implicit-core";
 import {
   createContext,
   PropsWithChildren,
@@ -33,7 +39,7 @@ export const OidcProvider = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const refreshAuthStatus = useCallback(
-    () => OidcService.checkSession().then(() => setIsAuthenticated(true)),
+    () => checkSession().then(() => setIsAuthenticated(true)),
     [],
   );
 
@@ -42,7 +48,7 @@ export const OidcProvider = ({
    */
   useEffect(() => {
     setIsInitialized(false);
-    OidcService.OidcConfigService.config = oidcConfig;
+    configure(oidcConfig);
     setIsInitialized(true);
   }, [oidcConfig]);
 
@@ -68,9 +74,7 @@ export const OidcProvider = ({
 
 export const useOidc = () => useContext(OidcContext);
 
-export const useRequireAuthenticated = (
-  deps?: React.DependencyList | undefined,
-) => {
+export const useRequireAuthenticated = (deps: React.DependencyList = []) => {
   const { refreshAuthStatus, isAuthenticated, isInitialized } = useOidc();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -105,10 +109,10 @@ const useAutomaticLogout = ({
     if (autoLogout && isAuthenticated) {
       const autoLogoutInterval = setInterval(() => {
         // Get stored token either returns a non-expired token or null
-        const storedToken = OidcService.getStoredToken();
+        const storedToken = getStoredAuthResult();
 
         if (!storedToken) {
-          OidcService.isSessionAlive().catch(() => {
+          isSessionAlive().catch(() => {
             clearInterval(autoLogoutInterval);
 
             // Navigate to the logged out page via the router.

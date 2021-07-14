@@ -1,20 +1,25 @@
-import { OidcService } from "@hawaii-framework/oidc-implicit-core";
+import {
+  checkSession,
+  getAuthHeader,
+  getStoredAuthResult,
+  silentRefresh,
+} from "@hawaii-framework/oidc-implicit-core";
 import axios, { AxiosRequestConfig } from "axios";
 
 const setAuthHeader = async (
   config: AxiosRequestConfig,
 ): Promise<AxiosRequestConfig> => {
-  const storedToken = OidcService.getStoredToken();
+  const storedAuthResult = getStoredAuthResult();
 
-  if (storedToken) {
-    config.headers["Authorization"] = OidcService.getAuthHeader(storedToken);
+  if (storedAuthResult) {
+    config.headers["Authorization"] = getAuthHeader(storedAuthResult);
 
     // For info see Token Expiration section in Readme
     if (
-      (storedToken.expires || 0) - Math.round(new Date().getTime() / 1000.0) <
+      (storedAuthResult.expires || 0) - Math.round(new Date().getTime() / 1000.0) <
       300
     ) {
-      OidcService.silentRefreshAccessToken();
+      silentRefresh();
     }
     return config;
   } else {
@@ -22,7 +27,7 @@ const setAuthHeader = async (
     // that the user is indeed logged in, or redirect
     // the user to the login page. This redirection
     // will be triggered automatically by the library.
-    const isLoggedIn = await OidcService.checkSession();
+    const isLoggedIn = await checkSession();
     if (isLoggedIn) {
       config = await setAuthHeader(config);
       return config;

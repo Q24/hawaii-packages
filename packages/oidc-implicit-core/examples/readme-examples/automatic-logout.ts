@@ -1,11 +1,14 @@
-import { OidcService } from "@hawaii-framework/oidc-implicit-core/dist";
+import {
+  getStoredAuthResult,
+  isSessionAlive,
+} from "@hawaii-framework/oidc-implicit-core";
 
 const autoLogoutInterval = setInterval(() => {
-  // Get stored token either returns a non-expired token or null
-  const storedToken = OidcService.getStoredToken();
+  // Get stored auth result either returns a non-expired token or null
+  const storedToken = getStoredAuthResult();
 
   if (!storedToken) {
-    OidcService.isSessionAlive().catch(() => {
+    isSessionAlive().catch(() => {
       // If we are not logged in, no expired check is needed.
       clearInterval(autoLogoutInterval);
 

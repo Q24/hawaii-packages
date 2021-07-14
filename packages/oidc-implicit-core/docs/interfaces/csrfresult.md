@@ -22,7 +22,7 @@ The CSRF Token itself
 
 #### Defined in
 
-[csrf/csrf.model.ts:16](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/csrf/csrf.model.ts#L16)
+[csrf/csrf.model.ts:16](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/csrf/csrf.model.ts#L16)
 
 ___
 
@@ -34,7 +34,7 @@ CSRF Token Header name
 
 #### Defined in
 
-[csrf/csrf.model.ts:8](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/csrf/csrf.model.ts#L8)
+[csrf/csrf.model.ts:8](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/csrf/csrf.model.ts#L8)
 
 ___
 
@@ -46,4 +46,4 @@ CRSF Token key to be used
 
 #### Defined in
 
-[csrf/csrf.model.ts:12](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/csrf/csrf.model.ts#L12)
+[csrf/csrf.model.ts:12](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/csrf/csrf.model.ts#L12)

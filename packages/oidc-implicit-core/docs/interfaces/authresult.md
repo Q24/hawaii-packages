@@ -36,7 +36,7 @@ Access Token for the UserInfo Endpoint.
 
 #### Defined in
 
-[jwt/model/auth-result.model.ts:18](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L18)
+[jwt/model/auth-result.model.ts:18](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L18)
 
 ___
 
@@ -48,7 +48,7 @@ Expiry time of token
 
 #### Defined in
 
-[jwt/model/auth-result.model.ts:43](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L43)
+[jwt/model/auth-result.model.ts:43](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L43)
 
 ___
 
@@ -61,7 +61,7 @@ generated.
 
 #### Defined in
 
-[jwt/model/auth-result.model.ts:39](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L39)
+[jwt/model/auth-result.model.ts:39](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L39)
 
 ___
 
@@ -73,7 +73,7 @@ ID Token
 
 #### Defined in
 
-[jwt/model/auth-result.model.ts:34](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L34)
+[jwt/model/auth-result.model.ts:34](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L34)
 
 ___
 
@@ -85,7 +85,7 @@ Session Upgrade token received from Authorisation
 
 #### Defined in
 
-[jwt/model/auth-result.model.ts:47](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L47)
+[jwt/model/auth-result.model.ts:47](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L47)
 
 ___
 
@@ -99,7 +99,7 @@ the value of state parameter in the Authorization Request.
 
 #### Defined in
 
-[jwt/model/auth-result.model.ts:30](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L30)
+[jwt/model/auth-result.model.ts:30](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L30)
 
 ___
 
@@ -113,4 +113,4 @@ subset. Note that the token_type value is case insensitive.
 
 #### Defined in
 
-[jwt/model/auth-result.model.ts:24](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L24)
+[jwt/model/auth-result.model.ts:24](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/jwt/model/auth-result.model.ts#L24)

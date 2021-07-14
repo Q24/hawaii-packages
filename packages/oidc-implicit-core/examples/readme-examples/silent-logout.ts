@@ -1,7 +1,12 @@
-import { OidcService } from "@hawaii-framework/oidc-implicit-core";
+import {
+  cleanSessionStorage,
+  silentLogout,
+} from "@hawaii-framework/oidc-implicit-core";
 
-OidcService.silentLogoutByUrl().then((loggedOut) => {
-  if (loggedOut) {
-    OidcService.cleanSessionStorage();
-  }
-});
+silentLogout()
+  .then(() => {
+    cleanSessionStorage();
+  })
+  .catch(() => {
+    // Handle errors when logout has failed.
+  });

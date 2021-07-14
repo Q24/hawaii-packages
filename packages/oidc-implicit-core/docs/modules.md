@@ -57,7 +57,7 @@ A set of strings to match when the Authorize redirect is erroring. This is the c
 
 #### Defined in
 
-[authentication/model/authorize-errors.model.ts:4](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/model/authorize-errors.model.ts#L4)
+[authentication/model/authorize-errors.model.ts:4](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/model/authorize-errors.model.ts#L4)
 
 ## Variables
 
@@ -67,7 +67,7 @@ A set of strings to match when the Authorize redirect is erroring. This is the c
 
 #### Defined in
 
-[authentication/utils/authorize-errors.ts:3](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/utils/authorize-errors.ts#L3)
+[authentication/utils/authorize-errors.ts:3](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/utils/authorize-errors.ts#L3)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[configuration/config.service.ts:3](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/configuration/config.service.ts#L3)
+[configuration/config.service.ts:3](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/configuration/config.service.ts#L3)
 
 ## Functions
 
@@ -102,7 +102,7 @@ an AuthResultFilter function
 
 #### Defined in
 
-[auth-result-filter/access-token-scope-filter.ts:12](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/auth-result-filter/access-token-scope-filter.ts#L12)
+[auth-result-filter/access-token-scope-filter.ts:12](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/auth-result-filter/access-token-scope-filter.ts#L12)
 
 ___
 
@@ -140,7 +140,7 @@ It will reject (as well as redirect) in case the check did not pass.
 
 #### Defined in
 
-[authentication/check-session.ts:42](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/check-session.ts#L42)
+[authentication/check-session.ts:42](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/check-session.ts#L42)
 
 ___
 
@@ -167,7 +167,7 @@ the URL without the hash fragment
 
 #### Defined in
 
-[utils/urlUtil.ts:114](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/utils/urlUtil.ts#L114)
+[utils/urlUtil.ts:114](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/utils/urlUtil.ts#L114)
 
 ___
 
@@ -184,7 +184,7 @@ id token hint, CSRF token, json web key set, id provider metadata, user info.
 
 #### Defined in
 
-[utils/clean-storage.ts:14](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/utils/clean-storage.ts#L14)
+[utils/clean-storage.ts:14](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/utils/clean-storage.ts#L14)
 
 ___
 
@@ -204,7 +204,7 @@ ___
 
 #### Defined in
 
-[configuration/config.service.ts:5](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/configuration/config.service.ts#L5)
+[configuration/config.service.ts:5](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/configuration/config.service.ts#L5)
 
 ___
 
@@ -227,7 +227,7 @@ If tokenFilter is passed in, only a subset will be deleted.
 
 #### Defined in
 
-[authentication/utils/auth-result.ts:20](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/utils/auth-result.ts#L20)
+[authentication/utils/auth-result.ts:20](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/utils/auth-result.ts#L20)
 
 ___
 
@@ -249,7 +249,7 @@ A promise which will resolve when the discovery is complete
 
 #### Defined in
 
-[discovery/discovery.ts:24](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/discovery/discovery.ts#L24)
+[discovery/discovery.ts:24](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/discovery/discovery.ts#L24)
 
 ___
 
@@ -273,7 +273,7 @@ Uses the token type present in the token.
 
 #### Defined in
 
-[authentication/utils/auth-header.ts:8](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/utils/auth-header.ts#L8)
+[authentication/utils/auth-header.ts:8](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/utils/auth-header.ts#L8)
 
 ___
 
@@ -289,7 +289,7 @@ Get a CSRF Token from the authorization server
 
 #### Defined in
 
-[csrf/csrf.ts:25](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/csrf/csrf.ts#L25)
+[csrf/csrf.ts:25](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/csrf/csrf.ts#L25)
 
 ___
 
@@ -316,7 +316,7 @@ During logout, the regex option should be enabled if we are not sure that the *c
 
 #### Defined in
 
-[authentication/utils/id-token-hint.ts:15](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/utils/id-token-hint.ts#L15)
+[authentication/utils/id-token-hint.ts:15](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/utils/id-token-hint.ts#L15)
 
 ___
 
@@ -340,7 +340,7 @@ A valid Token or `null` if no token has been found.
 
 #### Defined in
 
-[authentication/utils/auth-result.ts:95](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/utils/auth-result.ts#L95)
+[authentication/utils/auth-result.ts:95](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/utils/auth-result.ts#L95)
 
 ___
 
@@ -356,7 +356,7 @@ Gets the stored CSRF Token from storage
 
 #### Defined in
 
-[csrf/csrf.ts:17](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/csrf/csrf.ts#L17)
+[csrf/csrf.ts:17](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/csrf/csrf.ts#L17)
 
 ___
 
@@ -374,7 +374,7 @@ the user info
 
 #### Defined in
 
-[user-info/getUserInfo.ts:125](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/user-info/getUserInfo.ts#L125)
+[user-info/getUserInfo.ts:125](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/user-info/getUserInfo.ts#L125)
 
 ___
 
@@ -395,7 +395,7 @@ The status code of the HTTP response
 
 #### Defined in
 
-[backend-check/session-alive.ts:13](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/backend-check/session-alive.ts#L13)
+[backend-check/session-alive.ts:13](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/backend-check/session-alive.ts#L13)
 
 ___
 
@@ -427,7 +427,7 @@ is not valid.
 
 #### Defined in
 
-[authentication/lazy-refresh.ts:19](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/lazy-refresh.ts#L19)
+[authentication/lazy-refresh.ts:19](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/lazy-refresh.ts#L19)
 
 ___
 
@@ -447,7 +447,7 @@ ___
 
 #### Defined in
 
-[jwt/parseJwt.ts:45](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/parseJwt.ts#L45)
+[jwt/parseJwt.ts:45](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/jwt/parseJwt.ts#L45)
 
 ___
 
@@ -478,7 +478,7 @@ JSON Web Token
 
 #### Defined in
 
-[jwt/parseJwt.ts:27](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/parseJwt.ts#L27)
+[jwt/parseJwt.ts:27](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/jwt/parseJwt.ts#L27)
 
 ___
 
@@ -510,7 +510,7 @@ The promise resolves if the logout was successful, otherwise it will reject.
 
 #### Defined in
 
-[authentication/silent-logout.ts:29](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/silent-logout.ts#L29)
+[authentication/silent-logout.ts:29](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/silent-logout.ts#L29)
 
 ___
 
@@ -543,4 +543,4 @@ A valid token
 
 #### Defined in
 
-[authentication/silent-refresh.ts:47](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/authentication/silent-refresh.ts#L47)
+[authentication/silent-refresh.ts:47](https://github.com/Q24/hawaii-packages/blob/dbaae5f/packages/oidc-implicit-core/src/authentication/silent-refresh.ts#L47)
