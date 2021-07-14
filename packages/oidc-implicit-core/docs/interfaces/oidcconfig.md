@@ -15,10 +15,9 @@ Config Object for OIDC Service
 - [is\_session\_alive\_endpoint](oidcconfig.md#is_session_alive_endpoint)
 - [issuedAtMaxOffset](oidcconfig.md#issuedatmaxoffset)
 - [issuer](oidcconfig.md#issuer)
-- [jwks](oidcconfig.md#jwks)
+- [login\_hint](oidcconfig.md#login_hint)
 - [logout\_endpoint](oidcconfig.md#logout_endpoint)
 - [post\_logout\_redirect\_uri](oidcconfig.md#post_logout_redirect_uri)
-- [providerMetadata](oidcconfig.md#providermetadata)
 - [redirect\_uri](oidcconfig.md#redirect_uri)
 - [response\_type](oidcconfig.md#response_type)
 - [scope](oidcconfig.md#scope)
@@ -37,7 +36,7 @@ Set the ID of your client
 
 #### Defined in
 
-[configuration/model/config.model.ts:14](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L14)
+[configuration/model/config.model.ts:10](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L10)
 
 ___
 
@@ -49,7 +48,7 @@ CSRF token endpoint
 
 #### Defined in
 
-[configuration/model/config.model.ts:48](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L48)
+[configuration/model/config.model.ts:47](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L47)
 
 ___
 
@@ -61,7 +60,7 @@ Verbose logging of inner workings of the package.
 
 #### Defined in
 
-[configuration/model/config.model.ts:68](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L68)
+[configuration/model/config.model.ts:67](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L67)
 
 ___
 
@@ -73,19 +72,19 @@ A list of filters each auth result must adhere to.
 
 #### Defined in
 
-[configuration/model/config.model.ts:90](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L90)
+[configuration/model/config.model.ts:89](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L89)
 
 ___
 
 ### is\_session\_alive\_endpoint
 
-• **is\_session\_alive\_endpoint**: `string`
+• `Optional` **is\_session\_alive\_endpoint**: `string`
 
 Endpoint for checking if a session is still used somewhere
 
 #### Defined in
 
-[configuration/model/config.model.ts:58](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L58)
+[configuration/model/config.model.ts:57](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L57)
 
 ___
 
@@ -98,7 +97,7 @@ authentication result.
 
 #### Defined in
 
-[configuration/model/config.model.ts:80](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L80)
+[configuration/model/config.model.ts:79](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L79)
 
 ___
 
@@ -110,17 +109,26 @@ The base issuer URL.
 
 #### Defined in
 
-[configuration/model/config.model.ts:85](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L85)
+[configuration/model/config.model.ts:84](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L84)
 
 ___
 
-### jwks
+### login\_hint
 
-• `Optional` **jwks**: `JsonWebKeySet`
+• `Optional` **login\_hint**: `string`
+
+Hint to the Authorization Server about the login identifier the End-User
+might use to log in (if necessary). This hint can be used by a Relying
+Party (RP) if it first asks the End-User for their e-mail address (or other
+identifier) and then wants to pass that value as a hint to the discovered
+authorization service. It is RECOMMENDED that the hint value match the
+value used for discovery. This value MAY also be a phone number in the
+format specified for the `phone_number` Claim. The use of this parameter is
+left to the OpenID Provider's discretion.
 
 #### Defined in
 
-[configuration/model/config.model.ts:9](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L9)
+[configuration/model/config.model.ts:101](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L101)
 
 ___
 
@@ -132,7 +140,7 @@ ___
 
 #### Defined in
 
-[configuration/model/config.model.ts:63](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L63)
+[configuration/model/config.model.ts:62](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L62)
 
 ___
 
@@ -144,17 +152,7 @@ The URL you want to be redirected to after logging out
 
 #### Defined in
 
-[configuration/model/config.model.ts:37](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L37)
-
-___
-
-### providerMetadata
-
-• `Optional` **providerMetadata**: `OpenIDProviderMetadata`
-
-#### Defined in
-
-[configuration/model/config.model.ts:10](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L10)
+[configuration/model/config.model.ts:36](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L36)
 
 ___
 
@@ -162,11 +160,11 @@ ___
 
 • **redirect\_uri**: `string`
 
-The URL you want to be redirected to after redirect from Authorisation
+The URL you want to be redirected to after redirect from Authorization
 
 #### Defined in
 
-[configuration/model/config.model.ts:23](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L23)
+[configuration/model/config.model.ts:21](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L21)
 
 ___
 
@@ -179,7 +177,7 @@ In case op Open Id Connect this is usually `token id_token`
 
 #### Defined in
 
-[configuration/model/config.model.ts:19](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L19)
+[configuration/model/config.model.ts:16](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L16)
 
 ___
 
@@ -192,7 +190,7 @@ When using Open Id Connect, scope `openid` is mandatory
 
 #### Defined in
 
-[configuration/model/config.model.ts:43](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L43)
+[configuration/model/config.model.ts:42](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L42)
 
 ___
 
@@ -204,7 +202,7 @@ The URL you want to use for a silent Logout, if your stack supports it.
 
 #### Defined in
 
-[configuration/model/config.model.ts:32](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L32)
+[configuration/model/config.model.ts:31](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L31)
 
 ___
 
@@ -212,11 +210,11 @@ ___
 
 • `Optional` **silent\_refresh\_uri**: `string`
 
-The URL you want to be redirected to after redirect from Authorisation, while doing a silent access token refresh
+The URL you want to be redirected to after redirect from Authorization, while doing a silent access token refresh
 
 #### Defined in
 
-[configuration/model/config.model.ts:27](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L27)
+[configuration/model/config.model.ts:26](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L26)
 
 ___
 
@@ -224,12 +222,12 @@ ___
 
 • `Optional` **trusted\_audiences**: `string`[]
 
-Audiences (client_id's) other than the current client which are allowed in
+Audiences (client_ids) other than the current client which are allowed in
 the audiences claim.
 
 #### Defined in
 
-[configuration/model/config.model.ts:74](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L74)
+[configuration/model/config.model.ts:73](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L73)
 
 ___
 
@@ -241,4 +239,4 @@ Validate received token endpoint
 
 #### Defined in
 
-[configuration/model/config.model.ts:53](https://github.com/Q24/hawaii-packages/blob/5893d6f/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L53)
+[configuration/model/config.model.ts:52](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/configuration/model/config.model.ts#L52)

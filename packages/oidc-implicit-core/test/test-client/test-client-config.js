@@ -6,12 +6,12 @@ import {
 } from "../../dist/index.modern.js";
 
 configure({
-  client_id: "oidc_implicit_core_client",
+  client_id: "ilionx",
   redirect_uri: window.location.href,
   response_type: "id_token",
   scope: "openid",
   debug: true,
-  issuer: "https://www.certification.openid.net/test/a/ilionx",
+  issuer: "https://localhost:8443/test/a/ilionx",
 });
 
 document.getElementById("checkSession").onclick = () => {

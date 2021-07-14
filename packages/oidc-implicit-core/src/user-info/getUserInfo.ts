@@ -86,7 +86,7 @@ function fetchUserInfo(): Promise<UserInfo> {
 
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
-        if (xhr.status === 204) {
+        if (xhr.status >= 200 && xhr.status <= 300) {
           const userInfo = JSON.parse(xhr.responseText);
 
           if (verifyUserInfoResponse(userInfo)) {

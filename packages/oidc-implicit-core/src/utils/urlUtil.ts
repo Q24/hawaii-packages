@@ -50,8 +50,8 @@ function getUrlStringToParse(
 
 /**
  * Convert Object to URL Query string
- * @param {Object} urlVars
- * @returns {string}
+ * @param urlVars
+ * @returns the url parameters
  */
 export function createURLParameters(urlVars: {
   redirect_uri?: string;

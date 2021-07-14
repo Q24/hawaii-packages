@@ -54,7 +54,7 @@ export interface OidcConfig {
   /**
    * Endpoint for checking if a session is still used somewhere
    */
-  is_session_alive_endpoint: string;
+  is_session_alive_endpoint?: string;
 
   /**
    * `POST` to this endpoint in the logout form
@@ -87,4 +87,16 @@ export interface OidcConfig {
    * A list of filters each auth result must adhere to.
    */
   defaultAuthResultFilters?: AuthResultFilter[];
+
+  /**
+   * Hint to the Authorization Server about the login identifier the End-User
+   * might use to log in (if necessary). This hint can be used by a Relying
+   * Party (RP) if it first asks the End-User for their e-mail address (or other
+   * identifier) and then wants to pass that value as a hint to the discovered
+   * authorization service. It is RECOMMENDED that the hint value match the
+   * value used for discovery. This value MAY also be a phone number in the
+   * format specified for the `phone_number` Claim. The use of this parameter is
+   * left to the OpenID Provider's discretion.
+   */
+  login_hint?: string;
 }

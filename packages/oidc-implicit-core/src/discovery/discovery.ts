@@ -1,7 +1,6 @@
+import { LogUtil } from "../utils/logUtil";
 import { getJwks } from "./get-jwks";
 import { getOpenIdProviderMetadata } from "./get-openid-provider-metadata";
-import { restoreJsonWebKeySet } from "./jwks-storage";
-import { restoreOpenIDProviderMetadata } from "./open-id-provider-metadata-storage";
 
 /**
  * A singleton promise used for initialization.
@@ -9,8 +8,6 @@ import { restoreOpenIDProviderMetadata } from "./open-id-provider-metadata-stora
 let discoveryPromise: Promise<void> | null = null;
 
 async function _discovery() {
-  restoreOpenIDProviderMetadata();
-  restoreJsonWebKeySet();
   await getOpenIdProviderMetadata();
   await getJwks();
 }
@@ -28,8 +25,10 @@ export async function discovery(): Promise<void> {
   if (discoveryPromise) {
     return discoveryPromise;
   }
-  discoveryPromise = _discovery().catch(() => {
+  discoveryPromise = _discovery().catch((reason) => {
     discoveryPromise = null;
+    LogUtil.error("Discovery failed", reason);
+    throw Error(reason);
   });
   return discoveryPromise;
 }

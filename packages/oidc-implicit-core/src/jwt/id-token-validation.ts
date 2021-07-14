@@ -48,6 +48,10 @@ function validSignature(idTokenString: string, headerData: JWTHeader): boolean {
   // No kid in the Jose header
   if (kid) {
     const keyToValidate = jwks.keys.find((key) => key.kid === kid);
+    if (!keyToValidate) {
+      LogUtil.warn("Didn't find key to validate");
+      return false;
+    }
     const publicKey = KEYUTIL.getKey(keyToValidate);
     const isValid = KJUR.jws.JWS.verify(idTokenString, publicKey, [alg]);
     if (!isValid) {
@@ -134,6 +138,15 @@ function tokenIsExpired(idToken: IdTokenPayload) {
 
 function iatOffsetTooBig(idToken: IdTokenPayload) {
   const offset = Math.abs(GeneratorUtil.epoch() - idToken.iat);
+  LogUtil.debug(
+    "checking issued at offset (iat)",
+    "iat",
+    idToken.iat,
+    "epoch current",
+    GeneratorUtil.epoch(),
+    "offset",
+    offset,
+  );
   return offset > (config.issuedAtMaxOffset || 30);
 }
 
@@ -153,9 +166,8 @@ export function validateIdToken(idTokenString: string): void {
   assertProviderMetadata(state.providerMetadata);
 
   validateJwtString(idTokenString);
-  const { header, payload: idTokenPayload } = parseJwt<IdTokenPayload>(
-    idTokenString,
-  );
+  const { header, payload: idTokenPayload } =
+    parseJwt<IdTokenPayload>(idTokenString);
 
   if (!idTokenPayload.sub) {
     LogUtil.error("The ID Token does not have a sub claim");
@@ -213,18 +225,6 @@ export function validateIdToken(idTokenString: string): void {
     throw Error("id_token_invalid__azp_invalid");
   }
 
-  // The Client MUST validate the signature of the ID Token according to JWS
-  // [JWS] using the algorithm specified in the alg Header Parameter of the JOSE
-  // Header. The Client MUST use the keys provided by the Issuer.
-  // The alg value SHOULD be RS256. Validation of tokens using other signing
-  // algorithms is described in the OpenID Connect Core 1.0 [OpenID.Core]
-  // specification.
-  if (!validSignature(idTokenString, header)) {
-    LogUtil.error("The ID token signature is invalid");
-
-    throw Error("id_token_invalid__invalid_signature");
-  }
-
   // The current time MUST be before the time represented by the exp Claim
   // (possibly allowing for some small leeway to account for clock skew).
   if (tokenIsExpired(idTokenPayload)) {
@@ -250,6 +250,18 @@ export function validateIdToken(idTokenString: string): void {
     LogUtil.error("The ID token nonce does not equal the stored nonce.");
 
     throw Error("id_token_invalid__nonce_invalid");
+  }
+
+  // The Client MUST validate the signature of the ID Token according to JWS
+  // [JWS] using the algorithm specified in the alg Header Parameter of the JOSE
+  // Header. The Client MUST use the keys provided by the Issuer.
+  // The alg value SHOULD be RS256. Validation of tokens using other signing
+  // algorithms is described in the OpenID Connect Core 1.0 [OpenID.Core]
+  // specification.
+  if (!validSignature(idTokenString, header)) {
+    LogUtil.error("The ID token signature is invalid");
+
+    throw Error("id_token_invalid__invalid_signature");
   }
 
   // If the acr Claim was requested, the Client SHOULD check that the asserted

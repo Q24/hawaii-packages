@@ -1,17 +1,6 @@
 declare module "jsrsasign-reduced" {
   export const KEYUTIL = {
-    getKey(
-      param:
-        | RSAKey
-        | ECCPrivateKey
-        | KJUR.crypto.ECDSA
-        | KJUR.crypto.DSA
-        | KJUR.jws.JWS.JsonWebKey
-        | { n: string; e: string }
-        | string,
-      passcode?: string | null,
-      hextype?: string,
-    ): RSAKey | KJUR.crypto.DSA | KJUR.crypto.ECDSA;,
+    getKey(param: Object, passcode?: string | null, hextype?: string): string;,
   };
   export function hextob64u(s: string): string;
   export const KJUR = {

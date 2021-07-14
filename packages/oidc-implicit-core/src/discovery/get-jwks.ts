@@ -2,7 +2,6 @@ import type { JsonWebKeySet } from "./model/jwks.model";
 import { LogUtil } from "../utils/logUtil";
 import { assertProviderMetadata } from "./assert-provider-metadata";
 import { getOpenIdProviderMetadata } from "./get-openid-provider-metadata";
-import { getStoredJsonWebKeySet, setStoredJsonWebKeySet } from "./jwks-storage";
 import { state } from "../state/state";
 
 function fetchJwks(): Promise<JsonWebKeySet> {
@@ -45,7 +44,6 @@ export async function getRemoteJwks(): Promise<JsonWebKeySet> {
     throw Error("no_jwks_uri");
   }
   const jwks = await fetchJwks();
-  setStoredJsonWebKeySet(jwks);
   state.jwks = jwks;
 
   return jwks;
@@ -57,9 +55,8 @@ export async function getRemoteJwks(): Promise<JsonWebKeySet> {
  * @returns the jwks
  */
 export async function getJwks(): Promise<JsonWebKeySet> {
-  const stored = getStoredJsonWebKeySet();
-  if (stored) {
-    return stored;
+  if (state.jwks) {
+    return state.jwks;
   }
   return getRemoteJwks();
 }

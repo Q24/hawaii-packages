@@ -19,7 +19,7 @@ export function getAuthorizeParams(
   promptNone = false,
 ): ImplicitRequestParameters {
   const storedState = getState() || GeneratorUtil.generateState();
-  const urlVars: ImplicitRequestParameters = {
+  const authorizeParams: ImplicitRequestParameters = {
     nonce: getNonce() || GeneratorUtil.generateNonce(),
     state: storedState,
     client_id: config.client_id,
@@ -31,14 +31,18 @@ export function getAuthorizeParams(
     scope: scopes.join(" "),
   };
 
+  if (config.login_hint) {
+    authorizeParams.login_hint = config.login_hint;
+  }
+
   if (promptNone) {
-    urlVars.prompt = "none";
+    authorizeParams.prompt = "none";
   }
 
   // Save the generated state & nonce
   saveState(storedState);
-  saveNonce(urlVars.nonce);
+  saveNonce(authorizeParams.nonce);
 
-  LogUtil.debug("Gather the Authorize Params", urlVars);
-  return urlVars;
+  LogUtil.debug("Gather the Authorize Params", authorizeParams);
+  return authorizeParams;
 }

@@ -5,10 +5,6 @@
  */
 import type { OpenIDProviderMetadata } from "./model/openid-provider-metadata.model";
 import { LogUtil } from "../utils/logUtil";
-import {
-  getStoredOpenIDProviderMetadata,
-  setStoredOpenIDProviderMetadata,
-} from "./open-id-provider-metadata-storage";
 import { config } from "../configuration/config.service";
 import { state } from "../state/state";
 
@@ -54,7 +50,6 @@ function fetchOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
  */
 export async function getRemoteOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
   const providerMetadata = await fetchOpenIdProviderMetadata();
-  setStoredOpenIDProviderMetadata(providerMetadata);
   state.providerMetadata = providerMetadata;
   return providerMetadata;
 }
@@ -65,9 +60,8 @@ export async function getRemoteOpenIdProviderMetadata(): Promise<OpenIDProviderM
  * @returns the metadata
  */
 export async function getOpenIdProviderMetadata(): Promise<OpenIDProviderMetadata> {
-  const stored = getStoredOpenIDProviderMetadata();
-  if (stored) {
-    return stored;
+  if (state.providerMetadata) {
+    return state.providerMetadata;
   }
   return getRemoteOpenIdProviderMetadata();
 }
