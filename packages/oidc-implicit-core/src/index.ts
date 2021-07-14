@@ -9,3 +9,4 @@ export * from "./authentication/index";
 export * from "./jwt/index";
 export * from "./csrf/index";
 export * from "./configuration/index";
+export * from "./auth-result-filter/index";

@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[jwt/model/jwt.model.ts:4](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/jwt/model/jwt.model.ts#L4)
+[jwt/model/jwt.model.ts:4](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/jwt.model.ts#L4)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[jwt/model/jwt.model.ts:5](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/jwt/model/jwt.model.ts#L5)
+[jwt/model/jwt.model.ts:5](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/jwt.model.ts#L5)
 
 ___
 
@@ -44,4 +44,4 @@ ___
 
 #### Defined in
 
-[jwt/model/jwt.model.ts:6](https://github.com/Q24/hawaii-packages/blob/59af354/packages/oidc-implicit-core/src/jwt/model/jwt.model.ts#L6)
+[jwt/model/jwt.model.ts:6](https://github.com/Q24/hawaii-packages/blob/c7d5f20/packages/oidc-implicit-core/src/jwt/model/jwt.model.ts#L6)
