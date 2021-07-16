@@ -27,6 +27,7 @@ const silentLogoutStore: {
  * @returns The promise resolves if the logout was successful, otherwise it will reject.
  */
 export function silentLogout(url = config.silent_logout_uri): Promise<void> {
+
   LogUtil.debug("Silent logout by URL started");
   const iframeId = `silentLogoutIframe`;
 

@@ -2,10 +2,21 @@ import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, Observer } from 'rxjs';
 import {
-  OidcService as _OidcService,
   OidcConfig,
-  CsrfToken,
-  Token,
+  config,
+  configure,
+  AuthResult,
+  CsrfResult,
+  getCsrfResult,
+  getStoredCsrfResult,
+  getStoredAuthResult,
+  getAuthHeader,
+  getIdTokenHint,
+  cleanSessionStorage,
+  deleteStoredAuthResults,
+  isSessionAlive,
+  checkSession,
+  silentRefresh
 } from '@hawaii-framework/oidc-implicit-core';
 
 /**
@@ -14,54 +25,54 @@ import {
 @Injectable({ providedIn: 'root' })
 export class OidcService {
   get config(): OidcConfig {
-    return _OidcService.OidcConfigService.config;
+    return config;
   }
 
   set config(value: OidcConfig) {
-    _OidcService.OidcConfigService.config = value;
+    configure(value);
   }
 
-  getCsrfToken(): Observable<CsrfToken> {
-    return new Observable<CsrfToken>((observer: Observer<CsrfToken>) => {
-      _OidcService.getCsrfToken().then((csrfToken: CsrfToken) => {
-        observer.next(csrfToken);
+  getCsrfResult(): Observable<CsrfResult> {
+    return new Observable<CsrfResult>((observer) => {
+      getCsrfResult().then((csrfResult) => {
+        observer.next(csrfResult);
         observer.complete();
       });
     });
   }
 
   getStoredCsrfToken(): string | null {
-    return _OidcService.getStoredCsrfToken();
+    return getStoredCsrfResult();
   }
 
-  getStoredToken(): Token | null {
-    return _OidcService.getStoredToken();
+  getStoredAuthResult(): AuthResult | null {
+    return getStoredAuthResult();
   }
 
   getAuthHeader(): string | null {
-    const token = this.getStoredToken();
-    if (token) {
-      return _OidcService.getAuthHeader(token);
+    const authResult = this.getStoredAuthResult();
+    if (authResult) {
+      return getAuthHeader(authResult);
     }
     return null;
   }
 
   getIdTokenHint(options = { regex: false }): string | null {
-    return _OidcService.getIdTokenHint(options);
+    return getIdTokenHint(options);
   }
 
   cleanSessionStorage(): void {
-    _OidcService.cleanSessionStorage();
+    cleanSessionStorage();
   }
 
-  deleteStoredTokens(): void {
-    _OidcService.deleteStoredTokens();
+  deleteStoredAuthResults(): void {
+    deleteStoredAuthResults();
   }
 
   isSessionAlive(): Observable<{ status: number }> {
     return new Observable<{ status: number }>(
       (observer: Observer<{ status: number }>) => {
-        _OidcService.isSessionAlive().then(
+        isSessionAlive().then(
           (status: { status: number }) => {
             observer.next(status);
             observer.complete();
@@ -74,7 +85,7 @@ export class OidcService {
 
   checkSession(): Observable<boolean> {
     return new Observable<boolean>((observer: Observer<boolean>) => {
-      _OidcService.checkSession().then(
+      checkSession().then(
         () => {
           observer.next(true);
           observer.complete();
@@ -87,9 +98,9 @@ export class OidcService {
     });
   }
 
-  silentRefreshAccessToken(): Observable<boolean> {
+  silentRefresh(): Observable<boolean> {
     return new Observable<boolean>((observer: Observer<boolean>) => {
-      _OidcService.silentRefreshAccessToken().then(
+      silentRefresh().then(
         () => {
           observer.next(true);
           observer.complete();

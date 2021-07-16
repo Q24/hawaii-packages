@@ -1,4 +1,4 @@
-import { deleteAuthResults } from "../authentication/utils/auth-result";
+import { deleteStoredAuthResults } from "../authentication/utils/auth-result";
 import { deleteIdTokenHint } from "../authentication/utils/id-token-hint";
 import { deleteSessionId } from "../backend-check/session-id";
 import { deleteStoredCsrfToken } from "../csrf/csrf";
@@ -13,7 +13,7 @@ import { deleteState } from "./stateUtil";
  */
 export function cleanSessionStorage(): void {
   LogUtil.debug("cleanSessionStorage: cleaning all session storage items.");
-  deleteAuthResults();
+  deleteStoredAuthResults();
   deleteIdTokenHint();
   deleteState();
   deleteNonce();

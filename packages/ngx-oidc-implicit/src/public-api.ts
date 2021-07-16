@@ -1,8 +1,8 @@
 export {
   AUTHORIZE_ERRORS,
   AuthorizeErrors,
-  CsrfToken,
+  CsrfResult,
   OidcConfig,
-  Token,
-} from '@hawaii-framework/oidc-implicit-core';
-export * from './oidc-service.service';
+  AuthResult,
+} from "@hawaii-framework/oidc-implicit-core";
+export * from "./oidc-service.service";

@@ -17,18 +17,18 @@ import { storeIdToken } from "./id-token-hint";
  * the auth result will remain in the store. Otherwise, it will be deleted (Just
  * like Array.prototype.filter())
  */
-export function deleteAuthResults(
+export function deleteStoredAuthResults(
   authResultFilter?: (authResult: Readonly<AuthResult>) => boolean,
 ): void {
   if (authResultFilter) {
-    deleteAuthResultsFiltered(authResultFilter);
+    deleteStoredAuthResultsFiltered(authResultFilter);
   } else {
     LogUtil.debug(`Removed Tokens from session storage`);
     StorageUtil.remove("-token");
   }
 }
 
-function deleteAuthResultsFiltered(authResultFilter: AuthResultFilter): void {
+function deleteStoredAuthResultsFiltered(authResultFilter: AuthResultFilter): void {
   const allAuthResults = getStoredAuthResults();
   const authResultsToStore = allAuthResults.filter(authResultFilter);
   storeAuthResults(authResultsToStore);

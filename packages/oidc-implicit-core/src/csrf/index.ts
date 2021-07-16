@@ -1,2 +1,2 @@
 export type { CsrfResult } from "./csrf.model";
-export { getCsrfResult, getStoredCsrfResult } from "./csrf";
+export { getCsrfResult, getStoredCsrfToken as getStoredCsrfResult } from "./csrf";

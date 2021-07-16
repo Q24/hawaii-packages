@@ -1,3 +1,4 @@
+import { discovery } from "../discovery/discovery";
 import { AuthResult } from "../jwt/model/auth-result.model";
 import { AuthValidationOptions } from "../jwt/model/auth-validation-options.model";
 import { silentRefresh } from "./silent-refresh";
@@ -22,6 +23,7 @@ export async function lazyRefresh(
     almostExpiredThreshold?: number;
   },
 ): Promise<void> {
+  await discovery();
   if (
     almostExpired(authResult, tokenValidationOptions?.almostExpiredThreshold)
   ) {

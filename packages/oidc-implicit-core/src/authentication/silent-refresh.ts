@@ -1,6 +1,7 @@
 import { getAllAuthResultFilters } from "../auth-result-filter/all-filters";
 import { config } from "../configuration/config.service";
 import { assertProviderMetadata } from "../discovery/assert-provider-metadata";
+import { discovery } from "../discovery/discovery";
 import { AuthResult } from "../jwt/model/auth-result.model";
 import { AuthValidationOptions } from "../jwt/model/auth-validation-options.model";
 import { state } from "../state/state";
@@ -44,9 +45,10 @@ const silentRefreshStore: {
  * @param tokenValidationOptions The options that a token is tested for
  * @returns A valid token
  */
-export function silentRefresh(
+export async function silentRefresh(
   authValidationOptions?: AuthValidationOptions,
 ): Promise<AuthResult> {
+  await discovery();
   const scopes: string[] =
     authValidationOptions?.scopes ??
     transformScopesStringToArray(config.scope);

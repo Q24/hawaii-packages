@@ -1,6 +1,7 @@
+import { AuthorizationRequest } from "../../pkce/model/authorization-request.model";
 import type { RegistrationClientMetadata } from "./registration-client-metadata.model";
 
-export interface ImplicitRequestParameters {
+export interface ImplicitAuthorizationRequest extends AuthorizationRequest {
   /**
    * What type of token(s) you wish to receive This value consists of `id_token`
    * and `token`, as a space-delimited list. This requests that both an Access
@@ -9,11 +10,6 @@ export interface ImplicitRequestParameters {
    * [OAuth.Responses].
    */
   response_type: "id_token" | "id_token token";
-
-  /**
-   * OAuth 2.0 Client Identifier valid at the Authorization Server.
-   */
-  client_id: string;
 
   /**
    * Define the scopes you want to add to your session. Multiple scopes will be
@@ -36,16 +32,6 @@ export interface ImplicitRequestParameters {
    *   present (not logged in).
    */
   scope: "openid" | string;
-
-  /**
-   * The URL you want to be redirected to after redirect from Authorisation
-   */
-  redirect_uri: string;
-
-  /**
-   * Opaque value used to maintain state between the request and the callback.
-   */
-  state: string;
 
   /**
    * used to associate a Client session with an ID Token, and to mitigate replay

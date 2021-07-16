@@ -1,4 +1,4 @@
-import { ImplicitRequestParameters } from "../model/implicit-request-parameters.model";
+import { ImplicitAuthorizationRequest } from "../model/implicit-request-parameters.model";
 import { GeneratorUtil } from "../../utils/generatorUtil";
 import { LogUtil } from "../../utils/logUtil";
 import { getNonce, saveNonce } from "../../utils/nonceUtil";
@@ -17,9 +17,9 @@ import { config } from "../../configuration/config.service";
 export function getAuthorizeParams(
   scopes: string[],
   promptNone = false,
-): ImplicitRequestParameters {
+): ImplicitAuthorizationRequest {
   const storedState = getState() || GeneratorUtil.generateState();
-  const authorizeParams: ImplicitRequestParameters = {
+  const authorizeParams: ImplicitAuthorizationRequest = {
     nonce: getNonce() || GeneratorUtil.generateNonce(),
     state: storedState,
     client_id: config.client_id,

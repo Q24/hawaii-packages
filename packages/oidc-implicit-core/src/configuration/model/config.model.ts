@@ -13,7 +13,7 @@ export interface OidcConfig {
    * What type of token(s) you wish to receive
    * In case op Open Id Connect this is usually `token id_token`
    */
-  response_type: "id_token" | "id_token token";
+  response_type: "id_token" | "id_token token" | "code";
 
   /**
    * The URL you want to be redirected to after redirect from Authorization

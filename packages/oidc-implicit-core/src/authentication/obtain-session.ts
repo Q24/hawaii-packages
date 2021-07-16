@@ -1,5 +1,5 @@
 import { config } from "../configuration/config.service";
-import { getCsrfResult } from "../csrf/csrf";
+import { getCsrfResult, storeCsrfToken } from "../csrf/csrf";
 import { assertProviderMetadata } from "../discovery/assert-provider-metadata";
 import { discovery } from "../discovery/discovery";
 import { AuthResult } from "../jwt/model/auth-result.model";
@@ -21,29 +21,31 @@ import { validateAndStoreAuthResult } from "./utils/validate-store-auth-result";
 
 /**
  * Checks if there is a session available.
- * If this is not available, redirect to the authorisation page.
+ * If this is not available, redirect to the authorization page.
  *
  * Before starting with checks, we flush state if needed (in case of session upgrade i.e.)
- * 1. If there is a valid session storage token, we are done.
+ * 1. If there is a valid auth result already stored, we are done.
  * 2. Else, if we may refresh in the background, try to do that.
- * 3. Else, if there is an *access_token* in the URL;
+ * 3. Else, if there is an *id_token* in the URL;
  *   - a. Validate that the state from the response is equal to the state previously generated on the client.
  *   - b. Validate token from URL with Backend
  *   - c. Store the token
- *   - d. Get a new CSRF token from Authorisation with the newly created session, and save it for i.e. logout usage
- * 4. Check if there's a session_upgrade_token in the URL, if so, call the session upgrade function
- * 5. Nothing found anywhere, so redirect to authorisation
+ *   - d. Get a new CSRF token from Authorization with the newly created session, and save it for i.e. logout usage
+ * 4. Else, if there's a session_upgrade_token in the URL, call the session upgrade function
+ * 5. Else, Nothing found anywhere, so redirect to authorization
  *
  * @param authResultFilters If not set, takes the scope from the config.
- * @returns A valid token
+ * @returns An auth result
  *
- * It will reject (as well as redirect) in case the check did not pass.
+ * @throws It will reject (as well as redirect) in case the check did not pass.
  */
-export async function checkSession(
+export async function obtainSession(
   authValidationOptions?: AuthValidationOptions,
 ): Promise<AuthResult> {
   await discovery();
-  const allowBackgroundRefresh = !!authValidationOptions?.extraAuthFilters;
+  const allowBackgroundRefresh = Boolean(
+    authValidationOptions?.extraAuthFilters,
+  );
   const urlParams = getURLParameters(window.location.href);
 
   // With Clean Hash fragment implemented in Head
@@ -82,9 +84,9 @@ export async function checkSession(
   // No valid token found in storage, so we need to get a new one.
   // Store CSRF token of the new session to storage. We'll need it for logout and authenticate
   if (config.csrf_token_endpoint) {
-    const csrfToken = await getCsrfResult();
+    const csrfResult = await getCsrfResult();
     // Store the CSRF Token for future calls that need it. I.e. Logout
-    StorageUtil.store("_csrf", csrfToken.csrf_token);
+    storeCsrfToken(csrfResult.csrf_token);
   }
 
   if (
@@ -116,7 +118,8 @@ export async function checkSession(
     // 5 --- No token in URL or Storage, so we need to get one from SSO
     LogUtil.debug("No valid token in Storage or URL, Authorize Redirect!");
     authorizeRedirect();
-    throw Error("will_authorize_redirect");
+    await timeout(2000);
+    throw Error("authorize_redirect_timeout");
   }
 }
 
@@ -207,4 +210,12 @@ function authorizeRedirect(): void {
     LogUtil.error("Redirecting to Authorisation failed");
     LogUtil.debug(`Error in authorize redirect: ${urlParams["error"]}`);
   }
+}
+
+function timeout(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
 }
