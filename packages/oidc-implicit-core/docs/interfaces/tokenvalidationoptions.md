@@ -16,33 +16,37 @@ meets requirements set forth herein, such as a scope.
 
 ### customTokenValidator
 
-• `Optional` **customTokenValidator**: (`token`: *Readonly*<[*Token*](token.md)\>) => *boolean*
+• `Optional` **customTokenValidator**: (`token`: `Readonly`<[`Token`](token.md)\>) => `boolean`
+
+#### Type declaration
+
+▸ (`token`): `boolean`
 
 A custom validation function that is called when trying
 to retrieve a (possibly pre-existing) Token.
 
-#### Type declaration:
-
-▸ (`token`: *Readonly*<[*Token*](token.md)\>): *boolean*
-
-#### Parameters:
+##### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `token` | *Readonly*<[*Token*](token.md)\> |
+| `token` | `Readonly`<[`Token`](token.md)\> |
 
-**Returns:** *boolean*
+##### Returns
 
-Defined in: [models/token.models.ts:81](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L81)
+`boolean`
 
-Defined in: [models/token.models.ts:81](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L81)
+#### Defined in
+
+[models/token.models.ts:81](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L81)
 
 ___
 
 ### scopes
 
-• `Optional` **scopes**: *string*[]
+• `Optional` **scopes**: `string`[]
 
 A list of scopes that the token must have.
 
-Defined in: [models/token.models.ts:76](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L76)
+#### Defined in
+
+[models/token.models.ts:76](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L76)

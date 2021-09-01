@@ -20,68 +20,82 @@ Token received in URL from Authorisation
 
 ### access\_token
 
-• `Optional` **access\_token**: *string*
+• `Optional` **access\_token**: `string`
 
 Token for use with REST calls
 
-Defined in: [models/token.models.ts:26](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L26)
+#### Defined in
+
+[models/token.models.ts:26](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L26)
 
 ___
 
 ### expires
 
-• `Optional` **expires**: *number*
+• `Optional` **expires**: `number`
 
 Expiry time of token
 
-Defined in: [models/token.models.ts:46](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L46)
+#### Defined in
+
+[models/token.models.ts:46](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L46)
 
 ___
 
 ### expires\_in
 
-• `Optional` **expires\_in**: *string*
+• `Optional` **expires\_in**: `string`
 
 Token expiry in seconds
 
-Defined in: [models/token.models.ts:38](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L38)
+#### Defined in
+
+[models/token.models.ts:38](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L38)
 
 ___
 
 ### id\_token
 
-• `Optional` **id\_token**: *string*
+• `Optional` **id\_token**: `string`
 
 ID Token
 
-Defined in: [models/token.models.ts:42](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L42)
+#### Defined in
+
+[models/token.models.ts:42](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L42)
 
 ___
 
 ### session\_upgrade\_token
 
-• `Optional` **session\_upgrade\_token**: *string*
+• `Optional` **session\_upgrade\_token**: `string`
 
 Session Upgrade token received from Authorisation
 
-Defined in: [models/token.models.ts:50](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L50)
+#### Defined in
+
+[models/token.models.ts:50](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L50)
 
 ___
 
 ### state
 
-• `Optional` **state**: *string*
+• `Optional` **state**: `string`
 
 State string
 
-Defined in: [models/token.models.ts:34](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L34)
+#### Defined in
+
+[models/token.models.ts:34](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L34)
 
 ___
 
 ### token\_type
 
-• `Optional` **token\_type**: *string*
+• `Optional` **token\_type**: `string`
 
 Type of token received, usually `Bearer`
 
-Defined in: [models/token.models.ts:30](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L30)
+#### Defined in
+
+[models/token.models.ts:30](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L30)

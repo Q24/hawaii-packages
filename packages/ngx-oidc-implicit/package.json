@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/ng-packagr/package.schema.json",
   "name": "@hawaii-framework/ngx-oidc-implicit",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Open ID Connect - Implicit Flow Service for Angular",
   "author": "ilionx",
   "email": "info@qnh.nl",
@@ -29,15 +29,17 @@
     "build": "ng-packagr -p package.json"
   },
   "devDependencies": {
-    "@angular/common": "~11.0.0",
-    "@angular/core": "~11.0.0",
+    "@angular/common": "~12.1.4",
+    "@angular/compiler": "^12.1.4",
+    "@angular/compiler-cli": "^12.1.4",
+    "@angular/core": "~12.1.4",
     "@hawaii-framework/oidc-implicit-core": "^2.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
-    "eslint": "^7.24.0",
-    "ng-packagr": "^11.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "eslint": "^7.32.0",
+    "ng-packagr": "^12.1.2",
     "rxjs": "~6.6.0",
-    "typescript": "~4.0.2"
+    "typescript": "~4.3.5"
   },
   "ngPackage": {
     "lib": {

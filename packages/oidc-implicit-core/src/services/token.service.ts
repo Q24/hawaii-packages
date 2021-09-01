@@ -93,19 +93,23 @@ export function tokenHasRequiredScopes(
     if (!token.access_token) {
       return false;
     }
-    const accessToken = parseJwt(token.access_token);
-    // All scopes must specified in the scopes and context must be represented in the token
-    if (
-      !requiredScopes.every((requiredScope) =>
-        accessToken.scope.some(
-          (accessTokenScope) => accessTokenScope === requiredScope,
-        ),
-      )
-    ) {
-      return false;
-    }
+    const { scope: accessTokenScopes } = parseJwt(token.access_token);
 
-    return true;
+    // All scopes must specified in the scopes and context must be represented in the token
+    const hasRequiredScopes = requiredScopes.every((requiredScope) =>
+      accessTokenScopes.includes(requiredScope),
+    );
+
+    LogUtil.debug("Scope checking", [
+      "Access Token Scopes",
+      accessTokenScopes,
+      "Required scopes",
+      requiredScopes,
+      "has required scopes",
+      hasRequiredScopes,
+    ]);
+
+    return hasRequiredScopes;
   };
 }
 
@@ -123,6 +127,8 @@ function filterTokens(
   const scopes =
     tokenValidationOptions?.scopes ??
     transformScopesStringToArray(OidcConfigService.config.scope);
+
+  LogUtil.debug("filtering token on scopes", scopes);
   const checkScopes = tokenHasRequiredScopes(scopes);
   const relevantTokens = tokens.filter(checkScopes);
   if (tokenValidationOptions?.customTokenValidator) {

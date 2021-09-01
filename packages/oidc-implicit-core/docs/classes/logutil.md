@@ -20,92 +20,110 @@
 
 ### constructor
 
-\+ **new LogUtil**(): [*LogUtil*](logutil.md)
-
-**Returns:** [*LogUtil*](logutil.md)
+• **new LogUtil**()
 
 ## Methods
 
 ### debug
 
-▸ `Static`**debug**(`msg`: *string*, ...`supportingDetails`: *any*[]): *void*
+▸ `Static` **debug**(`msg`, ...`supportingDetails`): `void`
 
-#### Parameters:
+#### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `msg` | *string* |
-| `...supportingDetails` | *any*[] |
+| `msg` | `string` |
+| `...supportingDetails` | `any`[] |
 
-**Returns:** *void*
+#### Returns
 
-Defined in: [utils/logUtil.ts:4](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L4)
+`void`
+
+#### Defined in
+
+[utils/logUtil.ts:4](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/utils/logUtil.ts#L4)
 
 ___
 
 ### emitLog
 
-▸ `Private` `Static`**emitLog**(`logType`: ``"log"`` \| ``"info"`` \| ``"warn"`` \| ``"error"``, `msg`: *string*, `supportingDetails`: *any*[]): *void*
+▸ `Static` `Private` **emitLog**(`logType`, `msg`, `supportingDetails`): `void`
 
-#### Parameters:
+#### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `logType` | ``"log"`` \| ``"info"`` \| ``"warn"`` \| ``"error"`` |
-| `msg` | *string* |
-| `supportingDetails` | *any*[] |
+| `msg` | `string` |
+| `supportingDetails` | `any`[] |
 
-**Returns:** *void*
+#### Returns
 
-Defined in: [utils/logUtil.ts:20](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L20)
+`void`
+
+#### Defined in
+
+[utils/logUtil.ts:20](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/utils/logUtil.ts#L20)
 
 ___
 
 ### error
 
-▸ `Static`**error**(`msg`: *string*, ...`supportingDetails`: *any*[]): *void*
+▸ `Static` **error**(`msg`, ...`supportingDetails`): `void`
 
-#### Parameters:
+#### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `msg` | *string* |
-| `...supportingDetails` | *any*[] |
+| `msg` | `string` |
+| `...supportingDetails` | `any`[] |
 
-**Returns:** *void*
+#### Returns
 
-Defined in: [utils/logUtil.ts:16](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L16)
+`void`
+
+#### Defined in
+
+[utils/logUtil.ts:16](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/utils/logUtil.ts#L16)
 
 ___
 
 ### info
 
-▸ `Static`**info**(`msg`: *string*, ...`supportingDetails`: *any*[]): *void*
+▸ `Static` **info**(`msg`, ...`supportingDetails`): `void`
 
-#### Parameters:
+#### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `msg` | *string* |
-| `...supportingDetails` | *any*[] |
+| `msg` | `string` |
+| `...supportingDetails` | `any`[] |
 
-**Returns:** *void*
+#### Returns
 
-Defined in: [utils/logUtil.ts:8](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L8)
+`void`
+
+#### Defined in
+
+[utils/logUtil.ts:8](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/utils/logUtil.ts#L8)
 
 ___
 
 ### warn
 
-▸ `Static`**warn**(`msg`: *string*, ...`supportingDetails`: *any*[]): *void*
+▸ `Static` **warn**(`msg`, ...`supportingDetails`): `void`
 
-#### Parameters:
+#### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `msg` | *string* |
-| `...supportingDetails` | *any*[] |
+| `msg` | `string` |
+| `...supportingDetails` | `any`[] |
 
-**Returns:** *void*
+#### Returns
 
-Defined in: [utils/logUtil.ts:12](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/logUtil.ts#L12)
+`void`
+
+#### Defined in
+
+[utils/logUtil.ts:12](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/utils/logUtil.ts#L12)

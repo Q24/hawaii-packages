@@ -29,23 +29,25 @@
 
 ### OidcConfigService
 
-• `Const` **OidcConfigService**: *object*
+• `Const` **OidcConfigService**: `Object`
 
 A service containing the config
 
-#### Type declaration:
+#### Type declaration
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `get **config**(): [*OidcConfig*](../interfaces/oidcconfig.md)` | *object* | Get the global OIDC config |
+| ``get` **config**(): [`OidcConfig`](../interfaces/oidcconfig.md)` | `Object` | Get the global OIDC config |
 
-Defined in: [services/config.service.ts:8](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/config.service.ts#L8)
+#### Defined in
+
+[services/config.service.ts:8](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/config.service.ts#L8)
 
 ## Functions
 
 ### checkIfTokenExpiresAndRefreshWhenNeeded
 
-▸ **checkIfTokenExpiresAndRefreshWhenNeeded**(`token`: [*Token*](../interfaces/token.md), `tokenValidationOptions?`: [*TokenValidationOptions*](../interfaces/tokenvalidationoptions.md) & { `almostExpiredThreshold?`: *number*  }): *Promise*<void\>
+▸ **checkIfTokenExpiresAndRefreshWhenNeeded**(`token`, `tokenValidationOptions?`): `Promise`<`void`\>
 
 Check if the token expires in the next *x* seconds.
 
@@ -55,25 +57,29 @@ a silent refresh will be triggered and the Promise will resolve to `true`.
 If the token does not expire within *x* seconds, the Promise will resolve
 to `false` instead.
 
-#### Parameters:
+#### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `token` | [*Token*](../interfaces/token.md) | the token to check |
-| `tokenValidationOptions?` | [*TokenValidationOptions*](../interfaces/tokenvalidationoptions.md) & { `almostExpiredThreshold?`: *number*  } | extra validations for the token |
+| `token` | [`Token`](../interfaces/token.md) | the token to check |
+| `tokenValidationOptions?` | [`TokenValidationOptions`](../interfaces/tokenvalidationoptions.md) & { `almostExpiredThreshold?`: `number`  } | extra validations for the token |
 
-**Returns:** *Promise*<void\>
+#### Returns
+
+`Promise`<`void`\>
 
 A promise. May throw and error if the token
 we got from the refresh is not valid.
 
-Defined in: [services/session.service.ts:502](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L502)
+#### Defined in
+
+[services/session.service.ts:502](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L502)
 
 ___
 
 ### checkSession
 
-▸ **checkSession**(`tokenValidationOptions?`: [*TokenValidationOptions*](../interfaces/tokenvalidationoptions.md)): *Promise*<[*Token*](../interfaces/token.md)\>
+▸ **checkSession**(`tokenValidationOptions?`): `Promise`<[`Token`](../interfaces/token.md)\>
 
 Checks if there is a session available.
 If this is not available, redirect to the authorisation page.
@@ -89,111 +95,135 @@ Before starting with checks, we flush state if needed (in case of session upgrad
 4. Check if there's a session_upgrade_token in the URL, if so, call the session upgrade function
 5. Nothing found anywhere, so redirect to authorisation
 
-#### Parameters:
+#### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `tokenValidationOptions?` | [*TokenValidationOptions*](../interfaces/tokenvalidationoptions.md) | If not set, takes the tokens from the config. |
+| `tokenValidationOptions?` | [`TokenValidationOptions`](../interfaces/tokenvalidationoptions.md) | If not set, takes the tokens from the config. |
 
-**Returns:** *Promise*<[*Token*](../interfaces/token.md)\>
+#### Returns
+
+`Promise`<[`Token`](../interfaces/token.md)\>
 
 A valid token
 
 It will reject (as well as redirect) in case the check did not pass.
 
-Defined in: [services/session.service.ts:599](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L599)
+#### Defined in
+
+[services/session.service.ts:599](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L599)
 
 ___
 
 ### cleanHashFragment
 
-▸ **cleanHashFragment**(`url`: *string*): *string*
+▸ **cleanHashFragment**(`url`): `string`
 
 Based on a URL containing a hash fragment, gets a new URL without this fragment.
 
 Useful if the URL contains a hash fragment which should be stripped. URL could contain
 an *access_token* when a user uses the *BACK* button in the browser.
 
-#### Parameters:
+#### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `url` | *string* | the URL containing the hash fragment |
+| `url` | `string` | the URL containing the hash fragment |
 
-**Returns:** *string*
+#### Returns
+
+`string`
 
 the URL without the hash fragment
 
-Defined in: [utils/urlUtil.ts:92](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/urlUtil.ts#L92)
+#### Defined in
+
+[utils/urlUtil.ts:92](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/utils/urlUtil.ts#L92)
 
 ___
 
 ### cleanSessionStorage
 
-▸ **cleanSessionStorage**(): *void*
+▸ **cleanSessionStorage**(): `void`
 
 Cleans up the current session: deletes the stored local tokens, state, nonce, id token hint and CSRF token.
 
-**Returns:** *void*
+#### Returns
 
-Defined in: [services/session.service.ts:39](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L39)
+`void`
+
+#### Defined in
+
+[services/session.service.ts:39](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L39)
 
 ___
 
 ### deleteStoredTokens
 
-▸ **deleteStoredTokens**(`tokenFilter?`: (`token`: *Readonly*<[*Token*](../interfaces/token.md)\>) => *boolean*): *void*
+▸ **deleteStoredTokens**(`tokenFilter?`): `void`
 
 Deletes all the tokens from the storage.
 If tokenFilter is passed in, only a subset will be deleted.
 
-#### Parameters:
+#### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `tokenFilter?` | (`token`: *Readonly*<[*Token*](../interfaces/token.md)\>) => *boolean* | if specified, the custom token validator is called for every token in the store. If a tokenFilter callback returns true, the token will remain in the store. Otherwise, it will be deleted (Just like Array.prototype.filter()) |
+| `tokenFilter?` | (`token`: `Readonly`<[`Token`](../interfaces/token.md)\>) => `boolean` | if specified, the custom token validator is called for every token in the store. If a tokenFilter callback returns true, the token will remain in the store. Otherwise, it will be deleted (Just like Array.prototype.filter()) |
 
-**Returns:** *void*
+#### Returns
 
-Defined in: [services/token.service.ts:22](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L22)
+`void`
+
+#### Defined in
+
+[services/token.service.ts:22](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L22)
 
 ___
 
 ### getAuthHeader
 
-▸ **getAuthHeader**(`token`: [*Token*](../interfaces/token.md)): *string*
+▸ **getAuthHeader**(`token`): `string`
 
 Get the Authorisation header for usage with rest calls.
 
 Uses the token type present in the token.
 
-#### Parameters:
+#### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `token` | [*Token*](../interfaces/token.md) |
+| `token` | [`Token`](../interfaces/token.md) |
 
-**Returns:** *string*
+#### Returns
 
-Defined in: [services/session.service.ts:484](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L484)
+`string`
+
+#### Defined in
+
+[services/session.service.ts:484](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L484)
 
 ___
 
 ### getCsrfToken
 
-▸ **getCsrfToken**(): *Promise*<[*CsrfToken*](../interfaces/csrftoken.md)\>
+▸ **getCsrfToken**(): `Promise`<[`CsrfToken`](../interfaces/csrftoken.md)\>
 
 Get a CSRF Token from the authorisation server
 
-**Returns:** *Promise*<[*CsrfToken*](../interfaces/csrftoken.md)\>
+#### Returns
 
-Defined in: [services/token.service.ts:236](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L236)
+`Promise`<[`CsrfToken`](../interfaces/csrftoken.md)\>
+
+#### Defined in
+
+[services/token.service.ts:242](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L242)
 
 ___
 
 ### getIdTokenHint
 
-▸ **getIdTokenHint**(`options?`: { `regex`: *boolean* = false }): *string* \| ``null``
+▸ **getIdTokenHint**(`options?`): `string` \| ``null``
 
 Get the saved id_token_hint string for the current instance from storage
 Used when you need to check the if your logged in or not without using access-tokens as a reference
@@ -201,92 +231,112 @@ Used when you need to check the if your logged in or not without using access-to
 Pass the `{regex: true}` option, to search for any ID Token Hint by regex
 During logout, the regex option should be enabled if we are not sure that the *client_id* will remain stable.
 
-#### Parameters:
+#### Parameters
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
-| `options` | *object* | - |
-| `options.regex` | *boolean* | false |
+| `options` | `Object` | `undefined` |
+| `options.regex` | `boolean` | `false` |
 
-**Returns:** *string* \| ``null``
+#### Returns
 
-Defined in: [services/token.service.ts:192](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L192)
+`string` \| ``null``
+
+#### Defined in
+
+[services/token.service.ts:198](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L198)
 
 ___
 
 ### getStoredCsrfToken
 
-▸ **getStoredCsrfToken**(): *string* \| ``null``
+▸ **getStoredCsrfToken**(): `string` \| ``null``
 
 Gets the stored CSRF Token from storage
 
-**Returns:** *string* \| ``null``
+#### Returns
 
-Defined in: [services/token.service.ts:228](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L228)
+`string` \| ``null``
+
+#### Defined in
+
+[services/token.service.ts:234](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L234)
 
 ___
 
 ### getStoredToken
 
-▸ **getStoredToken**(`tokenValidationOptions?`: [*TokenValidationOptions*](../interfaces/tokenvalidationoptions.md)): [*Token*](../interfaces/token.md) \| ``null``
+▸ **getStoredToken**(`tokenValidationOptions?`): [`Token`](../interfaces/token.md) \| ``null``
 
 Gets a valid, non-expired token from session storage given a set of validators.
 
-#### Parameters:
+#### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `tokenValidationOptions?` | [*TokenValidationOptions*](../interfaces/tokenvalidationoptions.md) | the required scopes and other validators |
+| `tokenValidationOptions?` | [`TokenValidationOptions`](../interfaces/tokenvalidationoptions.md) | the required scopes and other validators |
 
-**Returns:** [*Token*](../interfaces/token.md) \| ``null``
+#### Returns
+
+[`Token`](../interfaces/token.md) \| ``null``
 
 A valid Token or `null` if no token has been found.
 
-Defined in: [services/token.service.ts:140](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/token.service.ts#L140)
+#### Defined in
+
+[services/token.service.ts:146](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/token.service.ts#L146)
 
 ___
 
 ### isSessionAlive
 
-▸ **isSessionAlive**(): *Promise*<{ `status`: *number*  }\>
+▸ **isSessionAlive**(): `Promise`<`Object`\>
 
 Checks if a session is alive. This may be on another platform.
 This is normally used in conjunction with a silent logout. It
 doesn't extend the lifetime of the current session. If a
 session is found, a logout should NOT be triggered.
 
-**Returns:** *Promise*<{ `status`: *number*  }\>
+#### Returns
+
+`Promise`<`Object`\>
 
 The status code of the HTTP response
 
-Defined in: [services/session.service.ts:56](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L56)
+#### Defined in
+
+[services/session.service.ts:56](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L56)
 
 ___
 
 ### parseJwt
 
-▸ **parseJwt**(`token`: *string*): [*JWT*](../interfaces/jwt.md)
+▸ **parseJwt**(`token`): [`JWT`](../interfaces/jwt.md)
 
 transforms an JWT string (e.g. from an access token) to a
 JWT object.
 
-#### Parameters:
+#### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `token` | *string* | A JWT token string |
+| `token` | `string` | A JWT token string |
 
-**Returns:** [*JWT*](../interfaces/jwt.md)
+#### Returns
+
+[`JWT`](../interfaces/jwt.md)
 
 JSON Web Token
 
-Defined in: [utils/jwtUtil.ts:10](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/utils/jwtUtil.ts#L10)
+#### Defined in
+
+[utils/jwtUtil.ts:10](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/utils/jwtUtil.ts#L10)
 
 ___
 
 ### silentLogoutByUrl
 
-▸ **silentLogoutByUrl**(`url?`: *string*): *Promise*<void\>
+▸ **silentLogoutByUrl**(`url?`): `Promise`<`void`\>
 
 Allows you to initiate a logout of the session in the background via an
 iframe.
@@ -298,23 +348,27 @@ an action (e.g. do a redirect to the logout page).
 The logout was successful if the iframe ended up on the configured
 `post_logout_redirect_uri`.
 
-#### Parameters:
+#### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `url` | *string* | A URL pointing to a *page*. This *page* should make a POST request to the logout endpoint of the SSO server in an automated fashion, which will cause the user to be logged out. The `id_token_hint` and `csrf_token` will be supplied to the *page* via this function. Defaults to `silent_logout_uri` from the config. |
+| `url` | `string` | A URL pointing to a *page*. This *page* should make a POST request to the logout endpoint of the SSO server in an automated fashion, which will cause the user to be logged out. The `id_token_hint` and `csrf_token` will be supplied to the *page* via this function. Defaults to `silent_logout_uri` from the config. |
 
-**Returns:** *Promise*<void\>
+#### Returns
+
+`Promise`<`void`\>
 
 The promise resolves if the logout was successful, otherwise it will reject.
 
-Defined in: [services/session.service.ts:276](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L276)
+#### Defined in
+
+[services/session.service.ts:276](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L276)
 
 ___
 
 ### silentRefreshAccessToken
 
-▸ **silentRefreshAccessToken**(`tokenValidationOptions?`: [*TokenValidationOptions*](../interfaces/tokenvalidationoptions.md)): *Promise*<[*Token*](../interfaces/token.md)\>
+▸ **silentRefreshAccessToken**(`tokenValidationOptions?`): `Promise`<[`Token`](../interfaces/token.md)\>
 
 Silently refresh an access token via iFrame.
 
@@ -327,14 +381,18 @@ the token from the iframe URL and returns it.
 
 If this function fails for any reason, the Promise will reject.
 
-#### Parameters:
+#### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `tokenValidationOptions?` | [*TokenValidationOptions*](../interfaces/tokenvalidationoptions.md) | The options that a token is tested for |
+| `tokenValidationOptions?` | [`TokenValidationOptions`](../interfaces/tokenvalidationoptions.md) | The options that a token is tested for |
 
-**Returns:** *Promise*<[*Token*](../interfaces/token.md)\>
+#### Returns
+
+`Promise`<[`Token`](../interfaces/token.md)\>
 
 A valid token
 
-Defined in: [services/session.service.ts:158](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/services/session.service.ts#L158)
+#### Defined in
+
+[services/session.service.ts:158](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/services/session.service.ts#L158)

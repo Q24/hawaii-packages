@@ -36,12 +36,16 @@
 
 A set of strings to match when the Authorize redirect is erroring. This is the complete list of possible error to handle.
 
-Defined in: [models/url-param.models.ts:63](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/url-param.models.ts#L63)
+#### Defined in
+
+[models/url-param.models.ts:63](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/url-param.models.ts#L63)
 
 ## Variables
 
 ### AUTHORIZE\_ERRORS
 
-• `Const` **AUTHORIZE\_ERRORS**: [*AuthorizeErrors*](modules.md#authorizeerrors)[]
+• `Const` **AUTHORIZE\_ERRORS**: [`AuthorizeErrors`](modules.md#authorizeerrors)[]
 
-Defined in: [constants/authorize.constants.ts:3](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/constants/authorize.constants.ts#L3)
+#### Defined in
+
+[constants/authorize.constants.ts:3](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/constants/authorize.constants.ts#L3)

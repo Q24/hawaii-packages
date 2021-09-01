@@ -16,18 +16,22 @@ of an access token.
 
 ### exp
 
-• **exp**: *number*
+• **exp**: `number`
 
 The expiration date of the token.
 
-Defined in: [models/token.models.ts:65](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L65)
+#### Defined in
+
+[models/token.models.ts:65](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L65)
 
 ___
 
 ### scope
 
-• **scope**: *string*[]
+• **scope**: `string`[]
 
 The scopes the token has.
 
-Defined in: [models/token.models.ts:61](https://github.com/Q24/hawaii-packages/blob/caaf87c/packages/oidc-implicit-core/src/models/token.models.ts#L61)
+#### Defined in
+
+[models/token.models.ts:61](https://github.com/Q24/hawaii-packages/blob/95c67f6/packages/oidc-implicit-core/src/models/token.models.ts#L61)
