@@ -117,19 +117,18 @@ export function tokenHasRequiredScopes(
  *
  * @param tokens the tokens to be filtered
  * @param tokenValidationOptions possible extra validation on a token
- * @param returnValidTokens if the filter should return the invalid or valid tokens.
  * @returns the filtered tokens.
  */
 function filterTokens(
   tokens: Token[],
   tokenValidationOptions?: TokenValidationOptions,
 ): Token[] {
-  const scopes =
+  const requiredScopes =
     tokenValidationOptions?.scopes ??
     transformScopesStringToArray(OidcConfigService.config.scope);
 
-  LogUtil.debug("filtering token on scopes", scopes);
-  const checkScopes = tokenHasRequiredScopes(scopes);
+  LogUtil.debug("filtering token on scopes", requiredScopes);
+  const checkScopes = tokenHasRequiredScopes(requiredScopes);
   const relevantTokens = tokens.filter(checkScopes);
   if (tokenValidationOptions?.customTokenValidator) {
     return relevantTokens.filter(tokenValidationOptions.customTokenValidator);

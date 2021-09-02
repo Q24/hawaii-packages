@@ -101,18 +101,59 @@ describe("getStoredToken", () => {
     // Create a sample token in the database
     window.sessionStorage.setItem(
       `${constants.client_id}-token`,
-      JSON.stringify([constants.sampleToken3]),
+      JSON.stringify([
+        constants.sampleToken3,
+        constants.sampleToken2,
+        constants.sampleToken1,
+      ]),
     );
 
-    // Verify that the normal method does not return the right scopes.
+    // does not return with insufficient scopes.
     expect(OidcService.getStoredToken()).toBeNull;
 
-    // Verify that there are tokens in the storage.
+    // does not return with wrong scopes.
     expect(
       OidcService.getStoredToken({
         scopes: ["custom", "other-custom"],
       }),
-    ).not.toBeNull;
+    ).toBeNull();
+
+    // does return with right scopes
+    expect(
+      OidcService.getStoredToken({
+        scopes: constants.sampleToken1Scopes,
+      }),
+    ).not.toBeNull();
+  });
+
+  it("Given a ccam token and ciam token in session storage, it will return the ccam token when requested", () => {
+    // Create a sample token in the database
+    window.sessionStorage.setItem(
+      `${constants.client_id}-token`,
+      JSON.stringify([constants.ccamAuthResult, constants.ciamAuthResult]),
+    );
+
+    // Verify that the normal method does not return the right scopes.
+    expect(
+      OidcService.getStoredToken({
+        scopes: constants.ccamTokenScopes.split(" "),
+      }),
+    ).toEqual(constants.ccamAuthResult);
+  });
+
+  it("Given a ccam token and ciam token in session storage, it will return NOT the ccam token when requested with the WRONG scopes", () => {
+    // Create a sample token in the database
+    window.sessionStorage.setItem(
+      `${constants.client_id}-token`,
+      JSON.stringify([constants.ccamAuthResult, constants.ciamAuthResult]),
+    );
+
+    // Verify that the normal method does not return the right scopes.
+    expect(
+      OidcService.getStoredToken({
+        scopes: ["some", "invalid", "value"],
+      }),
+    ).toBeNull();
   });
 });
 

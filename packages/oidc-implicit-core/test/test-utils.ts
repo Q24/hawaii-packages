@@ -1,5 +1,5 @@
 import { OidcService } from "../src/index";
-import { constants } from './constants';
+import { constants } from "./constants";
 
 export function initConfig() {
   OidcService.OidcConfigService.config = {
